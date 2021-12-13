@@ -12,3 +12,5 @@ engine = executable('engine', src,
     install         : true,
     install_dir     : join_paths(meson.project_source_root(), 'runtime')
 )
+
+executable('test_vector', 'tests/test_vector.cpp')
