@@ -8,7 +8,7 @@ src = files(
 )
 
 engine = executable('engine', src,
-    dependencies    : [sdl_dep, bgfx_dep],
+    dependencies    : [sdl_dep, bgfx_dep, hlslpp_dep],
     install         : true,
     install_dir     : join_paths(meson.project_source_root(), 'runtime')
 )
