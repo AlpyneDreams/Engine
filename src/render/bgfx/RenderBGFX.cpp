@@ -9,14 +9,23 @@
 #include "platform/Window.h"
 #include "render/Render.h"
 
-namespace engine
+namespace engine::render
 {
     struct RenderState
     {
+        uint width, height;
         bgfx::ViewId clearView;
+
+        struct ClearState {
+            uint16 flags = BGFX_CLEAR_NONE;
+            uint32 rgba  = 0x000000FF;
+            float depth = 1.0f;
+            uint8 stencil = 0;
+        } clear;
     };
 
     Render::Render() { state = new RenderState(); }
+    Render::~Render() { delete state; }
 
     void Render::Init(Window* window)
     {
@@ -34,6 +43,8 @@ namespace engine
 
         init.resolution.reset = BGFX_RESET_VSYNC;
 
+        state->width = width, state->height = height;
+
         // Handle window resize
         window->SetResizeCallback([=](uint width, uint height) {
             bgfx::reset(uint32(width), uint32(height), BGFX_RESET_VSYNC);
@@ -45,14 +56,17 @@ namespace engine
         }
 
         state->clearView = 0;
-        bgfx::setViewClear(state->clearView, BGFX_CLEAR_COLOR);
         bgfx::setViewRect(state->clearView, 0, 0, bgfx::BackbufferRatio::Equal);
     }
 
-    void Render::Update()
+    void Render::BeginFrame()
     {
+        // Always clear this view even if no draw calls are made
         bgfx::touch(state->clearView);
+    }
 
+    void Render::EndFrame()
+    {
         bgfx::dbgTextClear();
 		//bgfx::dbgTextImage(bx::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, bx::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
 		//bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
@@ -69,5 +83,41 @@ namespace engine
     void Render::Shutdown()
     {
         bgfx::shutdown();
+    }
+
+    float Render::GetAspectRatio()
+    {
+        return float(state->width) / float(state->height);
+    }
+
+    void Render::SetViewTransform(hlslpp::float4x4& view, hlslpp::float4x4& proj)
+    {
+        bgfx::setViewTransform(0, &view._m00, &proj._m00);
+    }
+
+    void Render::SetTransform(hlslpp::float4x4& matrix)
+    {
+        bgfx::setTransform(&matrix._m00);
+    }
+
+    static inline void UpdateClearState(const RenderState& state)
+    {
+        bgfx::setViewClear(state.clearView, state.clear.flags, state.clear.rgba, state.clear.depth, state.clear.stencil);
+    }
+
+    void Render::SetClearColor(bool clear, Color color)
+    {
+        if (clear)  state->clear.flags |= BGFX_CLEAR_COLOR;
+        else        state->clear.flags &= ~BGFX_CLEAR_COLOR;
+        state->clear.rgba = color.Pack();
+        UpdateClearState(*state);
+    }
+
+    void Render::SetClearDepth(bool clear, float depth)
+    {
+        if (clear)  state->clear.flags |= BGFX_CLEAR_DEPTH;
+        else        state->clear.flags &= ~BGFX_CLEAR_COLOR;
+        state->clear.depth = depth;
+        UpdateClearState(*state);
     }
 }

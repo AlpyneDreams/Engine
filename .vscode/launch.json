@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/runtime/engine",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}/runtime",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

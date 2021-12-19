@@ -2,6 +2,8 @@
 
 #include "platform/Window.h"
 #include "render/Render.h"
+#include "render/pipelines/RenderPipeline.h"
+#include "render/pipelines/forward/Forward.h"
 
 namespace engine
 {
@@ -9,7 +11,9 @@ namespace engine
     {
     private:
         Window* window;
-        Render render;
+        render::Render render;
+        render::ForwardRenderPipeline renderPipeline;
+
     public:
         void Init()
         {
@@ -24,13 +28,18 @@ namespace engine
         void InitRender()
         {
             render.Init(window);
+            renderPipeline.Init(render);
         }
 
         void Start()
         {
             while (!window->ShouldClose()) {
                 window->PreUpdate();
-                render.Update();
+                render.BeginFrame();
+                
+                renderPipeline.RenderFrame(render);
+
+                render.EndFrame();
                 window->Update();
             }
         }
