@@ -17,7 +17,6 @@ namespace engine
         friend Window* Window::CreateWindow();
         SDL_Window* window;
         bool shouldClose = false;
-        int width, height;
 
     public:
         ~WindowSDL() { SDL_DestroyWindow(window); }
@@ -79,6 +78,12 @@ namespace engine
             return {width, height};
         }
 
+        const char* GetTitle()
+        {
+            return SDL_GetWindowTitle(window);
+        }
+
+        void* GetHandle() { return window; }
     #ifdef PLATFORM_X11
         void* GetNativeDisplay() { return GetSysWMInfo().info.x11.display; }
         void* GetNativeWindow() { return (void*)(uintptr_t)GetSysWMInfo().info.x11.window; }

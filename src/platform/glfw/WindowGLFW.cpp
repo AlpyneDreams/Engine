@@ -28,6 +28,7 @@ namespace engine
         friend Window* Window::CreateWindow();
         GLFWwindow* window;
         int width, height;
+        const char* title;
 
     public:
         static bool resizeOccured;
@@ -42,6 +43,9 @@ namespace engine
             if (!window) {
                 throw std::runtime_error("[GLFW] Failed to create window!");
             }
+
+            this->width = width; this->height = height;
+            this->title = name;
 
             glfwSetWindowSizeCallback(window, resizeCallback);
         }
@@ -77,6 +81,12 @@ namespace engine
             return {width, height};
         }
 
+        const char* GetTitle()
+        {
+            return title;
+        }
+
+        void* GetHandle() { return window; }
     #ifdef PLATFORM_X11
         void* GetNativeDisplay() { return glfwGetX11Display(); }
         void* GetNativeWindow() { return (void*)(uintptr_t)glfwGetX11Window(window); }

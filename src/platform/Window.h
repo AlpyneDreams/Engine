@@ -5,8 +5,6 @@
 
 #include "common/Common.h"
 
-using std::pair;
-
 namespace engine
 {
     class Window
@@ -24,7 +22,10 @@ namespace engine
         virtual bool ShouldClose() = 0;
         virtual void PreUpdate() = 0;
         virtual void Update() = 0;
-        virtual pair<int, int> GetSize() = 0;
+        virtual std::pair<int, int> GetSize() = 0;
+        virtual const char* GetTitle() = 0;
+
+        virtual void* GetHandle() = 0;
 
         virtual void* GetNativeDisplay() = 0;
         virtual void* GetNativeWindow() = 0;
