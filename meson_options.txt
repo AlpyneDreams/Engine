@@ -1,0 +1,3 @@
+
+option('windowlib',		type: 'combo', choices: ['glfw', 'sdl'],			value: 'glfw')
+option('graphicslib',	type: 'combo', choices: ['bgfx', 'vulkan'],		value: 'vulkan')
