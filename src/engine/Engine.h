@@ -11,7 +11,7 @@ namespace engine
     {
     private:
         Window* window;
-        render::Render render;
+        render::Render* render;
         render::ForwardRenderPipeline renderPipeline;
 
     public:
@@ -27,26 +27,28 @@ namespace engine
 
         void InitRender()
         {
-            render.Init(window);
-            renderPipeline.Init(render);
+            render = render::Render::Create();
+            render->Init(window);
+            renderPipeline.Init(*render);
         }
 
         void Start()
         {
             while (!window->ShouldClose()) {
                 window->PreUpdate();
-                render.BeginFrame();
+                render->BeginFrame();
                 
-                renderPipeline.RenderFrame(render);
+                renderPipeline.RenderFrame(*render);
 
-                render.EndFrame();
+                render->EndFrame();
                 window->Update();
             }
         }
 
         void Shutdown()
         {
-            render.Shutdown();
+            render->Shutdown();
+            delete render;
             delete window;
             Window::Shutdown();
         }
