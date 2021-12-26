@@ -10,7 +10,7 @@
 #include "render/Render.h"
 
 namespace engine::render
-{
+{   
     class RenderVK final : public Render
     {
         struct RenderState {
@@ -53,9 +53,16 @@ namespace engine::render
 
             device = fw.device();
 
-            window = vku::Window {fw.instance(), device, fw.physicalDevice(), fw.graphicsQueueFamilyIndex(), (GLFWwindow*)win->GetHandle()};
-            if (!window.ok())
-                throw std::runtime_error("[VKU] Failed to attach to window.");
+            // Attach to window surface
+            {
+                auto display = (Display*)win->GetNativeDisplay();
+                auto x11win = (::Window)win->GetNativeWindow();
+                auto info = vk::XlibSurfaceCreateInfoKHR{{}, display, x11win};
+                auto surface = fw.instance().createXlibSurfaceKHR(info);
+                window = vku::Window {fw.instance(), device, fw.physicalDevice(), fw.graphicsQueueFamilyIndex(), surface};
+                if (!window.ok())
+                    throw std::runtime_error("[VKU] Failed to attach to window.");
+            }
 
             vert = vku::ShaderModule(device, "./core/shaders/spirv/triangle.vert.spv");
             frag = vku::ShaderModule(device, "./core/shaders/spirv/triangle.frag.spv");
