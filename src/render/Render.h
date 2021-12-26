@@ -3,11 +3,14 @@
 #include "platform/Window.h"
 #include "math/Math.h"
 #include "math/Color.h"
+#include "render/core/VertexBuffer.h"
 
 namespace engine { class Engine; }
 
 namespace engine::render
 {
+    struct IndexBuffer;
+
     class Render
     {
         friend class ::engine::Engine;
@@ -20,6 +23,10 @@ namespace engine::render
         static Render* Create();
         virtual ~Render() {}
 
+        //virtual VertexBuffer* CreateVertexBuffer(void* data, VertexLayout& layout);
+        virtual IndexBuffer* CreateIndexBuffer(const void* data, size_t size);
+
+        virtual void SetIndexBuffer(IndexBuffer* buffer);
 
         virtual float GetAspectRatio() = 0;
 

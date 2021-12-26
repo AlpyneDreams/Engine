@@ -11,6 +11,10 @@
 
 namespace engine::render
 {
+    struct IndexBuffer {
+        bgfx::IndexBufferHandle handle;
+    };
+    
     class RenderBGFX final : public Render
     {
         struct RenderState {
@@ -85,6 +89,13 @@ namespace engine::render
         }
 
     public:
+        IndexBuffer* CreateIndexBuffer(const void* data, size_t size) {
+            return new IndexBuffer { bgfx::createIndexBuffer( bgfx::makeRef(data, size) ) };
+        }
+
+        void SetIndexBuffer(IndexBuffer* buffer) {
+            bgfx::setIndexBuffer(buffer->handle);
+        }
 
         float GetAspectRatio()
         {

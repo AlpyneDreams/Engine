@@ -77,7 +77,7 @@ namespace engine::render
     struct ForwardState
     {
         bgfx::VertexBufferHandle vb;
-        bgfx::IndexBufferHandle ib;
+        IndexBuffer* ib;
         bgfx::ProgramHandle program;
     };
 
@@ -140,9 +140,7 @@ namespace engine::render
                 layout
             );
 
-            state->ib = createIndexBuffer(
-                makeRef(CubeTriangles, sizeof(CubeTriangles))
-            );
+            state->ib = r.CreateIndexBuffer(&CubeTriangles, sizeof(CubeTriangles));
 
             state->program = loadProgram("vs_cubes", "fs_cubes");
         }
@@ -186,7 +184,7 @@ namespace engine::render
                 }
 
                 bgfx::setVertexBuffer(0, state->vb);
-                bgfx::setIndexBuffer(state->ib);
+                r.SetIndexBuffer(state->ib);
                 bgfx::setState(
                     BGFX_STATE_WRITE_RGB
                     | BGFX_STATE_WRITE_Z
