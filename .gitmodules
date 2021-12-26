@@ -1,3 +1,6 @@
 [submodule "submodules/hlslpp"]
 	path = submodules/hlslpp
 	url = https://github.com/redorav/hlslpp.git
+[submodule "submodules/vookoo"]
+	path = submodules/vookoo
+	url = https://github.com/andy-thomason/Vookoo.git
