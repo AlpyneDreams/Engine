@@ -8,6 +8,8 @@ namespace engine { class Engine; }
 
 namespace engine::render
 {
+    class Shader {};
+
     class Render
     {
         friend class ::engine::Engine;
@@ -20,6 +22,10 @@ namespace engine::render
         static Render* Create();
         virtual ~Render() {}
 
+        virtual Shader* LoadShader(const char* vertexShader, const char* pixelShader) = 0; // TODO: Probably replace this
+        virtual void    SetShader(Shader* shader) = 0;
+
+        virtual void Submit() = 0;
 
         virtual float GetAspectRatio() = 0;
 

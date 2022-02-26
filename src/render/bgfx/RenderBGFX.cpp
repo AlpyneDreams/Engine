@@ -1,7 +1,9 @@
 #include "common/Common.h"
+#include "common/Filesystem.h"
 #include "platform/Platform.h"
 
 #include <bgfx/bgfx.h>
+#include <bx/string.h>
 #include <bgfx/platform.h>
 
 #include <stdexcept>
@@ -11,6 +13,16 @@
 
 namespace engine::render
 {
+    class ShaderBGFX final : public Shader
+    {
+    public:
+        bgfx::ProgramHandle program;
+
+        ~ShaderBGFX() {
+            bgfx::destroy(program);
+        }
+    };
+
     class RenderBGFX final : public Render
     {
         struct RenderState {
@@ -23,6 +35,8 @@ namespace engine::render
                 float depth = 1.0f;
                 uint8 stencil = 0;
             } clear;
+
+            bgfx::ProgramHandle currentProgram;
         } state;
 
     protected:
@@ -85,6 +99,30 @@ namespace engine::render
         }
 
     public:
+        Shader* LoadShader(const char* vertexShader, const char* pixelShader)
+        {
+            bgfx::ShaderHandle vert = LoadShaderModule(vertexShader);
+            bgfx::ShaderHandle frag = BGFX_INVALID_HANDLE;
+            if (pixelShader != NULL) {
+                frag = LoadShaderModule(pixelShader);
+            }
+
+            ShaderBGFX* shader = new ShaderBGFX();
+            shader->program = bgfx::createProgram(vert, frag, true /* destroy shaders when program is destroyed */);
+            return shader;
+        }
+
+
+        void SetShader(Shader* shader)
+        {
+            state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
+        }
+
+        void Submit()
+        {
+            bgfx::submit(0, state.currentProgram);
+        }
+
 
         float GetAspectRatio()
         {
@@ -117,10 +155,55 @@ namespace engine::render
         void SetClearDepth(bool clear, float depth)
         {
             if (clear)  state.clear.flags |= BGFX_CLEAR_DEPTH;
-            else        state.clear.flags &= ~BGFX_CLEAR_COLOR;
+            else        state.clear.flags &= ~BGFX_CLEAR_DEPTH;
             state.clear.depth = depth;
             UpdateClearState(state);
         }
+
+    private:
+        const bgfx::Memory* LoadMem(const char* filePath)
+        {
+            auto [buffer, len] = fs::readFile(filePath);
+            return bgfx::copy(buffer, len);
+        }
+
+        bgfx::ShaderHandle LoadShaderModule(const char* _name)
+        {
+            char filePath[512];
+
+            const char* shaderPath = "???";
+
+            switch (bgfx::getRendererType() )
+            {
+            case bgfx::RendererType::Noop:
+            case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
+            case bgfx::RendererType::Direct3D11:
+            case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
+            case bgfx::RendererType::Agc:
+            case bgfx::RendererType::Gnm:        shaderPath = "shaders/pssl/";  break;
+            case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
+            case bgfx::RendererType::Nvn:        shaderPath = "shaders/nvn/";   break;
+            case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
+            case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
+            case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
+            case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
+
+            case bgfx::RendererType::Count:
+                BX_ASSERT(false, "You should not be here!");
+                break;
+            }
+
+            bx::strCopy(filePath, BX_COUNTOF(filePath), "core/");
+            bx::strCat(filePath, BX_COUNTOF(filePath), shaderPath);
+            bx::strCat(filePath, BX_COUNTOF(filePath), _name);
+            bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");
+
+            bgfx::ShaderHandle handle = bgfx::createShader(LoadMem(filePath));
+            bgfx::setName(handle, _name);
+
+            return handle;
+        }
+
     };
     
     Render* Render::Create()

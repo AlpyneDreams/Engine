@@ -14,62 +14,6 @@
 
 namespace fs = engine::fs;
 
-static const bgfx::Memory* loadMem(const char* _filePath)
-{
-    auto [buffer, len] = fs::readFile(_filePath);
-    return bgfx::copy(buffer, len);
-}
-
-
-static bgfx::ShaderHandle loadShader(const char* _name)
-{
-	char filePath[512];
-
-	const char* shaderPath = "???";
-
-	switch (bgfx::getRendererType() )
-	{
-	case bgfx::RendererType::Noop:
-	case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
-	case bgfx::RendererType::Direct3D11:
-	case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
-	case bgfx::RendererType::Agc:
-	case bgfx::RendererType::Gnm:        shaderPath = "shaders/pssl/";  break;
-	case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
-	case bgfx::RendererType::Nvn:        shaderPath = "shaders/nvn/";   break;
-	case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
-	case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
-	case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
-	case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
-
-	case bgfx::RendererType::Count:
-		BX_ASSERT(false, "You should not be here!");
-		break;
-	}
-
-	bx::strCopy(filePath, BX_COUNTOF(filePath), "core/");
-	bx::strCat(filePath, BX_COUNTOF(filePath), shaderPath);
-	bx::strCat(filePath, BX_COUNTOF(filePath), _name);
-	bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");
-
-	bgfx::ShaderHandle handle = bgfx::createShader(loadMem(filePath));
-	bgfx::setName(handle, _name);
-
-	return handle;
-}
-
-bgfx::ProgramHandle loadProgram(const char* _vsName, const char* _fsName)
-{
-	bgfx::ShaderHandle vsh = loadShader(_vsName);
-	bgfx::ShaderHandle fsh = BGFX_INVALID_HANDLE;
-	if (NULL != _fsName)
-	{
-		fsh = loadShader(_fsName);
-	}
-
-	return bgfx::createProgram(vsh, fsh, true /* destroy shaders when program is destroyed */);
-}
-
 namespace engine::render
 {
     using Forward = ForwardRenderPipeline;
@@ -78,7 +22,7 @@ namespace engine::render
     {
         bgfx::VertexBufferHandle vb;
         bgfx::IndexBufferHandle ib;
-        bgfx::ProgramHandle program;
+        Shader* shader;
     };
 
     struct XYZColor {
@@ -144,13 +88,16 @@ namespace engine::render
                 makeRef(CubeTriangles, sizeof(CubeTriangles))
             );
 
-            state->program = loadProgram("vs_cubes", "fs_cubes");
+            state->shader = r.LoadShader("vs_cubes", "fs_cubes");
         }
     }
 
     void Forward::RenderFrame(Render& r)
     {
         using namespace hlslpp;
+
+        // Set shader
+        r.SetShader(state->shader);
         
         // Set view and proj matrices
         {
@@ -195,7 +142,7 @@ namespace engine::render
                     | BGFX_STATE_MSAA
                 );
 
-                bgfx::submit(0, state->program);
+                r.Submit();
 
             }
         }
