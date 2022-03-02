@@ -9,4 +9,6 @@ vulkan_dep = dependency('vulkan')
 vookoo_dep = declare_dependency(include_directories: 'submodules/vookoo/include')
 hlslpp_dep = declare_dependency(include_directories: 'submodules/hlslpp/include')
 
+tinygltf_dep = declare_dependency(include_directories: 'submodules/tinygltf')
+
 subdir('src')
