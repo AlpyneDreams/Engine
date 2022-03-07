@@ -8,7 +8,10 @@
             "detail": "Meson",
             "type": "shell",
             "command": "meson install -C build",
-            "problemMatcher": [],
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": ["autoDetect", "${workspaceFolder}/src"]
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
