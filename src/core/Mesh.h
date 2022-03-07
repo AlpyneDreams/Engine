@@ -5,10 +5,10 @@
 
 namespace engine
 {
-    struct Mesh
+    /*struct Mesh
     {
         using float3 = hlslpp::float3;
 
         
-    };
+    };*/
 }

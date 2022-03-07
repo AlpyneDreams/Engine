@@ -1,13 +1,17 @@
 #pragma once
+#include "platform/Platform.h"
 
 #include <limits>
 #include <algorithm>
 #include <type_traits>
 
+#include <raylib.h>
+
 #include "common/Common.h"
 
 namespace engine
 {
+    using RaylibColor = ::Color;
     template <typename T = float>
     struct ColorRGBA
     {
@@ -34,13 +38,22 @@ namespace engine
                     | uint32( clamp(b * packScale, T{0}, T{255}) ) <<  8u 
                     | uint32( clamp(a * packScale, T{0}, T{255}) ) <<  0u ;
         }
+
+        inline operator RaylibColor() const {
+            return RaylibColor {r, g, b, a};
+        }
+
+        inline operator ColorRGBA<byte>() const {
+            return ColorRGBA<byte>(byte(r * 255), byte(g * 255), byte(b * 255), byte(a * 255));
+        }
     };
 
-    using Color = ColorRGBA<float>;
+    using Color  = ColorRGBA<byte>;
+    using Colorf = ColorRGBA<float>;
 
     // List of common colors
     const struct {
-        Color Black = Color(0.0, 0.0, 0.0, 1.0);
+        Color Black = Color(0, 0, 0, 255);
     } Colors;
 
 }

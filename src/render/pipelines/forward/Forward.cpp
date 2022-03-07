@@ -4,71 +4,11 @@
 #include "math/Math.h"
 #include "core/Mesh.h"
 
-
-#include <bgfx/bgfx.h>
-#include <bx/bx.h>
-#include <bx/math.h>
-#include <bx/string.h>
+#include <raylib.h>
 
 #include <cstdio>
 
 namespace fs = engine::fs;
-
-static const bgfx::Memory* loadMem(const char* _filePath)
-{
-    auto [buffer, len] = fs::readFile(_filePath);
-    return bgfx::copy(buffer, len);
-}
-
-
-static bgfx::ShaderHandle loadShader(const char* _name)
-{
-	char filePath[512];
-
-	const char* shaderPath = "???";
-
-	switch (bgfx::getRendererType() )
-	{
-	case bgfx::RendererType::Noop:
-	case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
-	case bgfx::RendererType::Direct3D11:
-	case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
-	case bgfx::RendererType::Agc:
-	case bgfx::RendererType::Gnm:        shaderPath = "shaders/pssl/";  break;
-	case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
-	case bgfx::RendererType::Nvn:        shaderPath = "shaders/nvn/";   break;
-	case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
-	case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
-	case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
-	case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
-
-	case bgfx::RendererType::Count:
-		BX_ASSERT(false, "You should not be here!");
-		break;
-	}
-
-	bx::strCopy(filePath, BX_COUNTOF(filePath), "core/");
-	bx::strCat(filePath, BX_COUNTOF(filePath), shaderPath);
-	bx::strCat(filePath, BX_COUNTOF(filePath), _name);
-	bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");
-
-	bgfx::ShaderHandle handle = bgfx::createShader(loadMem(filePath));
-	bgfx::setName(handle, _name);
-
-	return handle;
-}
-
-bgfx::ProgramHandle loadProgram(const char* _vsName, const char* _fsName)
-{
-	bgfx::ShaderHandle vsh = loadShader(_vsName);
-	bgfx::ShaderHandle fsh = BGFX_INVALID_HANDLE;
-	if (NULL != _fsName)
-	{
-		fsh = loadShader(_fsName);
-	}
-
-	return bgfx::createProgram(vsh, fsh, true /* destroy shaders when program is destroyed */);
-}
 
 namespace engine::render
 {
@@ -76,9 +16,6 @@ namespace engine::render
 
     struct ForwardState
     {
-        bgfx::VertexBufferHandle vb;
-        bgfx::IndexBufferHandle ib;
-        bgfx::ProgramHandle program;
     };
 
     struct XYZColor {
@@ -117,35 +54,10 @@ namespace engine::render
         state = new ForwardState();
     }
 
-    static bgfx::VertexLayout layout;
-
     void Forward::Init(Render& r)
     {
-        r.SetClearColor(true, Color(0.2, 0.2, 0.2));
+        r.SetClearColor(true, Colorf(0.2, 0.2, 0.2));
         r.SetClearDepth(true, 1.0f);
-
-        Mesh cube;
-
-        {
-            using namespace bgfx;
-
-            layout
-                .begin()
-                .add(Attrib::Position,  3, AttribType::Float)
-                .add(Attrib::Color0,    4, AttribType::Uint8, true)
-                .end();
-
-            state->vb = createVertexBuffer(
-                makeRef(CubeVertices, sizeof(CubeVertices)),
-                layout
-            );
-
-            state->ib = createIndexBuffer(
-                makeRef(CubeTriangles, sizeof(CubeTriangles))
-            );
-
-            state->program = loadProgram("vs_cubes", "fs_cubes");
-        }
     }
 
     void Forward::RenderFrame(Render& r)
@@ -164,12 +76,30 @@ namespace engine::render
             r.SetViewTransform(view, proj);
         }
 
+        Camera3D camera = { 0 };
+        camera.position = (Vector3){ 0.0f, 0.f, -35.f };  // Camera position
+        camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+        camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+        camera.fovy = 60.0f;                                // Camera field-of-view Y
+        camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
+
+        Vector3 cubePos = Vector3(0.f, 0.f, 0.f);
+
+        BeginMode3D(camera);
+
+        //DrawCube(cubePos, 2.f, 2.f, 2.f, RED);
+        //DrawCubeWires(cubePos, 2.f, 2.f, 2.f, MAROON);
+
+        DrawGrid(10, 1.0f);
+            
         // Lazy time
         static float time = 0;
         time += 0.01;
 
         for (int yy = 0; yy < 11; yy++) {
             for(int xx = 0; xx < 11; xx++) {
+
+                DrawCube(Vector3(-15.0f + float(xx)*3.0f, -15.0f + float(yy)*3.0f, 0.f), 2.f, 2.f, 2.f, RED);
 
                 // Set object transform
                 {
@@ -185,7 +115,7 @@ namespace engine::render
                     r.SetTransform(mtx);
                 }
 
-                bgfx::setVertexBuffer(0, state->vb);
+                /*bgfx::setVertexBuffer(0, state->vb);
                 bgfx::setIndexBuffer(state->ib);
                 bgfx::setState(
                     BGFX_STATE_WRITE_RGB
@@ -195,10 +125,15 @@ namespace engine::render
                     | BGFX_STATE_MSAA
                 );
 
-                bgfx::submit(0, state->program);
+                bgfx::submit(0, state->program);*/
 
             }
         }
+
+        EndMode3D();
+
+        DrawText("Welcome to the third dimension!", 10, 40, 20, DARKGRAY);
+        DrawFPS(10, 10);
 
     }
 }

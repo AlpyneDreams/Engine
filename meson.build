@@ -4,9 +4,11 @@ add_project_arguments('-std=c++20', language: 'cpp')
 
 #glfw_dep  = dependency('glfw3')
 sdl_dep    = dependency('sdl2')
-bgfx_dep   = dependency('bgfx', method: 'cmake')
+bgfx_dep   = dependency('bgfx')
 vulkan_dep = dependency('vulkan')
 vookoo_dep = declare_dependency(include_directories: 'submodules/vookoo/include')
 hlslpp_dep = declare_dependency(include_directories: 'submodules/hlslpp/include')
+
+raylib_dep = dependency('raylib')
 
 subdir('src')
