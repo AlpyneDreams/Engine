@@ -3,8 +3,8 @@ src = files(
     'main/Main.cpp',
     #'platform/glfw/WindowGLFW.cpp',
     'platform/sdl/WindowSDL.cpp',
-    'render/bgfx/RenderBGFX.cpp',
-    #'render/vk/RenderVK.cpp',
+    #'render/bgfx/RenderBGFX.cpp',
+    'render/vk/RenderVK.cpp',
     'render/pipelines/forward/Forward.cpp',
     'assets/models/importers/OBJ.cpp'
 )

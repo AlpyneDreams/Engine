@@ -29,7 +29,7 @@ namespace engine
         {
             render = render::Render::Create();
             render->Init(window);
-            renderPipeline.Init(*render);
+            //renderPipeline.Init(*render);
         }
 
         void Start()
@@ -38,7 +38,7 @@ namespace engine
                 window->PreUpdate();
                 render->BeginFrame();
                 
-                renderPipeline.RenderFrame(*render);
+                //renderPipeline.RenderFrame(*render);
 
                 render->EndFrame();
                 window->Update();

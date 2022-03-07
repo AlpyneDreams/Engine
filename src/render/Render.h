@@ -29,8 +29,8 @@ namespace engine::render
 
         virtual float GetAspectRatio() = 0;
 
-        virtual void SetViewTransform(hlslpp::float4x4& view, hlslpp::float4x4& proj) = 0;
-        virtual void SetTransform(hlslpp::float4x4& matrix) = 0;
+        virtual void SetViewTransform(Matrix4x4& view, Matrix4x4& proj) = 0;
+        virtual void SetTransform(Matrix4x4& matrix) = 0;
 
         virtual void SetClearColor(bool clear, Color color = Colors.Black) = 0;
         virtual void SetClearDepth(bool clear, float depth = 1.0f) = 0;
