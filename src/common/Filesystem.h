@@ -8,7 +8,7 @@
 
 namespace engine::fs
 {
-    inline const std::tuple<byte*, size_t> readFile(const char* path)
+    inline const std::tuple<char*, size_t> readFile(const char* path)
     {
         using namespace std;
         FILE* f = fopen(path, "rb");
@@ -18,11 +18,12 @@ namespace engine::fs
         long size = ftell(f);
         rewind(f);
 
-        byte* buffer = (byte*)malloc(size + 1);
+        char* buffer = (char*)malloc(size + 1);
         fread(buffer, size, 1, f);
         fclose(f);
 
-        return tuple<byte*, size_t>{buffer, size};
-
+        return tuple<char*, size_t>{buffer, size};
     }
+
+    
 }
