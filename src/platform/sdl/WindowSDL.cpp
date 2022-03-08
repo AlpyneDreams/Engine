@@ -10,6 +10,10 @@
 #include "platform/Platform.h"
 #include "platform/Window.h"
 
+#if PLATFORM_GL
+#include <glad/glad.h>
+#endif
+
 namespace engine
 {
     class WindowSDL final : public Window
@@ -18,20 +22,45 @@ namespace engine
         SDL_Window* window;
         bool shouldClose = false;
 
+        SDL_GLContext glContext;
+
     public:
         ~WindowSDL() { SDL_DestroyWindow(window); }
 
         void Create(const char* name, uint width, uint height, bool resizable)
         {
+        #if PLATFORM_GL
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        #endif
             int x = SDL_WINDOWPOS_UNDEFINED,
                 y = SDL_WINDOWPOS_UNDEFINED;
-            int flags = SDL_WINDOW_SHOWN | (resizable ? SDL_WINDOW_RESIZABLE : 0);
+            int flags = SDL_WINDOW_SHOWN | (resizable ? SDL_WINDOW_RESIZABLE : 0) | (PLATFORM_GL ? SDL_WINDOW_OPENGL : 0);
             
             // Create window!
             window = SDL_CreateWindow(name, x, y, width, height, flags);
             if (!window) {
                 throw std::runtime_error("[GLFW] Failed to create window!");
             }
+
+        #if PLATFORM_GL
+            // Create GL context
+            glContext = SDL_GL_CreateContext(window);
+            if (glContext == NULL) {
+                throw std::runtime_error(std::string("[SDL] Failed to create GL context! ") + SDL_GetError());
+            }
+
+            // Init GLAD
+            if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
+                throw std::runtime_error("[SDL] Failed to initialize GLAD!");
+            }
+
+            // Enable VSync
+            if (SDL_GL_SetSwapInterval(1) < 0) {
+                fprintf(stderr, "[SDL] Warning: Unable to set VSync! %s\n", SDL_GetError());
+            }
+        #endif
         }
 
         bool ShouldClose()
@@ -43,6 +72,9 @@ namespace engine
 
         void Update()
         {
+        #ifdef PLATFORM_GL
+            SDL_GL_SwapWindow(window);
+        #endif
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
                 switch(e.type) {
