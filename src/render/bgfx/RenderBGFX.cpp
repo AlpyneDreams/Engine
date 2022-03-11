@@ -7,20 +7,40 @@
 #include <bgfx/platform.h>
 
 #include <stdexcept>
+#include <unordered_map>
+#include <map>
+#include <typeindex>
 
 #include "platform/Window.h"
 #include "render/Render.h"
+#include "core/Mesh.h"
 
 namespace engine::render
 {
-    class ShaderBGFX final : public Shader
+    // Maps an integral type to bgfx::AttribType
+    static std::unordered_map<std::type_index, bgfx::AttribType::Enum> bgfxAttribTypes {
+        {std::type_index(typeid(uint8)), bgfx::AttribType::Uint8},
+        //{std::type_index(typeid(uint10)), bgfx::AttribType::Uint10},
+        {std::type_index(typeid(int16)), bgfx::AttribType::Int16},
+        //{std::type_index(typeid(half)), bgfx::AttribType::Half},
+        {std::type_index(typeid(float)), bgfx::AttribType::Float},
+    };
+
+    struct ShaderBGFX final : public Shader
     {
-    public:
         bgfx::ProgramHandle program;
 
         ~ShaderBGFX() {
             bgfx::destroy(program);
         }
+    };
+
+    struct HandleBGFX final : public Handle
+    {
+        union {
+            bgfx::VertexBufferHandle vb;
+            bgfx::IndexBufferHandle ib;
+        };
     };
 
     class RenderBGFX final : public Render
@@ -98,7 +118,55 @@ namespace engine::render
             bgfx::shutdown();
         }
 
+    private:
+        bgfx::Attrib::Enum GetAttribute(VertexAttribute::Mode mode) {
+            switch (mode) {
+                case VertexAttribute::Position: return bgfx::Attrib::Position;
+                case VertexAttribute::Normal:   return bgfx::Attrib::Normal;
+                case VertexAttribute::Tangent:  return bgfx::Attrib::Tangent;
+                case VertexAttribute::Bitangent: return bgfx::Attrib::Bitangent;
+                case VertexAttribute::Color:    return bgfx::Attrib::Color0;
+                case VertexAttribute::Indices:  return bgfx::Attrib::Indices;
+                case VertexAttribute::Weight:   return bgfx::Attrib::Weight;
+
+                default:
+                case VertexAttribute::TexCoord: return bgfx::Attrib::TexCoord0;
+            }
+        }
+
     public:
+        void UploadMesh(Mesh* mesh)
+        {
+            bgfx::VertexLayout layout;
+            layout.begin();
+
+            for (auto attr : mesh->layout.Attributes()) {
+                layout.add(GetAttribute(attr.mode), attr.dimension, bgfxAttribTypes[std::type_index(attr.type)], attr.normalized);
+            }
+            layout.end();
+
+            for (auto& group : mesh->groups) {
+
+                auto vb = bgfx::createVertexBuffer(
+                    bgfx::makeRef(group.vertices.vertices, group.vertices.Size()),
+                    layout
+                );
+
+                HandleBGFX* vh = new HandleBGFX();
+                vh->vb = vb;
+                group.vertices.handle = vh;
+                
+                auto ib = bgfx::createIndexBuffer(
+                    bgfx::makeRef(group.indices.indices, group.indices.Size()),
+                    group.indices.type == IndexBuffer::UInt32 ? BGFX_BUFFER_INDEX32 : 0
+                );
+
+                HandleBGFX* ih = new HandleBGFX();
+                ih->ib = ib;
+                group.indices.handle = ih;
+            }
+        }
+
         Shader* LoadShader(const char* vertexShader, const char* pixelShader)
         {
             bgfx::ShaderHandle vert = LoadShaderModule(vertexShader);
@@ -117,6 +185,19 @@ namespace engine::render
         {
             state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
         }
+
+        void DrawMesh(Mesh* mesh)
+        {
+            for (auto& group : mesh->groups) {
+                auto vb = static_cast<HandleBGFX*>(group.vertices.handle)->vb;
+                auto ib = static_cast<HandleBGFX*>(group.indices.handle)->ib;
+                bgfx::setVertexBuffer(0, vb);
+                bgfx::setIndexBuffer(ib);
+
+                bgfx::submit(0, state.currentProgram);
+            }
+        }
+
 
         void Submit()
         {

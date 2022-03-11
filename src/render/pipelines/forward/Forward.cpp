@@ -2,8 +2,6 @@
 #include "common/Common.h"
 #include "common/Filesystem.h"
 #include "math/Math.h"
-#include "core/Mesh.h"
-
 
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
@@ -17,13 +15,6 @@ namespace fs = engine::fs;
 namespace engine::render
 {
     using Forward = ForwardRenderPipeline;
-
-    struct ForwardState
-    {
-        bgfx::VertexBufferHandle vb;
-        bgfx::IndexBufferHandle ib;
-        Shader* shader;
-    };
 
     struct XYZColor {
         float x, y, z;
@@ -55,40 +46,23 @@ namespace engine::render
         2, 3, 6, // 10
         6, 3, 7,
     };
-
-    Forward::ForwardRenderPipeline()
-    {
-        state = new ForwardState();
-    }
-
-    static bgfx::VertexLayout layout;
+    
 
     void Forward::Init(Render& r)
     {
         r.SetClearColor(true, Color(0.2, 0.2, 0.2));
         r.SetClearDepth(true, 1.0f);
 
-        Mesh cube;
-
         {
-            using namespace bgfx;
-
+            VertexLayout layout;
             layout
-                .begin()
-                .add(Attrib::Position,  3, AttribType::Float)
-                .add(Attrib::Color0,    4, AttribType::Uint8, true)
-                .end();
+              .Add<float>(3, VertexAttribute::Position)
+              .Add<uint8>(4, VertexAttribute::Color, true);
+            
+            cube = Mesh(layout, CubeVertices, sizeof(CubeVertices), CubeTriangles, sizeof(CubeTriangles));
+            r.UploadMesh(&cube);
 
-            state->vb = createVertexBuffer(
-                makeRef(CubeVertices, sizeof(CubeVertices)),
-                layout
-            );
-
-            state->ib = createIndexBuffer(
-                makeRef(CubeTriangles, sizeof(CubeTriangles))
-            );
-
-            state->shader = r.LoadShader("vs_cubes", "fs_cubes");
+            shader = r.LoadShader("vs_cubes", "fs_cubes");
         }
     }
 
@@ -97,7 +71,7 @@ namespace engine::render
         using namespace hlslpp;
 
         // Set shader
-        r.SetShader(state->shader);
+        r.SetShader(shader);
         
         // Set view and proj matrices
         {
@@ -132,8 +106,6 @@ namespace engine::render
                     r.SetTransform(mtx);
                 }
 
-                bgfx::setVertexBuffer(0, state->vb);
-                bgfx::setIndexBuffer(state->ib);
                 bgfx::setState(
                     BGFX_STATE_WRITE_RGB
                     | BGFX_STATE_WRITE_Z
@@ -141,8 +113,9 @@ namespace engine::render
                     | BGFX_STATE_CULL_CW
                     | BGFX_STATE_MSAA
                 );
+                r.DrawMesh(&cube);
 
-                r.Submit();
+                //r.Submit();
 
             }
         }

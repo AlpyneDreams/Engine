@@ -4,11 +4,12 @@
 #include "math/Math.h"
 #include "math/Color.h"
 
-namespace engine { class Engine; }
+namespace engine { class Engine; struct Mesh; }
 
 namespace engine::render
 {
     class Shader {};
+    class Handle {};
 
     class Render
     {
@@ -22,8 +23,12 @@ namespace engine::render
         static Render* Create();
         virtual ~Render() {}
 
+        virtual void UploadMesh(Mesh* mesh) = 0;
+
         virtual Shader* LoadShader(const char* vertexShader, const char* pixelShader) = 0; // TODO: Probably replace this
         virtual void    SetShader(Shader* shader) = 0;
+
+        virtual void DrawMesh(Mesh* mesh) = 0;
 
         virtual void Submit() = 0;
 
