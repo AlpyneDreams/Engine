@@ -1,0 +1,5 @@
+[wrap-git]
+directory = OOGL
+url = https://github.com/Overv/OOGL.git
+revision = master
+patch_directory = OOGL
