@@ -2,6 +2,7 @@
 #include "common/Common.h"
 #include "common/Filesystem.h"
 #include "math/Math.h"
+#include "assets/models/importers/OBJ.h"
 
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
@@ -59,7 +60,8 @@ namespace engine::render
               .Add<float>(3, VertexAttribute::Position)
               .Add<uint8>(4, VertexAttribute::Color, true);
             
-            cube = Mesh(layout, CubeVertices, sizeof(CubeVertices), CubeTriangles, sizeof(CubeTriangles));
+            cube = *LoadMeshOBJ("core/models/teapot.obj");
+            //cube = Mesh(layout, CubeVertices, sizeof(CubeVertices), CubeTriangles, sizeof(CubeTriangles));
             r.UploadMesh(&cube);
 
             shader = r.LoadShader("vs_cubes", "fs_cubes");
