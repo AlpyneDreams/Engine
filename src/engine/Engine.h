@@ -7,6 +7,9 @@
 
 namespace engine
 {
+    // The global engine instance.
+    extern inline class Engine Engine;
+    
     class Engine
     {
     private:
@@ -15,6 +18,19 @@ namespace engine
         render::ForwardRenderPipeline renderPipeline;
 
     public:
+        void Run()
+        {
+            Init();
+            CreateWindow();
+            InitRender();
+
+            // Run the main loop
+            Start();
+
+            Shutdown();
+        }
+
+    protected:
         void Init()
         {
         }
@@ -53,4 +69,7 @@ namespace engine
             Window::Shutdown();
         }
     };
+
+    inline class Engine Engine;
+
 }
