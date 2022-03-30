@@ -14,6 +14,7 @@
 #include "platform/Window.h"
 #include "render/Render.h"
 #include "core/Mesh.h"
+#include "engine/Time.h"
 
 namespace engine::render
 {
@@ -109,6 +110,16 @@ namespace engine::render
             const bgfx::Stats* stats = bgfx::getStats();
             bgfx::dbgTextPrintf(0, 2, 0x0f, "Backbuffer %dW x %dH in pixels, debug text %dW x %dH in characters.", stats->width, stats->height, stats->textWidth, stats->textHeight);
             bgfx::setDebug(BGFX_DEBUG_TEXT);
+
+            static double totalTime = 0;
+            static double fps = (1 / Time.unscaled.deltaTime);
+            totalTime += Time.unscaled.deltaTime;
+            if (Time.frameCount % 29 == 0) {
+                fps = (1 / (totalTime / 30));
+                totalTime = Time.unscaled.deltaTime;
+            }
+
+            bgfx::dbgTextPrintf(0, 3, 0x0f, "fps: %.0f, t: %.4f, dt: %.0f ms, frame: %d", fps, Time.unscaled.time, Time.unscaled.deltaTime * 1000, Time.frameCount);
 
             bgfx::frame();
         }

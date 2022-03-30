@@ -5,6 +5,8 @@
 #include "render/pipelines/RenderPipeline.h"
 #include "render/pipelines/forward/Forward.h"
 
+#include "Time.h"
+
 namespace engine
 {
     // The global engine instance.
@@ -50,7 +52,36 @@ namespace engine
 
         void Start()
         {
-            while (!window->ShouldClose()) {
+            Time::Seconds lastTime    = Time::GetTime();
+            Time::Seconds accumulator = 0;
+
+            while (!window->ShouldClose())
+            {
+                auto currentTime = Time::GetTime();
+                auto deltaTime   = currentTime - lastTime;
+                lastTime = currentTime;
+
+                Time.Advance(deltaTime);
+
+                // TODO: Whether we use deltaTime or unscaled.deltaTime affects
+                // whether fixed.deltaTime needs to be changed with timeScale.
+                // Perhaps the accumulator logic could go into Time.
+                accumulator += Time.deltaTime;
+
+                // (Process input)
+
+                while (accumulator >= Time.fixed.deltaTime)
+                {
+                    // (Perform fixed update)
+
+                    accumulator     -= Time.fixed.deltaTime;
+                    Time.fixed.time += Time.fixed.deltaTime;
+                    Time.tickCount++;
+                }
+
+                // Amount to lerp between physics steps
+                double alpha = accumulator / Time.fixed.deltaTime;
+                
                 window->PreUpdate();
                 render->BeginFrame();
                 
@@ -58,6 +89,8 @@ namespace engine
 
                 render->EndFrame();
                 window->Update();
+
+                Time.frameCount++;
             }
         }
 
