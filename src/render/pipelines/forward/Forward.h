@@ -11,8 +11,9 @@ namespace engine::render
         Mesh cube;
 
     public:
-        ForwardRenderPipeline() {}
-        virtual void Init(Render& r);
-        virtual void RenderFrame(Render& r);
+        using RenderPipeline::RenderPipeline;
+
+        void Init() final override;
+        void RenderFrame() final override;
     };
 }

@@ -6,6 +6,7 @@
 #include "render/pipelines/forward/Forward.h"
 
 #include "Time.h"
+#include "System.h"
 
 namespace engine
 {
@@ -15,16 +16,16 @@ namespace engine
     class Engine
     {
     private:
-        Window* window;
-        render::Render* render;
-        render::ForwardRenderPipeline renderPipeline;
+        Window* window = Window::CreateWindow();
+        render::Render* render = render::Render::Create();
+        render::ForwardRenderPipeline renderPipeline = render::ForwardRenderPipeline(*render);
+
+        SystemGroup systems;
 
     public:
         void Run()
         {
             Init();
-            CreateWindow();
-            InitRender();
 
             // Run the main loop
             Start();
@@ -35,23 +36,15 @@ namespace engine
     protected:
         void Init()
         {
-        }
-
-        void CreateWindow()
-        {
-            window = Window::CreateWindow();
             window->Create("Engine", 1280, 720, true);
-        }
-
-        void InitRender()
-        {
-            render = render::Render::Create();
             render->Init(window);
-            renderPipeline.Init(*render);
+            renderPipeline.Init();
         }
 
         void Start()
         {
+            systems.Start();
+
             Time::Seconds lastTime    = Time::GetTime();
             Time::Seconds accumulator = 0;
 
@@ -68,11 +61,10 @@ namespace engine
                 // Perhaps the accumulator logic could go into Time.
                 accumulator += Time.deltaTime;
 
-                // (Process input)
-
                 while (accumulator >= Time.fixed.deltaTime)
                 {
-                    // (Perform fixed update)
+                    // Perform fixed updates
+                    systems.Tick();
 
                     accumulator     -= Time.fixed.deltaTime;
                     Time.fixed.time += Time.fixed.deltaTime;
@@ -82,12 +74,18 @@ namespace engine
                 // Amount to lerp between physics steps
                 double alpha = accumulator / Time.fixed.deltaTime;
                 
+                // Process input
                 window->PreUpdate();
-                render->BeginFrame();
-                
-                renderPipeline.RenderFrame(*render);
 
+                // Perform system updates
+                systems.Update();
+
+                // Render
+                render->BeginFrame();
+                renderPipeline.RenderFrame();
                 render->EndFrame();
+
+                // Present
                 window->Update();
 
                 Time.frameCount++;
