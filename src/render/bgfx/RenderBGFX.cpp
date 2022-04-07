@@ -3,13 +3,13 @@
 #include "platform/Platform.h"
 
 #include <bgfx/bgfx.h>
-#include <bx/string.h>
 #include <bgfx/platform.h>
 
 #include <stdexcept>
 #include <unordered_map>
 #include <map>
 #include <typeindex>
+#include <cstring>
 
 #include "platform/Window.h"
 #include "render/Render.h"
@@ -281,14 +281,19 @@ namespace engine::render
             case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
 
             case bgfx::RendererType::Count:
-                BX_ASSERT(false, "You should not be here!");
+                //BX_ASSERT(false, "You should not be here!");
                 break;
             }
 
-            bx::strCopy(filePath, BX_COUNTOF(filePath), "core/");
-            bx::strCat(filePath, BX_COUNTOF(filePath), shaderPath);
-            bx::strCat(filePath, BX_COUNTOF(filePath), _name);
-            bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");
+            std::strcpy(filePath, "core/");
+            std::strcat(filePath, shaderPath);
+            std::strcat(filePath, _name);
+            std::strcat(filePath, ".bin");
+
+            std::strcpy(filePath, "core/");
+            std::strcat(filePath, shaderPath);
+            std::strcat(filePath, _name);
+            std::strcat(filePath, ".bin");
 
             bgfx::ShaderHandle handle = bgfx::createShader(LoadMem(filePath));
             bgfx::setName(handle, _name);

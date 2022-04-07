@@ -4,9 +4,6 @@
 #include "math/Math.h"
 
 #include <bgfx/bgfx.h>
-#include <bx/bx.h>
-#include <bx/math.h>
-#include <bx/string.h>
 
 #include <cstdio>
 
