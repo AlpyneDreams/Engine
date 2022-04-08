@@ -28,6 +28,10 @@ namespace engine
 
         template <class C>
         C& AddComponent() {
+            // Add required components, if any
+            if constexpr (derived_from_template<C, RequireComponents>) {
+                C::AddRequiredComponents(handle);
+            }
 
             // Create component instance
             C& component = handle.emplace<C>();
