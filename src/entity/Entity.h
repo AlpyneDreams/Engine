@@ -1,53 +1,15 @@
 #pragma once
 
-#include "common/Common.h"
-#include "math/Math.h"
+#include <concepts>
 
-// Subject to change.
-#define ENTT_ID_TYPE    std::uint32_t
-#include <entt/entt.hpp>
-#include <entt/meta/ctx.hpp>
+#include "common/Traits.h"
 
-#include <set>
-#include <unordered_map>
-#include <typeindex>
-#include <memory>
-
-#include "engine/System.h"
+#include "Common.h"
+#include "Scene.h"
+#include "Component.h"
 
 namespace engine
 {
-    struct Component {};
-
-    using EntityID = entt::entity;
-    using Handle = entt::handle;    // TODO: Rename or move into a class?
-
-    // TODO: Scene.h
-
-    struct Scene : SystemGroup
-    {
-        // The global scene that contains all other scenes.
-        static Scene World;
-
-        Scene* parent = &World;
-        entt::registry ents;
-
-        Scene(Scene* parent = &World) : parent(parent) {
-            ents.set<Scene*>(this);
-        }
-
-        Handle CreateEntity() {
-            return Handle(ents, ents.create());
-        }
-
-        void DeleteEntity(EntityID id) {
-            ents.destroy(id);
-        }
-    };
-
-    // The global scene that contains all other scenes.
-    inline Scene Scene::World = Scene(nullptr);
-
     struct Entity
     {
         // The default scene for entities
@@ -66,7 +28,20 @@ namespace engine
 
         template <class C>
         C& AddComponent() {
-            return handle.emplace<C>();
+
+            // Create component instance
+            C& component = handle.emplace<C>();
+            
+            // If this component is an entity, then share our handle with it
+            if constexpr (std::derived_from<C, Entity>) {
+                static_cast<Entity&>(component).handle = handle;
+            }
+            
+            if constexpr (std::derived_from<C, Behavior>) {
+
+            }
+            
+            return component;
         }
 
         template <class C>
@@ -76,43 +51,15 @@ namespace engine
 
         template <class C>
         void RemoveComponent() {
+            if constexpr (std::derived_from<C, Behavior>) {
+
+            }
             handle.erase<C>();
         }
     };
-
-    // TOOD: Behvaior.h
-
-    struct Behavior : Entity, Component, System
-    {
-        Behavior(Handle& handle) : Entity(handle) {}
-
-        virtual void Start() override {}
-        virtual void Update() override {}
-        virtual void Tick() override {}
-    };
-
-    template <>
-    Behavior& Entity::AddComponent<Behavior>() {
-        return handle.emplace<Behavior>(handle);
-    }
 
     // A pure Entity cannot be a component.
     template<> Entity& Entity::AddComponent<Entity>() = delete;
     template<> Entity& Entity::GetComponent<Entity>() = delete;
     template<> void Entity::RemoveComponent<Entity>() = delete;
-
-    // TODO: Some example components. Move out of here.
-
-    struct Transform : Component
-    {
-        Vector3     position;
-        Quaternion  rotation;
-        Vector3     scale;
-    };
-
-    struct Parent : Component
-    {
-        Entity* parent;
-    };
-
 }

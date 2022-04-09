@@ -7,6 +7,8 @@
 #include <typeindex>
 #include <type_traits>
 
+// TODO: Move this into /entity/? or keep in /engine/? 
+
 namespace engine
 {
     struct System
@@ -36,7 +38,7 @@ namespace engine
     private:
         bool started = false;
 
-        // TODO: multiple systems?
+        // TODO: multiple systems? non-owned systems?
 
         std::map<std::type_index, std::unique_ptr<System>> systems;
 
