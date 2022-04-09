@@ -7,6 +7,8 @@
 #include <typeindex>
 #include <type_traits>
 
+#include "common/Ranges.h"
+
 // TODO: Move this into /entity/? or keep in /engine/? 
 
 namespace engine
@@ -38,43 +40,54 @@ namespace engine
     private:
         bool started = false;
 
-        // TODO: multiple systems? non-owned systems?
+        // TODO: non-owned systems?
 
-        std::map<std::type_index, std::unique_ptr<System>> systems;
+        std::multimap<std::type_index, std::unique_ptr<System>> systems;
 
     public:
+        // Can be destructured to a std::pair<std::type_index, std::unique_ptr<System>>
+        using Iterator   = decltype(systems)::const_iterator;
+        using SystemList = IteratorRange<Iterator>;
     
         template <SystemClass Sys>
-        Sys& GetSystem() const {
-            // TODO: ew
-            auto ptr = systems.at(typeid(Sys)).get();
-            return *static_cast<Sys*>(ptr);
+        SystemList GetSystems() const {
+            return systems.equal_range(typeid(Sys));
         }
 
         template <SystemClass Sys>
-        Sys& AddSystem(auto&... args) {
-            if (!systems.contains(typeid(Sys))) {
-                systems[typeid(Sys)] = std::make_unique<Sys>(args...);
+        Sys& AddSystem(auto&... args)
+        {
+            auto& [type, system] = *systems.insert({ typeid(Sys), std::make_unique<Sys>(args...) });
                 
-                // If Start() has already been called, then call
-                // it on new systems as soon as they're created.
-                if (started) {
-                    systems[typeid(Sys)]->Start();
-                }
+            // If Start() has already been called, then call
+            // it on new systems as soon as they're created.
+            if (started) {
+                system->Start();
             }
-            // TODO: This is redundant
-            return GetSystem<Sys>();
+
+            return *system.get();
         }
 
+        // Remove all systems of type Sys
         template <SystemClass Sys>
-        void RemoveSystem() {
+        void RemoveSystems() {
             systems.erase(typeid(Sys));
+        }
+
+        // Remove all systems of 'type'
+        void RemoveSystems(std::type_index type) {
+            systems.erase(type);
+        }
+
+        // Removes a single system
+        void RemoveSystem(Iterator iterator) {
+            systems.erase(iterator);
         }
 
     // Iteration:
 
-        auto begin() const {return systems.begin();}
-        auto end() const {return systems.end();}
+        Iterator begin() const {return systems.begin();}
+        Iterator end() const {return systems.end();}
     
     // System overrides:
 
