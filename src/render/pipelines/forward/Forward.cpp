@@ -2,6 +2,7 @@
 #include "common/Common.h"
 #include "common/Filesystem.h"
 #include "math/Math.h"
+#include "platform/Platform.h"
 
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
