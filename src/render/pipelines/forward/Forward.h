@@ -13,7 +13,7 @@ namespace engine::render
     public:
         using RenderPipeline::RenderPipeline;
 
-        void Init() final override;
-        void RenderFrame() final override;
+        void Start() final override;
+        void Update() final override;
     };
 }

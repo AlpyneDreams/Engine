@@ -49,7 +49,7 @@ namespace engine::render
     };
     
 
-    void Forward::Init()
+    void Forward::Start()
     {
         r.SetClearColor(true, Color(0.2, 0.2, 0.2));
         r.SetClearDepth(true, 1.0f);
@@ -67,7 +67,7 @@ namespace engine::render
         }
     }
 
-    void Forward::RenderFrame()
+    void Forward::Update()
     {
         using namespace hlslpp;
 

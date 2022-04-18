@@ -1,0 +1,45 @@
+#pragma once
+
+#include "platform/Window.h"
+#include "render/Render.h"
+#include "render/pipelines/RenderPipeline.h"
+#include "render/pipelines/forward/Forward.h"
+
+#include "System.h"
+
+namespace engine
+{
+    // Manages rendering systems and components
+    struct RenderSystem : public System
+    {
+        Window* window;
+        render::Render* render                       = render::Render::Create();
+        render::ForwardRenderPipeline renderPipeline = render::ForwardRenderPipeline(*render);
+
+        RenderSystem(Window* win) : window(win) {}
+
+        void Start()
+        {
+            window->Create("Engine", 1280, 720, true);
+            render->Init(window);
+            renderPipeline.Start();
+        }
+
+        void Update()
+        {
+            render->BeginFrame();
+            renderPipeline.Update();
+            render->EndFrame();
+        }
+
+        void Shutdown()
+        {
+            render->Shutdown();
+        }
+
+        ~RenderSystem() {
+            delete render;
+        }
+        
+    };
+}

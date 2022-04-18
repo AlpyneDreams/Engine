@@ -5,7 +5,7 @@
 
 namespace engine::render
 {
-    class RenderPipeline
+    class RenderPipeline : public System
     {
     protected:
         Render& r;
@@ -13,7 +13,7 @@ namespace engine::render
         RenderPipeline(Render& render) : r(render) {}
 
         virtual ~RenderPipeline() {}
-        virtual void Init() = 0;
-        virtual void RenderFrame() = 0;
+        virtual void Start() override = 0;
+        virtual void Update() override = 0;
     };
 }

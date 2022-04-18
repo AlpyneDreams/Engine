@@ -4,7 +4,7 @@
 #include "math/Math.h"
 #include "math/Color.h"
 
-namespace engine { class Engine; struct Mesh; }
+namespace engine { struct RenderSystem; struct Mesh; }
 
 namespace engine::render
 {
@@ -13,7 +13,7 @@ namespace engine::render
 
     class Render
     {
-        friend class ::engine::Engine;
+        friend struct ::engine::RenderSystem;
     protected:
         virtual void Init(Window* window) = 0;
         virtual void BeginFrame() = 0;

@@ -1,12 +1,10 @@
 #pragma once
 
 #include "platform/Window.h"
-#include "render/Render.h"
-#include "render/pipelines/RenderPipeline.h"
-#include "render/pipelines/forward/Forward.h"
 
 #include "Time.h"
 #include "System.h"
+#include "RenderSystem.h"
 
 namespace engine
 {
@@ -16,9 +14,8 @@ namespace engine
     class Engine
     {
     private:
-        Window* window = Window::CreateWindow();
-        render::Render* render = render::Render::Create();
-        render::ForwardRenderPipeline renderPipeline = render::ForwardRenderPipeline(*render);
+        Window* window      = Window::CreateWindow();
+        RenderSystem render = RenderSystem(window);
 
         SystemGroup systems;
 
@@ -26,19 +23,18 @@ namespace engine
         void Run()
         {
             Init();
-
             // Run the main loop
             Start();
-
             Shutdown();
         }
 
     protected:
         void Init()
         {
-            window->Create("Engine", 1280, 720, true);
-            render->Init(window);
-            renderPipeline.Init();
+            // (Load app info and configs)
+            render.Start();
+            // (Load important resources)
+            // (Load main scenes)
         }
 
         void Start()
@@ -81,9 +77,7 @@ namespace engine
                 systems.Update();
 
                 // Render
-                render->BeginFrame();
-                renderPipeline.RenderFrame();
-                render->EndFrame();
+                render.Update();
 
                 // Present
                 window->Update();
@@ -94,8 +88,7 @@ namespace engine
 
         void Shutdown()
         {
-            render->Shutdown();
-            delete render;
+            render.Shutdown();
             delete window;
             Window::Shutdown();
         }
