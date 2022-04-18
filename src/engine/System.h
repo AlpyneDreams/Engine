@@ -42,10 +42,10 @@ namespace engine
 
         // TODO: non-owned systems?
 
-        std::multimap<std::type_index, std::unique_ptr<System>> systems;
+        std::multimap<std::type_index, std::shared_ptr<System>> systems;
 
     public:
-        // Can be destructured to a std::pair<std::type_index, std::unique_ptr<System>>
+        // Can be destructured to a std::pair<std::type_index, std::shared_ptr<System>>
         using Iterator   = decltype(systems)::const_iterator;
         using SystemList = IteratorRange<Iterator>;
     
@@ -57,7 +57,7 @@ namespace engine
         template <SystemClass Sys>
         Sys& AddSystem(auto&... args)
         {
-            auto& [type, system] = *systems.insert({ typeid(Sys), std::make_unique<Sys>(args...) });
+            auto& [type, system] = *systems.insert({ typeid(Sys), std::make_shared<Sys>(args...) });
                 
             // If Start() has already been called, then call
             // it on new systems as soon as they're created.
