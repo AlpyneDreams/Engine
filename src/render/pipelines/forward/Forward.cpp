@@ -4,6 +4,8 @@
 #include "math/Math.h"
 #include "platform/Platform.h"
 
+#include "engine/Time.h"
+
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
 #include <bx/math.h>
@@ -86,9 +88,7 @@ namespace engine::render
             r.SetViewTransform(view, proj);
         }
 
-        // Lazy time
-        static float time = 0;
-        time += 0.01;
+        float time = Time.fixed.time;
 
         for (int yy = 0; yy < 11; yy++) {
             for(int xx = 0; xx < 11; xx++) {
