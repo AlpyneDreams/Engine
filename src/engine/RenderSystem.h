@@ -22,6 +22,7 @@ namespace engine
         {
             window->Create("Engine", 1280, 720, true);
             render->Init(window);
+            window->OnAttach();
             renderPipeline.Start();
         }
 
@@ -34,6 +35,7 @@ namespace engine
 
         void Shutdown()
         {
+            window->OnDetach();
             render->Shutdown();
         }
 

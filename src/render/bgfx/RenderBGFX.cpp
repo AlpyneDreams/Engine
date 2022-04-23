@@ -1,10 +1,15 @@
 #include "common/Common.h"
 #include "common/Filesystem.h"
 #include "platform/Platform.h"
+#include "engine/Time.h"
 
 #include <bgfx/bgfx.h>
 #include <bx/string.h>
 #include <bgfx/platform.h>
+
+#include <imgui.h>
+#include "imgui/impl/imgui_impl_bgfx.h"
+#include "imgui/Common.h"
 
 #include <stdexcept>
 #include <unordered_map>
@@ -48,7 +53,8 @@ namespace engine::render
     {
         struct RenderState {
             uint width, height;
-            bgfx::ViewId clearView;
+            bgfx::ViewId clearView = 0;
+            bgfx::ViewId imguiView = 255;
 
             struct ClearState {
                 uint16 flags = BGFX_CLEAR_NONE;
@@ -76,6 +82,7 @@ namespace engine::render
             init.resolution.height = uint32(height);
 
             init.resolution.reset = BGFX_RESET_VSYNC;
+            init.resolution.maxFrameLatency = 1; // This reduces mouse input lag for imgui
 
             state.width = width, state.height = height;
 
@@ -88,15 +95,29 @@ namespace engine::render
             if (!bgfx::init(init)) {
                 throw std::runtime_error("[BGFX] Failed to initialize!");
             }
-
-            state.clearView = 0;
+            
             bgfx::setViewRect(state.clearView, 0, 0, bgfx::BackbufferRatio::Equal);
+
+            ImGui::CreateContext();
+
+            ImGuiIO& io = ImGui::GetIO();
+
+            // Setup fonts etc.
+            ImGUI::Setup();
+
+            ImGui_Implbgfx_Init(state.imguiView);
+            ImGui_Implbgfx_NewFrame(); // Call at least once so ImGui_Implbgfx_Shutdown cannot fail
         }
 
         void BeginFrame()
         {
             // Always clear this view even if no draw calls are made
             bgfx::touch(state.clearView);
+
+            ImGui_Implbgfx_NewFrame();
+            ImGui::NewFrame();
+
+            ImGui::ShowDemoWindow(); // your drawing here
         }
 
         void EndFrame()
@@ -121,11 +142,17 @@ namespace engine::render
 
             bgfx::dbgTextPrintf(0, 3, 0x0f, "fps: %.0f, t: %.4f, dt: %.0f ms, frame: %d", fps, Time.unscaled.time, Time.unscaled.deltaTime * 1000, Time.frameCount);
 
+            ImGui::Render();
+            ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
+
             bgfx::frame();
         }
 
         void Shutdown()
         {
+            ImGui_Implbgfx_Shutdown();
+            ImGui::DestroyContext();
+
             bgfx::shutdown();
         }
 

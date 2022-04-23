@@ -10,6 +10,8 @@
 #include "platform/Platform.h"
 #include "platform/Window.h"
 
+#include "imgui/impl/imgui_impl_sdl.h"
+
 namespace engine
 {
     class WindowSDL final : public Window
@@ -34,8 +36,16 @@ namespace engine
             }
         }
 
-        bool ShouldClose()
-        {
+        void OnAttach() {
+            // This should work for all render APIs (Vulkan, OpenGL, D3D, etc.)
+            ImGui_ImplSDL2_InitForSDLRenderer(window, NULL);
+        }
+
+        void OnDetach() {
+            ImGui_ImplSDL2_Shutdown();
+        }
+
+        bool ShouldClose() {
             return shouldClose;
         }
 
@@ -43,6 +53,7 @@ namespace engine
         {
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
+                ImGui_ImplSDL2_ProcessEvent(&e);
                 switch(e.type) {
 
                     case SDL_QUIT:
@@ -67,6 +78,8 @@ namespace engine
 
                 }
             }
+
+            ImGui_ImplSDL2_NewFrame();
         }
 
         void Update() {}

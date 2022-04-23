@@ -19,6 +19,12 @@ namespace engine
         static void Shutdown();
 
         virtual void Create(const char* name, uint width, uint height, bool resizable) = 0;
+
+        // Run after Render::Init. Typically confgiures ImGui
+        virtual void OnAttach() {}
+        // Run before Render::Shutdown. Typically detaches ImGui
+        virtual void OnDetach() {}
+
         virtual bool ShouldClose() = 0;
         virtual void PreUpdate() = 0;
         virtual void Update() = 0;
