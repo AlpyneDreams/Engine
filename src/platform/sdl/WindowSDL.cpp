@@ -39,9 +39,7 @@ namespace engine
             return shouldClose;
         }
 
-        void PreUpdate() {}
-
-        void Update()
+        void PreUpdate()
         {
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
@@ -70,6 +68,8 @@ namespace engine
                 }
             }
         }
+
+        void Update() {}
 
         std::pair<int, int> GetSize()
         {
