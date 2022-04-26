@@ -80,6 +80,7 @@ namespace engine
             }
 
             ImGui_ImplSDL2_NewFrame();
+            ImGui::NewFrame();
         }
 
         void Update() {}

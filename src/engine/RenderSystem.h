@@ -4,6 +4,7 @@
 #include "render/Render.h"
 #include "render/pipelines/RenderPipeline.h"
 #include "render/pipelines/forward/Forward.h"
+#include "imgui/Common.h"
 
 #include "System.h"
 
@@ -28,6 +29,8 @@ namespace engine
 
         void Update()
         {
+            GUI::ShowDemoWindow();
+
             render->BeginFrame();
             renderPipeline.Update();
             render->EndFrame();

@@ -103,7 +103,7 @@ namespace engine::render
             ImGuiIO& io = ImGui::GetIO();
 
             // Setup fonts etc.
-            ImGUI::Setup();
+            GUI::Setup();
 
             ImGui_Implbgfx_Init(state.imguiView);
             ImGui_Implbgfx_NewFrame(); // Call at least once so ImGui_Implbgfx_Shutdown cannot fail
@@ -113,11 +113,6 @@ namespace engine::render
         {
             // Always clear this view even if no draw calls are made
             bgfx::touch(state.clearView);
-
-            ImGui_Implbgfx_NewFrame();
-            ImGui::NewFrame();
-
-            ImGui::ShowDemoWindow(); // your drawing here
         }
 
         void EndFrame()

@@ -2,8 +2,9 @@
 
 namespace engine
 {
-    namespace ImGUI
+    namespace GUI
     {
         void Setup();
+        void ShowDemoWindow();
     }
 }

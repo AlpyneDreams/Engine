@@ -6,13 +6,18 @@
 
 namespace engine
 {
-    void ImGUI::Setup()
+    void GUI::Setup()
     {
-        ImGuiIO& io = ImGui::GetIO();
+        //ImGuiIO& io = ImGui::GetIO();
 
-        ImFontConfig config;
-        config.FontDataOwnedByAtlas = false;
+        //ImFontConfig config;
+        //config.FontDataOwnedByAtlas = false;
 
-        io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTTF, sizeof(s_robotoRegularTTF), 18, &config);
+        //io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTTF, sizeof(s_robotoRegularTTF), 18, &config);
+    }
+
+    void GUI::ShowDemoWindow()
+    {
+        ImGui::ShowDemoWindow();
     }
 }
