@@ -123,6 +123,7 @@ namespace engine::render
         void EndFrame()
         {
             bgfx::dbgTextClear();
+            /*
             //bgfx::dbgTextImage(bx::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, bx::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
             //bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
             bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
@@ -130,6 +131,7 @@ namespace engine::render
             bgfx::dbgTextPrintf(80, 2, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
             const bgfx::Stats* stats = bgfx::getStats();
             bgfx::dbgTextPrintf(0, 2, 0x0f, "Backbuffer %dW x %dH in pixels, debug text %dW x %dH in characters.", stats->width, stats->height, stats->textWidth, stats->textHeight);
+            */
             bgfx::setDebug(BGFX_DEBUG_TEXT);
 
             static double totalTime = 0;
@@ -140,7 +142,8 @@ namespace engine::render
                 totalTime = Time.unscaled.deltaTime;
             }
 
-            bgfx::dbgTextPrintf(0, 3, 0x0f, "fps: %.0f, t: %.4f, dt: %.0f ms, frame: %d", fps, Time.unscaled.time, Time.unscaled.deltaTime * 1000, Time.frameCount);
+            //bgfx::dbgTextPrintf(0, 3, 0x0f, "fps: %.0f, t: %.4f, dt: %.0f ms, frame: %d", fps, Time.unscaled.time, Time.unscaled.deltaTime * 1000, Time.frameCount);
+            bgfx::dbgTextPrintf(0, 0, 0x0f, "%.0f", round(fps));
 
             ImGui::Render();
             ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());

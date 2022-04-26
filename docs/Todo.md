@@ -10,3 +10,5 @@ SDL Business:
 - Should WindowSDL PollEvents in PreUpdate or in Update?
 - Is SDL_RenderPresent or SDL_UpdateWindowSurface or anything ever needed?
 - Is SDL_WINDOW_VULKAN necessary
+
+- BGFX debug text and debug stats mode
