@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <utility>
 #include <iterator>
 
@@ -19,4 +20,12 @@ namespace engine
         Iterator begin() const { return first; }
         Iterator end() const { return last; }
     };
+
+    namespace util
+    {
+        constexpr bool contains(auto&& c, auto x) {
+            using namespace std;
+            return find(begin(c), end(c), x) != end(c);
+        }
+    }
 }

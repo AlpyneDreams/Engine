@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+#include <cctype>
 #include <cstdio>
 #include <stdexcept>
 #include <string>
@@ -8,6 +10,44 @@
 
 namespace engine::str
 {
+    // Returns lowercased copy of str
+    inline std::string toLower(std::string_view str)
+    {
+        std::string s = std::string(str);
+        std::transform(s.begin(), s.end(), s.begin(), [](auto c) { return std::tolower(c); });
+        return s;
+    }
+
+    // Returns uppercased copy of str
+    inline std::string toUpper(std::string_view str)
+    {
+        std::string s = std::string(str);
+        std::transform(s.begin(), s.end(), s.begin(), [](auto c) { return std::toupper(c); });
+        return s;
+    }
+
+    // Trim characters from left side of string
+    constexpr std::string_view trimStart(std::string_view str, std::string_view chars = " ")
+    {
+        str.remove_prefix(std::min(str.find_first_not_of(chars), str.size()));
+        return str;
+    }
+
+    // Trim characters from right side of string
+    constexpr std::string_view trimEnd(std::string_view str, std::string_view chars = " ")
+    {
+        auto pos = str.find_last_not_of(chars);
+        if (pos != str.npos)
+            str.remove_suffix(str.size() - pos - 1);
+        return str;
+    }
+
+    // Trim characters surrounding string
+    constexpr std::string_view trim(std::string_view str, std::string_view chars = " ")
+    {
+        return trimEnd(trimStart(str));
+    }
+
     // Split string at one or more delimiters
     inline std::vector<std::string_view> split(std::string_view string, std::string_view delims = " ")
     {

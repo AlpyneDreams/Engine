@@ -12,3 +12,11 @@ SDL Business:
 - Is SDL_WINDOW_VULKAN necessary
 
 - BGFX debug text and debug stats mode
+
+Console
+- keybind to open console
+- keybinds in general
+- aliases
+- flags
+- history
+- autocomplete

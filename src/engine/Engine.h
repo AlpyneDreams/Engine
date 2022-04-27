@@ -6,6 +6,8 @@
 #include "System.h"
 #include "RenderSystem.h"
 
+#include "imgui/ConsoleWindow.h"
+
 namespace engine
 {
     // The global engine instance.
@@ -22,6 +24,8 @@ namespace engine
     public:
         void Run()
         {
+            systems.AddSystem<GUI::ConsoleWindow>();
+            
             Init();
             // Run the main loop
             Start();
