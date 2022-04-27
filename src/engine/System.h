@@ -57,7 +57,8 @@ namespace engine
         template <SystemClass Sys>
         Sys& AddSystem(auto&... args)
         {
-            auto& [type, system] = *systems.insert({ typeid(Sys), std::make_shared<Sys>(args...) });
+            auto system = std::make_shared<Sys>(args...);
+            systems.insert({ typeid(Sys), system  });
                 
             // If Start() has already been called, then call
             // it on new systems as soon as they're created.
