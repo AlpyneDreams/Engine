@@ -8,8 +8,6 @@
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
-// This header has includes at the bottom.
-
 namespace engine
 {
     namespace GUI { struct ConsoleWindow; }
@@ -26,7 +24,7 @@ namespace engine
         void Warn(auto format = "", auto... args)     { Warning(format, args...); }
         void Error(auto format = "", auto... args)    { Print(format, args...); }
 
-        void Print(const char* string = "") { Log("{}", string); }
+        void Print(auto string = "") { Log("{}", string); }
 
         void Print(const char* format = "", auto... args)
         {
@@ -73,7 +71,3 @@ namespace engine
 
     inline struct Console Console;
 }
-
-#include "console/ConCommand.h"
-#include "console/ConVar.h"
-#include "console/ConsoleCommands.h"

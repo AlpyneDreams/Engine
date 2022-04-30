@@ -5,6 +5,8 @@
 #include <iostream>
 
 #include "console/Console.h"
+#include "console/ConCommand.h"
+#include "console/ConVar.h"
 
 namespace engine::GUI
 {
