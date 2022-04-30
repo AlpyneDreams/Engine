@@ -32,7 +32,7 @@ namespace engine
             // Create window!
             window = SDL_CreateWindow(name, x, y, width, height, flags);
             if (!window) {
-                throw std::runtime_error("[GLFW] Failed to create window!");
+                throw std::runtime_error("[SDL] Failed to create window!");
             }
         }
 
