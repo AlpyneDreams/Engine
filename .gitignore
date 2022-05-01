@@ -1,0 +1,11 @@
+# Clang cache
+/.cache
+
+# VS Code settings
+/.vscode/settings.json
+
+# The Binary
+/runtime/engine
+
+# ImGUI clutter
+/runtime/imgui.ini
