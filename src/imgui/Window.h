@@ -19,7 +19,7 @@ namespace engine::GUI
         Window(const char* name, uint width, uint height, bool open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
           : name(name), width(width), height(height), open(open), flags(flags) {}
 
-        void Update() final override
+        void Update() override
         {
             if (!open)
                 return;

@@ -8,13 +8,23 @@
 #include "console/ConCommand.h"
 #include "console/ConVar.h"
 
+#include "input/Input.h"
+
 namespace engine::GUI
 {
     struct ConsoleWindow : public Window
     {
-        ConsoleWindow() : Window("Console", 512, 512) {}
+        ConsoleWindow() : Window("Console", 512, 512, false) {}
 
         bool scrollToBottom = false;
+
+        void Update() final override
+        {
+            if (Input.GetKeyUp(Key::Grave)) {
+                open = !open;
+            }
+            Window::Update();
+        }
 
         // Based on imgui_demo.cpp ExampleAppConsole
         void Draw() final override
