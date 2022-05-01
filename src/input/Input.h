@@ -31,6 +31,9 @@ namespace engine
         // Called by Window::PreUpdate
         void SetKey(Key key, bool down)
         {
+            // Cannot process this key
+            if (key > Key::Max)
+                return;
             if (down)
                 keysDown[key] = true;
             else
