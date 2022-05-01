@@ -6,7 +6,10 @@
 #include "System.h"
 #include "RenderSystem.h"
 
+#include "console/Console.h"
 #include "imgui/ConsoleWindow.h"
+#include "console/ConsoleCommands.h"
+
 
 namespace engine
 {

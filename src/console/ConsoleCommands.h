@@ -2,6 +2,7 @@
 
 #include "common/Common.h"
 #include "Console.h"
+#include "ConCommand.h"
 
 namespace engine::commands
 {
