@@ -55,7 +55,10 @@ namespace engine
             while (SDL_PollEvent(&e)) {
                 ImGui_ImplSDL2_ProcessEvent(&e);
                 switch(e.type) {
-
+                    case SDL_KEYDOWN:
+                    case SDL_KEYUP:
+                        SetKey(Key(e.key.keysym.sym), e.key.type == SDL_KEYUP);
+                        break;
                     case SDL_QUIT:
                         shouldClose = true;
                         break;
@@ -83,7 +86,6 @@ namespace engine
             ImGui::NewFrame();
         }
 
-        void Update() {}
 
         std::pair<int, int> GetSize()
         {

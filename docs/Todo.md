@@ -20,3 +20,13 @@ Console
 - flags
 - history
 - autocomplete
+
+Input
+- Analog inputs
+- Input actions
+- Interop with console commands / bind command
+- Pretty names ("Left Mouse Button" / "LMB") and icons 
+- Steam Input ?
+- Hashed strings? (UDL literals) For actions or for literal keys?
+- Keyboard, Mouse, Gamepad, multi-devices
+- Get all Key Codes, Gamepad Buttons, etc.
