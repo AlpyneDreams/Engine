@@ -3,14 +3,18 @@
 #include <stdexcept>
 #include <string>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_syswm.h>
-
 #include "common/Common.h"
 #include "platform/Platform.h"
 #include "platform/Window.h"
 
 #include "imgui/impl/imgui_impl_sdl.h"
+
+#include <SDL.h>
+#include <SDL_syswm.h>
+
+#if defined(_INC_WINDOWS) and defined(CreateWindow)
+    #undef CreateWindow
+#endif
 
 namespace engine
 {
@@ -103,6 +107,9 @@ namespace engine
     #ifdef PLATFORM_X11
         void* GetNativeDisplay() { return GetSysWMInfo().info.x11.display; }
         void* GetNativeWindow() { return (void*)(uintptr_t)GetSysWMInfo().info.x11.window; }
+    #elif PLATFORM_WINDOWS
+        void* GetNativeDisplay() { return GetSysWMInfo().info.win.window; }
+        void* GetNativeWindow() { return GetSysWMInfo().info.win.window; }
     #endif
     private:
         SDL_SysWMinfo GetSysWMInfo()
