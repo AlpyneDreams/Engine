@@ -3,6 +3,7 @@
 
 # VS Code settings
 /.vscode/settings.json
+/.vscode/c_cpp_properties.json
 
 # The Binary
 /runtime/engine

@@ -15,9 +15,17 @@
             "detail": "Meson",
             "type": "shell",
             "command": "meson install -C build",
-            "problemMatcher": {
-                "base": "$gcc",
-                "fileLocation": ["autoDetect", "${workspaceFolder}/src"]
+            "linux": {
+                "problemMatcher": {
+                    "base": "$gcc",
+                    "fileLocation": ["autoDetect", "${workspaceFolder}/src"]
+                },
+            },
+            "windows": {
+                "problemMatcher": {
+                    "base": "$msCompile",
+                    "fileLocation": ["autoDetect", "${workspaceFolder}/src"]
+                }
             },
             "group": {
                 "kind": "build",
