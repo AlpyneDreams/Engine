@@ -14,5 +14,6 @@ src = files(
 engine = executable('engine', src,
     dependencies    : [fmt_dep, sdl_dep, bgfx_dep, vulkan_dep, vookoo_dep, hlslpp_dep, imgui_dep, entt_dep],
     install         : true,
-    install_dir     : join_paths(meson.project_source_root(), 'runtime')
+    install_dir     : join_paths(meson.project_source_root(), 'runtime'),
+    win_subsystem   : 'console',
 )
