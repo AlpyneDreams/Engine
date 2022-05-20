@@ -26,7 +26,8 @@ namespace engine
 
         void Print(auto string = "") { Log("{}", string); }
 
-        void Print(const char* format = "", auto... args)
+        template <typename... Args> // MSVC doesn't like auto...
+        void Print(const char* format = "", Args... args)
         {
             std::string str = Format(format, args...);
             log.push_back(str);

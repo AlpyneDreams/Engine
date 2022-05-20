@@ -13,7 +13,7 @@ namespace engine::fs
         using namespace std;
         FILE* f = fopen(path, "rb");
         if (!f)
-            throw runtime_error(string("[FS] Failed to open file: ", path));
+            throw runtime_error(string("[FS] Failed to open file: ") + path);
         fseek(f, 0, SEEK_END);
         long size = ftell(f);
         rewind(f);

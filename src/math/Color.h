@@ -24,6 +24,8 @@ namespace engine
         explicit ColorRGBA(T r, T g, T b, T a = NormalMax)
             : r(r), g(g), b(b), a(a) {}
 
+        explicit ColorRGBA(double r, double g, double b, double a = NormalMax)
+            : r(r), g(g), b(b), a(a) {}
 
         uint32 Pack()
         {
