@@ -20,6 +20,7 @@
 #include "render/Render.h"
 #include "core/Mesh.h"
 #include "engine/Time.h"
+#include "console/Console.h"
 
 namespace engine::render
 {
@@ -73,6 +74,8 @@ namespace engine::render
             bgfx::renderFrame();
             
             bgfx::Init init;
+            
+            init.type = bgfx::RendererType::Vulkan;
 
             init.platformData.ndt = window->GetNativeDisplay();
             init.platformData.nwh = window->GetNativeWindow();
@@ -94,6 +97,8 @@ namespace engine::render
 
             if (!bgfx::init(init)) {
                 throw std::runtime_error("[BGFX] Failed to initialize!");
+            } else {
+                Console.Log("[BGFX] Initialized BGFX with {}!", bgfx::getRendererName(bgfx::getRendererType()));
             }
             
             bgfx::setViewRect(state.clearView, 0, 0, bgfx::BackbufferRatio::Equal);
