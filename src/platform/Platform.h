@@ -1,11 +1,16 @@
 #pragma once
 
-// Temp
-#define PLATFORM_POSIX  1
-#define PLATFORM_LINUX  1
-#define PLATFORM_SDL    1
-#define PLATFORM_BGFX   1
-#define PLATFORM_X11    1
+#ifdef _WIN32
+    #define PLATFORM_WINDOWS 1
+    #define PLATFORM_WIN     1
+#else
+    #define PLATFORM_POSIX   1
+    #define PLATFORM_LINUX   1
+    #define PLATFORM_X11     1
+#endif
+
+#define PLATFORM_SDL     1
+#define PLATFORM_BGFX    1
 
 // HACK: Manually set BX_CONFIG_DEBUG so we can use bx lib,
 // since the CMake scripts are wrongly defining it as empty.
