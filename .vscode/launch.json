@@ -22,6 +22,17 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/engine.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/runtime",
+            "environment": [],
+            "console": "integratedTerminal"
         }
     ]
 }
