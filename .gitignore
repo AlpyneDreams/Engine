@@ -9,3 +9,11 @@
 
 # ImGUI clutter
 /runtime/imgui.ini
+
+# Meson subprojects
+/subprojects/packagecache
+/subprojects/*
+
+# Keep Meson .wrap and package files
+!/subprojects/*.wrap
+!/subprojects/packagefiles
