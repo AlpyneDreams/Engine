@@ -25,10 +25,31 @@ foreach file : src
 endforeach
 meta_dep = declare_dependency(sources: meta_files)
 
+engine_deps = [
+    meta_dep,
+    fmt_dep,
+    sdl_dep,
+    bgfx_dep,
+    #vulkan_dep,
+    #vookoo_dep,
+    hlslpp_dep,
+    imgui_dep,
+    entt_dep
+]
+
+# TODO: Shared static libs between engine and editor
 
 engine = executable('engine', files(src),
-    dependencies    : [meta_dep, fmt_dep, sdl_dep, bgfx_dep, vulkan_dep, vookoo_dep, hlslpp_dep, imgui_dep, entt_dep],
+    dependencies    : engine_deps,
     install         : true,
     install_dir     : join_paths(meson.project_source_root(), 'runtime'),
     win_subsystem   : 'console',
+)
+
+editor = executable('editor', files(src),
+    dependencies    : engine_deps,
+    install         : true,
+    install_dir     : join_paths(meson.project_source_root(), 'runtime'),
+    win_subsystem   : 'console',
+    cpp_args        : ['-DEDITOR=1']
 )
