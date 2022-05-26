@@ -1,3 +1,14 @@
+- For defines (PLATFORM_*, EDITOR), should they be either 1/0, or #ifdef-based
+- Not a huge fan of Scene::World
+- Change how we handle singletons?
+  - Sharing name between type and instance is not ideal
+  - Centralized global variable list?
+  - inline struct {...} Name; ?
+  - old fashioned singleton?
+    - Some kind of template bullshit?
+  - static classes?
+  - namespaces??
+
 - Should we not indent for `namespace engine {`?
     - Maybe use 2-space indent?
 - Replace HLSLPP with GLM and just make floatN aliases
