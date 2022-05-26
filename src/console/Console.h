@@ -47,7 +47,8 @@ namespace engine
             std::printf("%s", str.c_str());
         }
 
-        inline std::string Format(const char* format = "", auto... args)
+        template <typename... Args> // MSVC doesn't like auto...
+        inline std::string Format(const char* format = "", Args... args)
         try {
             return fmt::format(fmt::runtime(format), args...);
         } catch (fmt::format_error const& err) {
