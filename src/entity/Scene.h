@@ -14,7 +14,7 @@ namespace engine
         entt::registry ents;
 
         Scene(Scene* parent = &World) : parent(parent) {
-            ents.set<Scene*>(this);
+            ents.ctx().emplace<Scene*>(this);
         }
 
         Handle CreateEntity() {

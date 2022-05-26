@@ -23,7 +23,7 @@ namespace engine
         Entity(Handle& handle) : handle(handle) {}
         
         Scene& GetScene() const {
-            return *handle.registry()->ctx<Scene*>();
+            return *handle.registry()->ctx().at<Scene*>();
         }
 
         template <class C>
