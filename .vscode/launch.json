@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(Linux) Engine",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/runtime/engine",
@@ -24,10 +24,40 @@
             ]
         },
         {
-            "name": "(Windows) Launch",
+            "name": "(Linux) Editor",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/editor",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/runtime",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(Windows) Engine",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/runtime/engine.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/runtime",
+            "environment": [],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "(Windows) Editor",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/editor.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/runtime",

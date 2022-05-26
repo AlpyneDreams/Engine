@@ -7,8 +7,9 @@
 
 # The Binary
 /runtime/engine
-/runtime/engine.exe
-/runtime/engine.pdb
+/runtime/editor
+/runtime/*.exe
+/runtime/*.pdb
 
 # ImGUI clutter
 /runtime/imgui.ini

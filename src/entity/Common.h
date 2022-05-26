@@ -12,6 +12,8 @@ namespace engine
     using EntityID = entt::entity;
     using Handle = entt::handle;    // TODO: Rename or move into a class?
 
+    inline constexpr EntityID EntityNull = entt::null;
+
     struct System;
     struct Scene;
     struct Component;

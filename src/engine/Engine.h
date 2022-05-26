@@ -15,10 +15,14 @@ namespace engine
 {
     // The global engine instance.
     extern inline class Engine Engine;
+
+    // Forward declarations.
+    namespace editor { class Editor; }
     
     class Engine
     {
-    private:
+        friend class editor::Editor;
+    protected:
         Window* window      = Window::CreateWindow();
         RenderSystem render = RenderSystem(window);
 
@@ -31,7 +35,7 @@ namespace engine
             
             Init();
             // Run the main loop
-            Start();
+            Loop();
             Shutdown();
         }
 
@@ -44,14 +48,19 @@ namespace engine
             // (Load main scenes)
         }
 
-        void Start()
+        bool ShouldQuit()
+        {
+            return window->ShouldClose(); 
+        }
+
+        void Loop()
         {
             systems.Start();
 
             Time::Seconds lastTime    = Time::GetTime();
             Time::Seconds accumulator = 0;
 
-            while (!window->ShouldClose())
+            while (!ShouldQuit())
             {
                 auto currentTime = Time::GetTime();
                 auto deltaTime   = currentTime - lastTime;

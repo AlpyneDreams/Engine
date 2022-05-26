@@ -1,6 +1,9 @@
 - RTTI generation could be improved, or at least streamline rtti.py
 
+- Editor should eventually link engine as a static lib to reduce compile times
+  - So don't rely on ifdef too much!
 - For defines (PLATFORM_*, EDITOR), should they be either 1/0, or #ifdef-based
+
 - Not a huge fan of Scene::World
 - Change how we handle singletons?
   - Sharing name between type and instance is not ideal
