@@ -1,3 +1,5 @@
+- RTTI generation could be improved, or at least streamline rtti.py
+
 - For defines (PLATFORM_*, EDITOR), should they be either 1/0, or #ifdef-based
 - Not a huge fan of Scene::World
 - Change how we handle singletons?

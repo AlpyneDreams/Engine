@@ -109,12 +109,17 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
         write('template <>')
         write(f'Class RTTI<{name}> = {{')
 
+        # Write name, size
+        write(f'.name = "{node.displayname}",', indent=1)
+        write(f'.size = sizeof({name}),', indent=1)
+
         # Write fields
-        write('.fields = {', indent=1)
-        for n in fields:
-            typeclass = n.type.get_canonical()
-            write(f'{{ "{n.spelling}", typeid({typeclass.spelling}), offsetof({name}, {n.spelling}) }},', indent=2)
-        write('},', indent=1)
+        if len(fields) > 0:
+            write('.fields = {', indent=1)
+            for n in fields:
+                typeclass = n.type.get_canonical()
+                write(f'{{ "{n.spelling}", typeid({typeclass.spelling}), offsetof({name}, {n.spelling}) }},', indent=2)
+            write('},', indent=1)
 
         # End class RTTI
         write('};\n')

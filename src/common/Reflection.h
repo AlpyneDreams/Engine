@@ -23,6 +23,8 @@ namespace engine::reflect
 
     struct Class
     {
+        const char* name;
+        size_t size;
         std::vector<Variable> fields;
     };
 };
