@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Common.h"
+#include "common/Reflection.h"
 
 namespace engine
 {
-    struct Component {};
+    struct Component : Reflect {};
 
     // Attribute to require other components. Must be publically inherited.
     template <class... Components>
