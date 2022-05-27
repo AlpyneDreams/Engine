@@ -1,5 +1,6 @@
+from functools import cache
 from clang.cindex import Index, CursorKind, CompilationDatabase, Cursor
-import os, os.path, sys
+import os, os.path, sys, re, string
 
 # Usage: rtti.py <input.cpp> [output.meta.cpp]
 # Generates a single meta file for a single translation unit
@@ -24,6 +25,21 @@ outfile = sys.argv[2] if len(sys.argv) > 2 else infile + '.meta.cpp'
 discard = True
 
 out = ""
+
+# Converts a property name to a fancy human-friendly name
+@cache
+def display_name(name):
+    name = name.replace('_', ' ')
+
+    # Complex conversion of camelCase to spaced words
+    # (same pattern as converting to snake_case)
+    name = re.sub(r'(.)([A-Z][a-z]+)', r'\1 \2', name)
+    name = re.sub(r'([a-z0-9])([A-Z])', r'\1 \2', name)
+
+    # Capitalize first letter of each word
+    # (advanced titlecase algo from python docs)
+    return re.sub(r"[A-Za-z]+('[A-Za-z]+)?",
+        lambda m: m.group(0)[0].upper() + m.group(0)[1:], name)
 
 def out_write(*args, indent=0):
     global out
@@ -111,6 +127,7 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
 
         # Write name, size
         write(f'.name = "{node.displayname}",', indent=1)
+        write(f'.displayName = "{display_name(node.displayname)}",', indent=1)
         write(f'.size = sizeof({name}),', indent=1)
 
         # Write fields
@@ -118,7 +135,7 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
             write('.fields = {', indent=1)
             for n in fields:
                 typeclass = n.type.get_canonical()
-                write(f'{{ "{n.spelling}", typeid({typeclass.spelling}), offsetof({name}, {n.spelling}) }},', indent=2)
+                write(f'{{ "{n.spelling}", "{display_name(n.spelling)}", typeid({typeclass.spelling}), offsetof({name}, {n.spelling}) }},', indent=2)
             write('},', indent=1)
 
         # End class RTTI

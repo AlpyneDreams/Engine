@@ -17,6 +17,7 @@ namespace engine::reflect
     struct Variable
     {
         const char* name;
+        const char* displayName;
         std::type_index type;
         size_t offset;
     };
@@ -24,6 +25,7 @@ namespace engine::reflect
     struct Class
     {
         const char* name;
+        const char* displayName;
         size_t size;
         std::vector<Variable> fields;
     };
