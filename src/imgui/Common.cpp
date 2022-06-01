@@ -23,7 +23,8 @@ namespace engine
 
     void GUI::Setup()
     {
-        //ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
         //ImFontConfig config;
         //config.FontDataOwnedByAtlas = false;

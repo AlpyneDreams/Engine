@@ -1,11 +1,12 @@
 [wrap-file]
-directory = imgui-1.87
-source_url = https://github.com/ocornut/imgui/archive/refs/tags/v1.87.tar.gz
-source_filename = imgui-1.87.tar.gz
-source_hash = b54ceb35bda38766e36b87c25edf7a1cd8fd2cb8c485b245aedca6fb85645a20
-patch_filename = imgui_1.87-3_patch.zip
-patch_url = https://wrapdb.mesonbuild.com/v2/imgui_1.87-3/get_patch
-patch_hash = daedd65150ad24667190f915267515f36da68e46724a21175d667660c1b54918
+directory = imgui-docking
+source_url = https://github.com/ocornut/imgui/archive/refs/heads/docking.zip
+source_filename = imgui-docking.zip
+source_hash = 4522e05788dd26802d740a0e013430303b24a1798d44a6c0d8ebe8c366ec1540
+#patch_filename = imgui_1.87-3_patch.zip
+#patch_url = https://wrapdb.mesonbuild.com/v2/imgui_1.87-3/get_patch
+#patch_hash = daedd65150ad24667190f915267515f36da68e46724a21175d667660c1b54918
+patch_directory = imgui
 wrapdb_version = 1.87-3
 
 [provide]
