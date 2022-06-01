@@ -24,6 +24,7 @@ namespace engine
     void GUI::Setup()
     {
         ImGuiIO& io = ImGui::GetIO();
+        io.IniFilename = "engine.ui.ini";
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
@@ -53,6 +54,11 @@ namespace engine
         colors[ImGuiCol_Header]                 = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
         colors[ImGuiCol_HeaderHovered]          = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
         colors[ImGuiCol_HeaderActive]           = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+        colors[ImGuiCol_TitleBg]                = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_TitleBgActive]          = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_Tab]                    = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_TabUnfocused]           = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
     }
 
     static ConVar gui_demo("gui_demo", false, "Show ImGui demo window");

@@ -143,7 +143,7 @@ namespace engine::render
             }
 
             //bgfx::dbgTextPrintf(0, 3, 0x0f, "fps: %.0f, t: %.4f, dt: %.0f ms, frame: %d", fps, Time.unscaled.time, Time.unscaled.deltaTime * 1000, Time.frameCount);
-            bgfx::dbgTextPrintf(0, 0, 0x0f, "%.0f", round(fps));
+            bgfx::dbgTextPrintf(0, 1, 0x0f, "%.0f", round(fps));
 
             ImGui::Render();
             ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());

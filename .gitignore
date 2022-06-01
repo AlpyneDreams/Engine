@@ -12,7 +12,7 @@
 /runtime/*.pdb
 
 # ImGUI clutter
-/runtime/imgui.ini
+/runtime/*.ui.ini
 
 # Meson subprojects
 /subprojects/packagecache
