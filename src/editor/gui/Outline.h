@@ -36,7 +36,8 @@ namespace engine::editor
             });
 
             if (ImGui::Button("Add Entity")) {
-                Scene::World.CreateEntity();
+                Entity ent = Scene::World.CreateEntity();
+                Selection.Select(ent);
             }
             
         }

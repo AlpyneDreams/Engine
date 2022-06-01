@@ -20,7 +20,18 @@ namespace engine
 
         // Create a new entity
         Entity() : handle(World.CreateEntity()) {}
-        Entity(Handle& handle) : handle(handle) {}
+        Entity(Handle&& handle) : handle(handle) {}
+
+        // If no scene is specified use World
+        Entity(EntityID id) : handle(World.ents, id) {}
+
+        operator Handle() const { return handle; }
+        operator EntityID() const { return handle.entity(); }
+
+        operator bool() const { return handle.entity() != EntityNull && handle.valid(); }
+
+        bool operator==(const Entity& that) const { return handle == that.handle; }
+        bool operator==(const EntityID& that) const { return handle == that; }
         
         Scene& GetScene() const {
             return *handle.registry()->ctx().at<Scene*>();
