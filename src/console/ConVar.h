@@ -27,6 +27,10 @@ namespace engine
             defaultValue(defaultValue)
         {}
 
+        ConVar(const char* name, T defaultValue, const char* description)
+          : ConVar(name, defaultValue, description, NULL)
+        {}
+
         // Cannot call a ConVar like a function (can still Invoke)
         void operator()(auto... args) = delete;
         

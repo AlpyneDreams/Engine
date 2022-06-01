@@ -9,7 +9,7 @@ namespace engine
     namespace GUI
     {
         void Setup();
-        void ShowDemoWindow();
+        void Update();
 
         inline ImFont* FontMonospace = nullptr;
 

@@ -29,7 +29,7 @@ namespace engine
 
         void Update()
         {
-            GUI::ShowDemoWindow();
+            GUI::Update();
 
             render->BeginFrame();
             renderPipeline.Update();

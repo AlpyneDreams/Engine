@@ -5,6 +5,7 @@
 #include <imgui_internal.h>
 
 #include "console/Console.h"
+#include "console/ConVar.h"
 #include "common/Filesystem.h"
 
 namespace engine
@@ -52,9 +53,13 @@ namespace engine
         colors[ImGuiCol_HeaderActive]           = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
     }
 
-    void GUI::ShowDemoWindow()
+    static ConVar gui_demo("gui_demo", false, "Show ImGui demo window");
+
+    void GUI::Update()
     {
-        ImGui::ShowDemoWindow();
+        if (gui_demo) {
+            ImGui::ShowDemoWindow();
+        }
     }
 
     ImVec2 operator-(ImVec2 lhs, ImVec2 rhs) {
