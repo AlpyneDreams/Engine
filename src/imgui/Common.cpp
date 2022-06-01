@@ -3,18 +3,53 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
-#include "impl/fonts/roboto_regular.ttf.h"
+
+#include "console/Console.h"
+#include "common/Filesystem.h"
 
 namespace engine
 {
+    static ImFont* AddFontFile(const char* name, float size)
+    {
+        std::string path = std::string("core/fonts/") + name;
+        if (fs::exists(path)) {
+            return ImGui::GetIO().Fonts->AddFontFromFileTTF(path.c_str(), size);
+        } else {
+            Console.Error("[GUI] Font file not found: " + path);
+            return nullptr;
+        }
+    }
+
     void GUI::Setup()
     {
         //ImGuiIO& io = ImGui::GetIO();
 
         //ImFontConfig config;
         //config.FontDataOwnedByAtlas = false;
-
         //io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTTF, sizeof(s_robotoRegularTTF), 18, &config);
+
+        // Default font
+        AddFontFile("Roboto-Regular.ttf", 15);
+
+        GUI::FontMonospace = AddFontFile("RobotoMono.ttf", 16);
+
+        AddFontFile("Cousine-Regular.ttf", 15);
+        AddFontFile("DroidSans.ttf", 15);
+        AddFontFile("Karla-Regular.ttf", 15);
+        AddFontFile("ProggyClean.ttf", 13);
+        AddFontFile("Roboto-Medium.ttf", 15);
+
+        ImVec4* colors = ImGui::GetStyle().Colors;
+        colors[ImGuiCol_WindowBg]               = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
+        colors[ImGuiCol_FrameBg]                = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
+        colors[ImGuiCol_FrameBgActive]          = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+        colors[ImGuiCol_Button]                 = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_ButtonHovered]          = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
+        colors[ImGuiCol_ButtonActive]           = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+        colors[ImGuiCol_Header]                 = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
+        colors[ImGuiCol_HeaderHovered]          = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
+        colors[ImGuiCol_HeaderActive]           = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
     }
 
     void GUI::ShowDemoWindow()

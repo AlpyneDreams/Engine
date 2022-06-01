@@ -5,9 +5,15 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <filesystem>
 
 namespace engine::fs
 {
+    inline bool exists(const std::string_view& path)
+    {
+        return std::filesystem::exists(path.data());
+    }
+
     inline const std::tuple<char*, size_t> readFile(const char* path)
     {
         using namespace std;
