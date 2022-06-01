@@ -21,7 +21,7 @@ namespace engine
 
         void Start()
         {
-            window->Create("Engine", 1280, 720, true);
+            window->Create("Engine", 1920, 1080, true);
             render->Init(window);
             window->OnAttach();
             renderPipeline.Start();

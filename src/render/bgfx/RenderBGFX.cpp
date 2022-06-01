@@ -84,8 +84,8 @@ namespace engine::render
             init.resolution.width = uint32(width);
             init.resolution.height = uint32(height);
 
-            init.resolution.reset = BGFX_RESET_VSYNC;
-            init.resolution.maxFrameLatency = 1; // This reduces mouse input lag for imgui
+            //init.resolution.reset = BGFX_RESET_VSYNC;
+            //init.resolution.maxFrameLatency = 1; // This reduces mouse input lag for imgui
 
             state.width = width, state.height = height;
 
