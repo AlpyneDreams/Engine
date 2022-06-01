@@ -135,7 +135,7 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
             write('.fields = {', indent=1)
             for n in fields:
                 typeclass = n.type.get_canonical()
-                write(f'{{ "{n.spelling}", "{display_name(n.spelling)}", typeid({typeclass.spelling}), offsetof({name}, {n.spelling}) }},', indent=2)
+                write(f'{{ "{n.spelling}", "{display_name(n.spelling)}", TypeID<{typeclass.spelling}>(), offsetof({name}, {n.spelling}) }},', indent=2)
             write('},', indent=1)
 
         # End class RTTI
