@@ -22,7 +22,7 @@ namespace engine
         T defaultValue;
 
         ConVar(const char* name, T defaultValue, const char* description, auto... flags)
-          : ConCommand(name, description, flags..., {}),
+          : ConCommand(name, description, {}, flags...),
             value(defaultValue),
             defaultValue(defaultValue)
         {}

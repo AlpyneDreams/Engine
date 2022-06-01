@@ -47,7 +47,7 @@ namespace engine
         ConFunc function;
 
     public:
-        ConCommand(const char* name, const char* description, auto... flags, std::function<void(ConCmd&)> func)
+        ConCommand(const char* name, const char* description, std::function<void(ConCmd&)> func, auto... flags)
           : name(name),
             description(description),
             function(func)
