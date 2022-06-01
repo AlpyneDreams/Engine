@@ -1,7 +1,7 @@
 fs = import('fs')
 python = import('python').find_installation('python3')
 
-src = [
+engine_src = [
     'main/Main.cpp',
     'platform/sdl/WindowSDL.cpp',
     'render/bgfx/RenderBGFX.cpp',
@@ -13,20 +13,27 @@ src = [
     'imgui/impl/imgui_impl_bgfx.cpp',
 ]
 
+editor_src = [
+    'editor/Editor.cpp'
+]
+
 # Build meta files
-meta_files = []
-foreach file : src
-    meta_files += custom_target(
+engine_meta = []
+editor_meta = []
+foreach file : engine_src + editor_src
+    target = custom_target(
         fs.name(file) + '.meta.cpp',
         output: fs.name(file) + '.meta.cpp',
         input: ['../tools/rtti.py', file],
         command: [python, '@INPUT@', '@OUTPUT@']
     )
+    editor_meta += [target]
+    if engine_src.contains(file)
+        engine_meta += [target]
+    endif
 endforeach
-meta_dep = declare_dependency(sources: meta_files)
 
 engine_deps = [
-    meta_dep,
     fmt_dep,
     sdl_dep,
     bgfx_dep,
@@ -39,14 +46,14 @@ engine_deps = [
 
 # TODO: Shared static libs between engine and editor
 
-engine = executable('engine', files(src),
+engine = executable('engine', files(engine_src), engine_meta,
     dependencies    : engine_deps,
     install         : true,
     install_dir     : join_paths(meson.project_source_root(), 'runtime'),
     win_subsystem   : 'console',
 )
 
-editor = executable('editor', files(src),
+editor = executable('editor', files(engine_src), files(editor_src), editor_meta,
     dependencies    : engine_deps,
     install         : true,
     install_dir     : join_paths(meson.project_source_root(), 'runtime'),
