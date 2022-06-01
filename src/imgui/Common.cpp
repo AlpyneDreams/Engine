@@ -25,6 +25,7 @@ namespace engine
     {
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
         //ImFontConfig config;
         //config.FontDataOwnedByAtlas = false;
@@ -60,6 +61,18 @@ namespace engine
     {
         if (gui_demo) {
             ImGui::ShowDemoWindow();
+        }
+    }
+
+    void GUI::Render()
+    {
+        static ImGuiIO& io = ImGui::GetIO();
+
+        // Update and Render additional Platform Windows
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
         }
     }
 

@@ -10,6 +10,7 @@ namespace engine
     {
         void Setup();
         void Update();
+        void Render();
 
         inline ImFont* FontMonospace = nullptr;
 

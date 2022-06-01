@@ -34,6 +34,8 @@ namespace engine
             render->BeginFrame();
             renderPipeline.Update();
             render->EndFrame();
+
+            GUI::Render();
         }
 
         void Shutdown()
