@@ -17,11 +17,13 @@ namespace engine::GUI
         ConsoleWindow() : Window("Console", 512, 512, false) {}
 
         bool scrollToBottom = false;
+        bool focus = false;
 
         void Update() final override
         {
             if (Input.GetKeyUp(Key::Grave)) {
                 open = !open;
+                focus = open;
             }
             Window::Update();
         }
@@ -56,6 +58,9 @@ namespace engine::GUI
                 ImGui::SetKeyboardFocusHere(-1);
                 scrollToBottom = true;
                 Console.Execute(command);
+            } else if (focus) {
+                ImGui::SetKeyboardFocusHere(-1);
+                focus = false;
             }
 
             ImGui::PopFont();
