@@ -18,7 +18,7 @@ namespace engine::commands
         }
     });
 
-    inline ConCommand clear("clear", "Clear console output", [](ConCmd& cmd) {
+    inline ConCommand clear("clear", "Clear console output", []() {
         Console.Clear();
     });
 }

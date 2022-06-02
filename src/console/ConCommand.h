@@ -58,6 +58,11 @@ namespace engine
             commands[name] = this;
         }
 
+        // Supports using a void() function
+        ConCommand(const char* name, const char* description, std::function<void()> func, auto... flags)
+          : ConCommand(name, description, [func](ConCmd&) { func(); }, flags...)
+        {}
+
         virtual ~ConCommand()
         {
             commands.erase(name);
