@@ -30,11 +30,9 @@ SDL Business:
 - BGFX debug text and debug stats mode
 
 Console
-- keybind to open console
 - keybinds in general
 - aliases
 - flags
-- history
 - autocomplete
 
 Input

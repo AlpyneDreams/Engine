@@ -19,6 +19,9 @@ namespace engine::GUI
         bool scrollToBottom = false;
         bool focus = false;
 
+        std::string currentInput = "";
+        int historyPos = -1; // -1 = currentInput
+
         void Update() final override
         {
             if (Input.GetKeyUp(Key::Grave)) {
@@ -66,17 +69,64 @@ namespace engine::GUI
             ImGui::EndChild();
             ImGui::Separator();
 
+            constexpr auto flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackHistory;
+            constexpr auto callback = [](ImGuiInputTextCallbackData* data) -> int {
+                return ((ConsoleWindow*)data->UserData)->OnInput(data);
+            };
+
             char command[1024] = "";
-            if (ImGui::InputText("Command", command, 1024, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            if (ImGui::InputText("Command", command, 1024, flags, callback, (void*)this))
+            {
                 ImGui::SetKeyboardFocusHere(-1);
                 scrollToBottom = true;
+                currentInput = "";
+                historyPos = -1;
+
                 Console.Execute(command);
-            } else if (focus) {
+            }
+            else if (focus)
+            {
                 ImGui::SetKeyboardFocusHere(-1);
                 focus = false;
             }
 
             ImGui::PopFont();
+        }
+
+        int OnInput(ImGuiInputTextCallbackData* data)
+        {
+            switch (data->EventFlag)
+            {
+                case ImGuiInputTextFlags_CallbackHistory:
+                {
+                    int pos = historyPos;
+
+                    if (data->EventKey == ImGuiKey_UpArrow)
+                        pos = std::min(pos + 1, int(Console.history.size() - 1));
+                    
+                    else if (data->EventKey == ImGuiKey_DownArrow)
+                        pos = std::max(pos - 1, -1);
+                    
+                    if (pos != historyPos)
+                    {
+                        // If moving away from current input, cache it
+                        if (historyPos < 0) {
+                            currentInput = data->Buf;
+                        }
+
+                        std::string& str = (pos >= 0) ? Console.history[Console.history.size() - pos - 1] : currentInput;
+
+                        data->DeleteChars(0, data->BufTextLen);
+                        data->InsertChars(0, str.c_str());
+                        historyPos = pos;
+                    }
+
+                    break;
+                }
+                default:
+                    break;
+            }
+            return 0;
         }
     };
 }
