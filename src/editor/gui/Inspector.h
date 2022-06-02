@@ -24,7 +24,7 @@ namespace engine::editor
             if (!ent)
                 return;
 
-            ImGui::Text("Entity %d", ent);
+            ImGui::Text("Entity %d", ent.handle.entity());
 
             for (auto&& [id, storage] : ent.handle.registry()->storage())
             {
