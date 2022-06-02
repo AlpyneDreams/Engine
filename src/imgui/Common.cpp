@@ -8,17 +8,32 @@
 #include "console/ConVar.h"
 #include "common/Filesystem.h"
 
+#include "imgui/IconsMaterialCommunity.h"
+
 namespace engine
 {
+    // Merge in icon font(s) - see imgui/docs/FONTS.md
+    // This process is expensive for MaterialCommunityIcons (~7000 icons)
+    static void MergeIconFonts(float size)
+    {
+        ImFontConfig config;
+        config.MergeMode = true;
+        config.GlyphOffset = ImVec2(0, 1);
+        config.GlyphMinAdvanceX = size;
+        static const ImWchar icon_ranges[] = { ImWchar(ICON_MIN_MC), ImWchar(ICON_MAX_MC), ImWchar(0) };
+        ImGui::GetIO().Fonts->AddFontFromFileTTF("core/fonts/" FONT_ICON_FILE_NAME_MC, size, &config, icon_ranges);
+    }
+
     static ImFont* AddFontFile(const char* name, float size)
     {
         std::string path = std::string("core/fonts/") + name;
-        if (fs::exists(path)) {
-            return ImGui::GetIO().Fonts->AddFontFromFileTTF(path.c_str(), size);
-        } else {
+        if (!fs::exists(path)) {
             Console.Error("[GUI] Font file not found: " + path);
             return nullptr;
         }
+
+        ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF(path.c_str(), size);
+        return font;
     }
 
     void GUI::Setup()
@@ -28,19 +43,19 @@ namespace engine
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-        //ImFontConfig config;
-        //config.FontDataOwnedByAtlas = false;
-        //io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTTF, sizeof(s_robotoRegularTTF), 18, &config);
-
         // Default font
         AddFontFile("Roboto-Regular.ttf", 15);
 
+        // Add icons to default font
+        MergeIconFonts(15);
+
+        // Named fonts
         GUI::FontMonospace = AddFontFile("RobotoMono.ttf", 16);
 
         AddFontFile("Cousine-Regular.ttf", 15);
         AddFontFile("DroidSans.ttf", 15);
         AddFontFile("Karla-Regular.ttf", 15);
-        AddFontFile("ProggyClean.ttf", 13);
+        io.Fonts->AddFontDefault(); // ImGui Default: ProggyClean, 13px
         AddFontFile("Roboto-Medium.ttf", 15);
 
         ImVec4* colors = ImGui::GetStyle().Colors;
@@ -49,7 +64,7 @@ namespace engine
         colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
         colors[ImGuiCol_FrameBgActive]          = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
         colors[ImGuiCol_Button]                 = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-        colors[ImGuiCol_ButtonHovered]          = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
+        colors[ImGuiCol_ButtonHovered]          = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
         colors[ImGuiCol_ButtonActive]           = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
         colors[ImGuiCol_Header]                 = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
         colors[ImGuiCol_HeaderHovered]          = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);

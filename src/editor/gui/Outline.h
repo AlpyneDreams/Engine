@@ -7,6 +7,8 @@
 #include "entity/Scene.h"
 #include "entity/Entity.h"
 
+#include "imgui/IconsMaterialCommunity.h"
+
 namespace engine::editor
 {
     struct Outline : public GUI::Window
@@ -23,9 +25,9 @@ namespace engine::editor
         {
             if (ImGui::BeginMenuBar())
             {
-                if (ImGui::BeginMenu("Add"))
+                if (ImGui::BeginMenu(ICON_MC_PLUS ICON_MC_MENU_DOWN))
                 {
-                    if (ImGui::MenuItem("Entity")) {
+                    if (ImGui::MenuItem(ICON_MC_CUBE_OUTLINE " Entity")) {
                         AddEntity();
                     }
                     ImGui::EndMenu();

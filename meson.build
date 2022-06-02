@@ -1,5 +1,8 @@
 project('engine', 'cpp', default_options: ['cpp_std=c++20'])
 
+# ImGui: Use 32-bit Wchar to support planes 1-16
+add_global_arguments('-DIMGUI_USE_WCHAR32', language: 'cpp')
+
 windows    = build_machine.system() == 'windows'
 
 fmt_dep    = dependency('fmt', static: true)
