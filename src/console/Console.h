@@ -18,33 +18,41 @@ namespace engine
     struct Console
     {
     public:
-        // TODO: Text styles for various log levels
-        void Log(auto format = "", auto... args)      { Print(format, args...); }
-        void Warning(auto format = "", auto... args)  { Print(format, args...); }
-        void Warn(auto format = "", auto... args)     { Warning(format, args...); }
-        void Error(auto format = "", auto... args)    { Print(format, args...); }
+        enum class Level { Input = -1, Info = 0, Warning, Error };
 
-        void Print(auto string = "") { Log("{}", string); }
+        // TODO: Text styles for various log levels
+        void Log(auto format = "", auto... args)      { Print(Level::Info, format, args...); }
+        void Warning(auto format = "", auto... args)  { Print(Level::Warning, format, args...); }
+        void Warn(auto format = "", auto... args)     { Warning(format, args...); }
+        void Error(auto format = "", auto... args)    { Print(Level::Error, format, args...); }
+
+        void Print(Level level, auto string = "") { Log("{}", string); }
 
         template <typename... Args> // MSVC doesn't like auto...
-        void Print(const char* format = "", Args... args)
+        void Print(Level level, const char* format = "", Args... args)
         {
             std::string str = Format(format, args...);
-            log.push_back(str);
-            std::puts(str.c_str());
+            log.push_back({level, str});
+            if (level <= Level::Info)
+                std::puts(str.c_str());
+            else
+                std::fprintf(stderr, "%s\n", str.c_str());
             newline = true;
         }
 
-        void Printf(const char* format = "", auto... args)
+        void Printf(Level level, const char* format = "", auto... args)
         {
             std::string str = Format(format, args...);
             if (newline || log.size() <= 0) {
-                log.push_back(str);
+                log.push_back({Level::Info, str});
                 newline = false;
             } else {
-                log.back() += str;
+                log.back().text += str;
             }
-            std::printf("%s", str.c_str());
+            if (level <= Level::Info)
+                std::printf("%s", str.c_str());
+            else
+                std::fprintf(stderr, "%s", str.c_str());
         }
 
         template <typename... Args> // MSVC doesn't like auto...
@@ -66,7 +74,8 @@ namespace engine
 
         void Execute(const char* string);
     protected:
-        std::vector<std::string> log;
+        struct Entry { Level level; std::string text; };
+        std::vector<Entry> log;
         std::vector<std::string> history;
         bool newline = true;
 

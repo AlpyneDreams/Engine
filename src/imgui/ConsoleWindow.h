@@ -38,11 +38,24 @@ namespace engine::GUI
             ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
             
             // Print each log line
-            for (auto& str : Console.log) {
-                if (strncmp(str.c_str(), "> ", 2) == 0)
-                    ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.6f, 1.0f), "%s", str.c_str());
-                else
-                    ImGui::TextUnformatted(str.c_str());
+            for (auto& [level, str] : Console.log) {
+                using Level = Console::Level;
+                switch (level)
+                {
+                    case Level::Input:
+                        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.6f, 1.0f), "%s", str.c_str());
+                        break;
+                    case Level::Warning:
+                        ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.4f, 1.0f), "%s", str.c_str());
+                        break;
+                    case Level::Error:
+                        ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.4f, 1.0f), "%s", str.c_str());
+                        break;
+                    default:
+                    case Level::Info:
+                        ImGui::TextUnformatted(str.c_str());
+                        break;
+                }
             }
 
             // Auto-scroll to bottom

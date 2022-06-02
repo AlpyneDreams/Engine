@@ -102,7 +102,7 @@ namespace engine
         static void Execute(const char* string)
         {
             Console.history.push_back(string);
-            Console.Log("> {}", string);
+            Console.Print(Console::Level::Input, "> {}", string);
 
             auto tokens  = str::split(string);
             if (tokens.size() == 0) {

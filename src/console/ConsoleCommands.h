@@ -10,6 +10,14 @@ namespace engine::commands
         Console.Log(cmd.args);
     });
 
+    inline ConCommand error("error", "Prints error text to console", [](ConCmd& cmd) {
+        Console.Error(cmd.args);
+    });
+
+    inline ConCommand warning("warning", "Prints warning text to console", [](ConCmd& cmd) {
+        Console.Warn(cmd.args);
+    });
+
     inline ConCommand help("help", "Prints information about a command", [](ConCmd& cmd) {
         if (cmd.argc > 0) {
             ConCommand::PrintHelp(cmd.argv[0]);
