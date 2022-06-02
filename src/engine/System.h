@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <list>
 #include <memory>
 #include <map>
 #include <typeinfo>
@@ -53,11 +53,25 @@ namespace engine
         bool started = false;
 
         // TODO: non-owned systems?
-        // TODO: system update order
+        // TODO: let systems define their own update order?
+        //       (currently using insertion order)
+        // TODO: store and retrieve systems in update order?
         // TODO: VTable checks for Behaviors
 
-        std::multimap<std::type_index, std::shared_ptr<System>> systems;
-        std::map<System*, SystemFunc*> OnStart, OnUpdate, OnTick;
+        struct Callback {
+            System* system;
+            SystemFunc* func;
+        };
+
+        std::list<Callback> OnStart, OnUpdate, OnTick;
+
+
+        struct SystemRecord {
+            std::shared_ptr<System> system;
+            std::list<Callback>::iterator Start, Update, Tick;
+        };
+
+        std::multimap<std::type_index, SystemRecord> systems;
 
     public:
         // Can be destructured to a std::pair<std::type_index, std::shared_ptr<System>>
@@ -66,7 +80,7 @@ namespace engine
 
         SystemGroup() {}
         SystemGroup(auto*... sys) {
-            (systems.insert({typeid(decltype(sys)), std::shared_ptr<System>(sys)}), ...);
+            (systems.insert({typeid(decltype(sys)), {std::shared_ptr<System>(sys)}}), ...);
         }
     
         template <SystemClass Sys>
@@ -78,12 +92,12 @@ namespace engine
             auto system = std::make_shared<Sys>(args...);
             auto* sys   = system.get();
 
-            systems.insert({typeid(Sys), system});
+            auto& [id, record] = *systems.insert({typeid(Sys), {system}});
 
             VTable<System>& vt = GetVTable<System>(sys);
 
             if (vt.Start != base.Start) {
-                OnStart.insert({sys, vt.Start});
+                record.Start = RegisterCallback(OnStart, sys, vt.Start);
 
                 // If Start() has already been called, then call
                 // it on new systems as soon as they're created.
@@ -93,11 +107,11 @@ namespace engine
             }
 
             if (vt.Update != base.Update) {
-                OnUpdate.insert({sys, vt.Update});
+                record.Update = RegisterCallback(OnUpdate, sys, vt.Update);
             }
 
             if (vt.Tick != base.Tick) {
-                OnTick.insert({sys, vt.Tick});
+                record.Tick = RegisterCallback(OnTick, sys, vt.Tick);
             }
 
             return *sys;
@@ -120,17 +134,16 @@ namespace engine
 
         // Remove all systems of 'type'
         void RemoveSystems(std::type_index type) {
-            for (auto& [t, sys] : GetSystems(type)) {
-                auto* ptr = sys.get();
-                UnregisterCallbacks(ptr);
+            for (auto& [t, record] : GetSystems(type)) {
+                UnregisterCallbacks(record);
             }
             systems.erase(type);
         }
 
         // Removes a single system
         void RemoveSystem(Iterator iterator) {
+            UnregisterCallbacks(iterator->second);
             systems.erase(iterator);
-            UnregisterCallbacks(iterator->second.get());
         }
 
     // Iteration:
@@ -145,15 +158,20 @@ namespace engine
         void Tick() final override { Call(OnTick); }
 
     protected:
+
         inline void Call(auto& event) {
             for (auto& [sys, Func] : event) { Func(sys); }
         }
 
-        inline void UnregisterCallbacks(System* ptr)
+        inline auto RegisterCallback(auto& event, System* system, SystemFunc* func) {
+            return event.emplace(event.end(), system, func);
+        }
+
+        inline void UnregisterCallbacks(const SystemRecord& record)
         {
-            OnStart.erase(ptr);
-            OnUpdate.erase(ptr);
-            OnTick.erase(ptr);
+            OnStart.erase(record.Start);
+            OnUpdate.erase(record.Update);
+            OnTick.erase(record.Tick);
         }
     };
 }
