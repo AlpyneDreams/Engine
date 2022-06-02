@@ -62,9 +62,12 @@ namespace engine
             newline = true;
         }
 
+        const std::vector<std::string>& GetHistory() const { return history; }
+
         void Execute(const char* string);
     protected:
         std::vector<std::string> log;
+        std::vector<std::string> history;
         bool newline = true;
 
         friend struct GUI::ConsoleWindow;

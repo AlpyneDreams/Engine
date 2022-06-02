@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/Common.h"
 #include "common/String.h"
 
 #include "Console.h"
@@ -100,6 +101,7 @@ namespace engine
 
         static void Execute(const char* string)
         {
+            Console.history.push_back(string);
             Console.Log("> {}", string);
 
             auto tokens  = str::split(string);

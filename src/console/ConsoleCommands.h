@@ -21,6 +21,12 @@ namespace engine::commands
     inline ConCommand clear("clear", "Clear console output", []() {
         Console.Clear();
     });
+
+    inline ConCommand history("history", "Print command history", []() {
+        for (auto& cmd : Console.GetHistory()) {
+            Console.Log(cmd);
+        }
+    });
 }
 
 namespace engine::cvars
