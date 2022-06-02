@@ -12,8 +12,8 @@ namespace engine::editor
 {
     void Editor::Run()
     {
-        Engine.systems.AddSystem<GUI::ConsoleWindow>();
         Engine.systems.AddSystem<editor::Layout>();
+        Engine.systems.AddSystem<GUI::ConsoleWindow>();
         Engine.systems.AddSystem<editor::Outline>();
         Engine.systems.AddSystem<editor::Inspector>();
 
