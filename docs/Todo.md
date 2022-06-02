@@ -1,4 +1,5 @@
 - RTTI generation could be improved, or at least streamline rtti.py
+  - Enum names !!!!
 
 - Editor should eventually link engine as a static lib to reduce compile times
   - So don't rely on ifdef too much!

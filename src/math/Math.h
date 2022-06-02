@@ -11,4 +11,9 @@ namespace engine
     using Quaternion = hlslpp::quaternion;
 
     using Matrix4x4  = hlslpp::float4x4;
+
+    enum struct Space {
+        Global,
+        Local
+    };
 }
