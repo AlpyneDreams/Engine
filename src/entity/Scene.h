@@ -5,11 +5,11 @@
 
 namespace engine
 {
+    // The global scene that contains all other scenes.
+    extern inline struct Scene World;
+
     struct Scene : SystemGroup
     {
-        // The global scene that contains all other scenes.
-        static Scene World;
-
         Scene* parent = &World;
         entt::registry ents;
 
@@ -27,5 +27,5 @@ namespace engine
     };
 
     // The global scene that contains all other scenes.
-    inline Scene Scene::World = Scene(nullptr);
+    inline Scene World = Scene(nullptr);
 }

@@ -5,7 +5,8 @@
   - So don't rely on ifdef too much!
 - For defines (PLATFORM_*, EDITOR), should they be either 1/0, or #ifdef-based
 
-- Not a huge fan of Scene::World
+- Replace entt::registry::view<...>().each() with better semantics
+
 - Change how we handle singletons?
   - Sharing name between type and instance is not ideal
   - Centralized global variable list?

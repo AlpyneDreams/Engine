@@ -12,9 +12,6 @@ namespace engine
 {
     struct Entity
     {
-        // The default scene for entities
-        static constexpr Scene& World = Scene::World;
-
         // Handle: registry ptr + entity ID
         Handle handle;
 

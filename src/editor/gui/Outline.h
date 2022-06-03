@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity/Common.h"
+#include "entity/components/Transform.h"
 #include "imgui.h"
 #include "imgui/Window.h"
 #include "editor/Selection.h"
@@ -17,7 +18,7 @@ namespace engine::editor
 
         void AddEntity()
         {
-            Entity ent = Scene::World.CreateEntity();
+            Entity ent = World.CreateEntity();
             Selection.Select(ent);
         }
 
@@ -35,7 +36,7 @@ namespace engine::editor
                 ImGui::EndMenuBar();
             }
 
-            Scene::World.ents.each([this](auto& ent)
+            World.ents.each([this](auto& ent)
             {
                 ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth;
 
