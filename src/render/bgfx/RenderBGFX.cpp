@@ -105,8 +105,6 @@ namespace engine::render
 
             ImGui::CreateContext();
 
-            ImGuiIO& io = ImGui::GetIO();
-
             // Setup fonts etc.
             GUI::Setup();
 
@@ -251,14 +249,14 @@ namespace engine::render
             return float(state.width) / float(state.height);
         }
 
-        void SetViewTransform(hlslpp::float4x4& view, hlslpp::float4x4& proj)
+        void SetViewTransform(Matrix4x4& view, Matrix4x4& proj)
         {
-            bgfx::setViewTransform(0, &view._m00, &proj._m00);
+            bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
         }
 
-        void SetTransform(hlslpp::float4x4& matrix)
+        void SetTransform(Matrix4x4& matrix)
         {
-            bgfx::setTransform(&matrix._m00);
+            bgfx::setTransform(&matrix[0][0]);
         }
 
         static inline void UpdateClearState(const RenderState& state)
