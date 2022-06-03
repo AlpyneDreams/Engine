@@ -18,14 +18,11 @@ namespace engine
 
         void SetMatrices(render::Render& r)
         {
-            using namespace hlslpp;
-
             Transform& transform = GetComponent<Transform>();
-            float4x4 view = float4x4(transform.rotation);
-            view._m30_m31_m32 = transform.position;
+            Matrix4x4 view = Matrix4x4(transform.rotation);
+            view[3].xyz = transform.position;
 
-            frustum f = frustum::field_of_view_y(radians(float1(fieldOfView)), aspectRatio, 0.1f, 100.f);
-            float4x4 proj = float4x4::perspective(projection(f, zclip::zero));
+            Matrix4x4 proj = glm::perspectiveLH_ZO(glm::radians(fieldOfView), aspectRatio, 0.1f, 100.f);
 
             r.SetViewTransform(view, proj);
         }

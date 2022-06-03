@@ -1,16 +1,21 @@
 #pragma once
 
-#define HLSLPP_FEATURE_TRANSFORM
-#include "hlsl++.h"
+#define GLM_FORCE_SWIZZLE
+
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace engine
 {
-    using Vector2    = hlslpp::float2;
-    using Vector3    = hlslpp::float3;
-    using Vector4    = hlslpp::float4;
-    using Quaternion = hlslpp::quaternion;
+    using Vector2    = glm::vec2;
+    using Vector3    = glm::vec3;
+    using Vector4    = glm::vec4;
+    using Quaternion = glm::quat;
 
-    using Matrix4x4  = hlslpp::float4x4;
+    using Matrix4x4  = glm::mat4x4;
 
     enum struct Space {
         Global,

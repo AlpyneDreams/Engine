@@ -17,7 +17,6 @@
 
 - Should we not indent for `namespace engine {`?
     - Maybe use 2-space indent?
-- Replace HLSLPP with GLM and just make floatN aliases
 
 - Threaded renderer
 - Further troubleshoot mouse input lag for imgui (current solution: set bgfx maxFrameLatency = 1)
@@ -29,6 +28,12 @@ SDL Business:
 - Is SDL_WINDOW_VULKAN necessary
 
 - BGFX debug text and debug stats mode
+
+Math
+- floatN aliases for vecN?
+- left or right handed?
+- Y or Z up?
+- NDC Z is from -1 or 0?
 
 Console
 - keybinds in general

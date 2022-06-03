@@ -9,7 +9,7 @@ fmt_dep    = dependency('fmt', static: true)
 sdl_dep    = dependency('sdl2', default_options: ['use_sdl2main=false'], static: true)
 vulkan_dep = dependency('vulkan')
 vookoo_dep = declare_dependency(include_directories: 'submodules/vookoo/include')
-hlslpp_dep = declare_dependency(include_directories: 'submodules/hlslpp/include')
+glm_dep    = dependency('glm', static: true)
 imgui_dep  = dependency('imgui', static: true)
 
 entt_dep   = dependency('entt', required: not windows)

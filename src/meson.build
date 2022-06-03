@@ -39,7 +39,7 @@ engine_deps = [
     bgfx_dep,
     #vulkan_dep,
     #vookoo_dep,
-    hlslpp_dep,
+    glm_dep,
     imgui_dep,
     entt_dep
 ]

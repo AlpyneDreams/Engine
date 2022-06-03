@@ -8,12 +8,12 @@
 
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
-#include <bx/math.h>
 #include <bx/string.h>
 
-#include <cstdio>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
-namespace fs = engine::fs;
+#include <cstdio>
 
 namespace engine::render
 {
@@ -71,19 +71,17 @@ namespace engine::render
 
     void Forward::Update()
     {
-        using namespace hlslpp;
-
         // Set shader
         r.SetShader(shader);
         
         // Set view and proj matrices
         {
-            float3 at = float3(0, 0, 0);
-            float3 eye = float3(0, 0, -35);
-            float4x4 view = float4x4::look_at(eye, at, float3(0, 1, 0));
+            Vector3 at = Vector3(0, 0, 0);
+            Vector3 eye = Vector3(0, 0, -35);
+            Matrix4x4 view = glm::lookAtLH(eye, at, Vector3(0, 1, 0));
 
-            frustum f = frustum::field_of_view_y(radians(float1(60.0f)), r.GetAspectRatio(), 0.1f, 100.f);
-            float4x4 proj = float4x4::perspective(projection(f, zclip::zero));
+            
+            Matrix4x4 proj = glm::perspectiveLH_ZO(glm::radians(60.f), r.GetAspectRatio(), 0.1f, 100.f);
 
             r.SetViewTransform(view, proj);
         }
@@ -95,15 +93,9 @@ namespace engine::render
 
                 // Set object transform
                 {
-                    // NOTE: bx::mtxRotateXY is right-handed, HLSL++ is set to left-handed,
-                    // so we flip the angle signs here to do a right-handed transform.
-                    // (Note also that bx::mtxLookAt and bx::mtxProj are left-handed by default)
-
-                    float4x4 mtx = float4x4::rotation_y(-(time+yy*0.37f));
-                    mtx = mul(float4x4::rotation_x(-(time + xx*0.21f)), mtx);
-                    mtx._m30 = -15.0f + float(xx)*3.0f;
-                    mtx._m31 = -15.0f + float(yy)*3.0f;
-                    mtx._m32 = 0.0f;
+                    Matrix4x4 mtx = glm::translate(glm::identity<Matrix4x4>(), Vector3(-15 + xx*3, -15 + yy*3, 0));
+                    mtx *= glm::eulerAngleYX(-(time + yy*0.37f), -(time + xx*0.21f));
+                    
                     r.SetTransform(mtx);
                 }
 
