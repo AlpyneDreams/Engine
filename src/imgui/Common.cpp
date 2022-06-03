@@ -52,11 +52,11 @@ namespace engine
         // Named fonts
         GUI::FontMonospace = AddFontFile("RobotoMono.ttf", 16);
 
-        AddFontFile("Cousine-Regular.ttf", 15);
-        AddFontFile("DroidSans.ttf", 15);
-        AddFontFile("Karla-Regular.ttf", 15);
         io.Fonts->AddFontDefault(); // ImGui Default: ProggyClean, 13px
-        AddFontFile("Roboto-Medium.ttf", 15);
+        //AddFontFile("Cousine-Regular.ttf", 15);
+        //AddFontFile("DroidSans.ttf", 15);
+        //AddFontFile("Karla-Regular.ttf", 15);
+        //AddFontFile("Roboto-Medium.ttf", 15);
 
         ImVec4* colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_WindowBg]               = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
