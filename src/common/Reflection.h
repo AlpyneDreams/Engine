@@ -27,8 +27,7 @@ namespace engine::reflect
     template <typename T>
     constexpr size_t TypeHash = entt::type_hash<T>::value();
 
-
-    struct Variable
+    struct Field
     {
         const char* name;
         const char* displayName;
@@ -42,7 +41,7 @@ namespace engine::reflect
 
         template <typename T>
         T& Get(void* obj) const {
-            return GetPointer<T>(obj);
+            return *GetPointer<T>(obj);
         }
     };
 
@@ -51,7 +50,7 @@ namespace engine::reflect
         const char* name;
         const char* displayName;
         size_t size;
-        std::vector<Variable> fields;
+        std::vector<Field> fields;
     };
 };
 

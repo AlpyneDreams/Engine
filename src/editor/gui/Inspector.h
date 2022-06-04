@@ -70,7 +70,7 @@ namespace engine::editor
                 return;
             }
 
-            for (Variable& field : component.fields)
+            for (Field& field : component.fields)
             {
                 auto name = field.displayName;
 
