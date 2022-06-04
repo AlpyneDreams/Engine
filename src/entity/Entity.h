@@ -57,7 +57,7 @@ namespace engine
         }
 
         template <class C>
-        C& GetComponent() {
+        C& GetComponent() const {
             return handle.get<C>();
         }
 
@@ -72,6 +72,6 @@ namespace engine
 
     // A pure Entity cannot be a component.
     template<> Entity& Entity::AddComponent<Entity>() = delete;
-    template<> Entity& Entity::GetComponent<Entity>() = delete;
+    template<> Entity& Entity::GetComponent<Entity>() const = delete;
     template<> void Entity::RemoveComponent<Entity>() = delete;
 }
