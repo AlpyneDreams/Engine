@@ -4,11 +4,17 @@
 #include "engine/System.h"
 #include "editor/Editor.h"
 #include "math/Math.h"
+#include "console/ConVar.h"
 
 #include "imgui/Common.h"
 #include <imgui.h>
 
 #include "imgui/IconsMaterialCommunity.h"
+
+namespace engine {
+    extern ConVar<bool> gui_demo;
+}
+
 namespace engine::editor
 {
     struct Layout : System
@@ -26,6 +32,16 @@ namespace engine::editor
             if (ImGui::BeginMainMenuBar())
             {
                 CoordinateSpacePicker();
+
+                if (ImGui::BeginMenu("Window"))
+                {
+                    ImGui::MenuItem("Console", "", &Editor.console->open);
+                    ImGui::MenuItem("Outline", "", &Editor.outline->open);
+                    ImGui::MenuItem("Inspector", "", &Editor.inspector->open);
+                    ImGui::MenuItem("GUI Demo", "", &gui_demo.value);
+                    ImGui::EndMenu();
+                }
+
                 ImGui::EndMainMenuBar();
             }
 

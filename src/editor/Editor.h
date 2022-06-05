@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imgui/Window.h"
+
 namespace engine::editor
 {
     // The global editor instance.
@@ -8,6 +10,11 @@ namespace engine::editor
     class Editor
     {
     public:
+        // TODO: Support multiple instances of each
+        GUI::Window* console;
+        GUI::Window* outline;
+        GUI::Window* inspector;
+
         void Run();
     };
     

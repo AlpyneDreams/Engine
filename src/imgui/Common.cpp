@@ -76,7 +76,7 @@ namespace engine
         colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
     }
 
-    static ConVar gui_demo("gui_demo", false, "Show ImGui demo window");
+    ConVar gui_demo("gui_demo", false, "Show ImGui demo window");
 
     void GUI::Update()
     {
