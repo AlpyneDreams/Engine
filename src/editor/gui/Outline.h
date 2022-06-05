@@ -62,13 +62,14 @@ namespace engine::editor
             DrawContextMenu();
         }
 
-        void DrawContextMenu(EntityID id = EntityNull)
+        void DrawContextMenu(Entity ent = EntityNull)
         {
             auto flags = ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
-            bool window = id == EntityNull;
+            bool window = !ent;
             if (window ? ImGui::BeginPopupContextWindow(NULL, flags) : ImGui::BeginPopupContextItem())
             {
-                if (ImGui::MenuItem("Delete", NULL, false, !window)) {        
+                if (ImGui::MenuItem("Delete", NULL, false, !window)) {
+                    ent.Delete();
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Create Entity")) {
