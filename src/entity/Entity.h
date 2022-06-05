@@ -44,6 +44,11 @@ namespace engine
         }
 
         template <class C>
+        bool HasComponent() {
+            return handle.any_of<C>();
+        }
+
+        template <class C>
         C& AddComponent() {
             // Add required components, if any
             if constexpr (derived_from_template<C, RequireComponents>) {
@@ -68,6 +73,15 @@ namespace engine
         template <class C>
         C& GetComponent() const {
             return handle.get<C>();
+        }
+
+        template <class C>
+        C& GetOrAddComponent()
+        {
+            if (!HasComponent<C>()) {
+                return AddComponent<C>();
+            }
+            return GetComponent<C>();
         }
 
         template <class C>
