@@ -4,6 +4,7 @@
 #include <typeindex>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <cstddef>
 
 #include <entt/core/type_info.hpp>
@@ -17,6 +18,7 @@ namespace engine
 namespace engine::reflect
 {
     using Type = entt::type_info;
+    using Hash = entt::id_type;
     
     // Get type info.
     // Has to be function not variable or else we can get invalid results sometimes
@@ -25,7 +27,7 @@ namespace engine::reflect
 
     // Type hashes (constexpr)
     template <typename T>
-    constexpr size_t TypeHash = entt::type_hash<T>::value();
+    constexpr Hash TypeHash = entt::type_hash<T>::value();
 
     struct Field
     {
@@ -49,8 +51,24 @@ namespace engine::reflect
     {
         const char* name;
         const char* displayName;
+        Type type = TypeID<nullptr_t>();
         size_t size;
         std::vector<Field> fields;
+
+        static inline Class& Register(Class&& c) {
+            classes.insert({ c.type.hash(), c });
+            return c;
+        }
+
+        static inline Class* Get(Hash hash) {
+            return classes.contains(hash) ? &classes.at(hash) : nullptr;
+        }
+
+        static inline Class* Get(Type type) {
+            return Get(type.hash());
+        }
+
+        static inline std::unordered_map<Hash, Class> classes;
     };
 };
 

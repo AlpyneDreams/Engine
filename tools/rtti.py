@@ -123,11 +123,12 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
         name = f'{keyword} {prefix}{node.displayname}'
         write(f'// {location}')
         write('template <>')
-        write(f'Class RTTI<{name}> = {{')
+        write(f'Class& RTTI<{name}> = Class::Register(Class {{')
 
         # Write name, size
         write(f'.name = "{node.displayname}",', indent=1)
         write(f'.displayName = "{display_name(node.displayname)}",', indent=1)
+        write(f'.type = TypeID<{name}>(),', indent=1)
         write(f'.size = sizeof({name}),', indent=1)
 
         # Write fields
@@ -139,7 +140,7 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
             write('},', indent=1)
 
         # End class RTTI
-        write('};\n')
+        write('});\n')
 
         # Write nested classes too
         for c in classes:
