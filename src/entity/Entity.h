@@ -41,8 +41,8 @@ namespace engine
                 C::AddRequiredComponents(handle);
             }
 
-            // Create component instance
-            C& component = handle.emplace<C>();
+            // Create component instance (or get it)
+            C& component = handle.get_or_emplace<C>();
             
             // If this component is an entity, then share our handle with it
             if constexpr (std::derived_from<C, Entity>) {
@@ -66,7 +66,8 @@ namespace engine
             if constexpr (std::derived_from<C, Behavior>) {
 
             }
-            handle.erase<C>();
+            // remove<C>(): the component need not exist
+            handle.remove<C>();
         }
     };
 
