@@ -1,5 +1,5 @@
 from functools import cache
-from clang.cindex import Index, CursorKind, CompilationDatabase, Cursor
+from clang.cindex import Index, CursorKind, CompilationDatabase, Cursor, AccessSpecifier
 import os, os.path, sys, re, string
 
 # Usage: rtti.py <input.cpp> [output.meta.cpp]
@@ -135,6 +135,9 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
         if len(fields) > 0:
             write('.fields = {', indent=1)
             for n in fields:
+                # Only public fields for now
+                if n.access_specifier != AccessSpecifier.PUBLIC:
+                    continue
                 typeclass = n.type.get_canonical()
                 write(f'{{ "{n.spelling}", "{display_name(n.spelling)}", TypeID<{typeclass.spelling}>(), offsetof({name}, {n.spelling}) }},', indent=2)
             write('},', indent=1)
