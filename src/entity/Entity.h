@@ -17,7 +17,10 @@ namespace engine
 
         // Create a new entity
         Entity() : handle(World.CreateEntity()) {}
+
+        // Grab an entity by handle or scene & ID
         Entity(Handle&& handle) : handle(handle) {}
+        Entity(Scene& scene, EntityID id) : handle(scene.ents, id) {}
 
         // If no scene is specified use World
         Entity(EntityID id) : handle(World.ents, id) {}
@@ -34,6 +37,12 @@ namespace engine
             return *handle.registry()->ctx().at<Scene*>();
         }
 
+        // Delete an entity, (handle will become null)
+        void Delete() {
+            handle.registry()->destroy(handle.entity());
+            handle = Handle(World.ents, EntityNull);
+        }
+
         template <class C>
         C& AddComponent() {
             // Add required components, if any
@@ -41,7 +50,7 @@ namespace engine
                 C::AddRequiredComponents(handle);
             }
 
-            // Create component instance (or get it)
+            // Create component instance (get if it already exists)
             C& component = handle.get_or_emplace<C>();
             
             // If this component is an entity, then share our handle with it
@@ -66,7 +75,7 @@ namespace engine
             if constexpr (std::derived_from<C, Behavior>) {
 
             }
-            // remove<C>(): the component need not exist
+            // remove<C>(): the component does not need to exist
             handle.remove<C>();
         }
     };
