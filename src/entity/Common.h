@@ -10,6 +10,7 @@
 namespace engine
 {
     using EntityID = entt::entity;
+    using ComponentID = entt::id_type;
     using Handle = entt::handle;    // TODO: Rename or move into a class?
 
     inline constexpr EntityID EntityNull = entt::null;

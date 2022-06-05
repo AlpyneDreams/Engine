@@ -92,6 +92,10 @@ namespace engine
             // remove<C>(): the component does not need to exist
             handle.remove<C>();
         }
+
+        void RemoveComponent(ComponentID id) {
+            handle.registry()->storage(id)->second.remove(handle.entity());
+        }
     };
 
     // A pure Entity cannot be a component.
