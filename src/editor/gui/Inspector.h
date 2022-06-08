@@ -28,7 +28,7 @@ namespace engine::editor
 
             for (auto&& [id, storage] : ent.handle.registry()->storage())
             {
-                using namespace reflect;
+                using namespace refl;
 
                 if (!storage.contains(ent))
                     continue;
