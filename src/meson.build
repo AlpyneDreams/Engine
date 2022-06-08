@@ -6,7 +6,7 @@ engine_src = [
     'platform/sdl/WindowSDL.cpp',
     'render/bgfx/RenderBGFX.cpp',
     #'render/vk/RenderVK.cpp',
-    'render/pipelines/forward/Forward.cpp',
+    'render/pipelines/Forward.cpp',
 
     'imgui/Common.cpp',
     'imgui/impl/imgui_impl_sdl.cpp',

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../RenderPipeline.h"
+#include "RenderPipeline.h"
 #include "core/Mesh.h"
 
 namespace engine::render

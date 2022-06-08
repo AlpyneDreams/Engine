@@ -3,7 +3,7 @@
 #include "platform/Window.h"
 #include "render/Render.h"
 #include "render/pipelines/RenderPipeline.h"
-#include "render/pipelines/forward/Forward.h"
+#include "render/pipelines/Forward.h"
 #include "imgui/Common.h"
 
 #include "entity/Scene.h"
