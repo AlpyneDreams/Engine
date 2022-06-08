@@ -9,8 +9,11 @@
 #include "imgui/Common.h"
 
 #include "console/Console.h"
+#include "math/Math.h"
 
 #include <misc/cpp/imgui_stdlib.h>
+#include <string>
+#include <type_traits>
 
 namespace engine::editor
 {
@@ -32,93 +35,145 @@ namespace engine::editor
 
                 if (!storage.contains(ent))
                     continue;
-                
-                void* obj = storage.get(ent);
 
-                switch (id)
+                Class* cls = Class::Get(id);
+
+                if (!cls) {
+                    ImGui::Text("Component: %u", id);
+                    continue;
+                }
+
+                // Draw component inspector, remove component if removed
+                if (!DrawComponentInspector(*cls, ent, storage.get(ent)))
                 {
-                    case TypeHash<Transform>:
-                        DrawComponent<Transform>(ent, storage.get(ent));
-                        break;
-                    default:
-                        ImGui::Text("Component: %lld", id);
-                        break;
+                    storage.remove(ent);
+                    continue;
                 }
             }
             
             if (ImGui::Button("Add Component")) {
                 ent.AddComponent<Transform>();
             }
-            
         }
 
-        template <class T>
-        void DrawComponent(Entity& ent, void* obj)
+        bool DrawComponentInspector(refl::Class& component, Entity& ent, void* obj)
         {
-            using namespace rtti;
-            Class component = RTTI<T>;
+            using namespace refl;
 
-            static bool visible = true;
-            if (!ImGui::CollapsingHeader(component.displayName, &visible, ImGuiTreeNodeFlags_DefaultOpen)) {
-                return;
-            }
+            // Create a unique ID for each component on each entity version
+            // so that every unique component has its own collapsing header.
+            auto id = std::to_string((uintmax_t)ent.handle.entity());
+            auto ver = std::to_string(ent.handle.registry()->current(ent));
+            auto label = std::string(component.displayName) + "##" + id + "/" + ver;
+
+            bool visible = true;
+            bool expanded = ImGui::CollapsingHeader(label.c_str(), &visible, ImGuiTreeNodeFlags_DefaultOpen);
 
             // X button pressed - remove component
             if (!visible) {
-                ent.RemoveComponent<T>();
-                visible = true;
-                return;
+                ent.RemoveComponent(component.type.hash());
+                return false;
             }
 
-            for (Field& field : component.fields)
+            if (!expanded)
+                return true;
+
+            // TODO: Custom inspector registration system
+            switch (component.type.hash())
             {
-                auto name = field.displayName;
+                case TypeHash<Transform>:
+                    Inspect((Transform*)obj);
+                    break;
+                default:
+                    DrawComponent(component, ent, obj);
+                    break;
+            }
+            
+            return true;
+        }
+    
+    protected:
 
-                GUI::ItemLabel(name);
-
-                #define INPUT_POINTER(Type, Value, Input) \
-                    case TypeHash<Type>: {      \
-                        ImGui::Input(name, field.GetPointer<Value>(obj)); \
-                        break;                  \
-                    }
-                
-                #define INPUT_TYPE(Type, Input) INPUT_POINTER(Type, Type, Input)
-
-                #define INPUT_SCALAR(Type, Scalar) \
-                    case TypeHash<Type>: {      \
-                        ImGui::InputScalar(name, ImGuiDataType_ ## Scalar, field.GetPointer<Type>(obj)); \
-                        break;                  \
-                    }
-                
-                switch (field.type.hash())
-                {
-                    INPUT_TYPE(float, InputFloat);
-                    INPUT_TYPE(double, InputDouble);
-                    INPUT_TYPE(std::string, InputText);
-                    INPUT_SCALAR(int8,   S8);
-                    INPUT_SCALAR(uint8,  U8);
-                    INPUT_SCALAR(int16,  S16);
-                    INPUT_SCALAR(uint16, U16);
-                    INPUT_SCALAR(int32,  S32);
-                    INPUT_SCALAR(uint32, U32);
-                    INPUT_SCALAR(int64,  S64);
-                    INPUT_SCALAR(uint64, U64);
-                    INPUT_POINTER(Vector4, float, InputFloat4);
-                    INPUT_POINTER(Vector3, float, InputFloat3);
-                    INPUT_POINTER(Vector2, float, InputFloat2);
-
-                    case TypeHash<Quaternion>: {
-                        // TODO: Euler angles
-                        ImGui::InputFloat3(name, field.GetPointer<float>(obj));
-                        break;
-                    }
-                    default: {
-                        ImGui::Text(name);
-                        break;
-                    }
-                }
+        // Default Inspector
+        void DrawComponent(refl::Class& component, Entity& ent, void* obj)
+        {
+            using namespace refl;
+            for (Field& field : component.fields) {
+                Input(field.displayName, field.type.hash(), field.GetPointer<void>(obj));
             }
         }
 
+        void Inspect(auto* t) { Inspect(*t); }
+
+        // Basic Custom Inspectors
+
+        void Inspect(Transform& t)
+        {
+            Input("Position", t.position);
+
+            Vector3 euler = t.GetEulerAngles();
+            if (Input("Rotation", euler)) {
+                t.SetEulerAngles(euler);
+            }
+
+            Input("Scale", t.scale);
+        }
+    public:
+
+        static bool Input(const char* name, auto& ref)
+        {
+            return Input(name, refl::TypeHash<std::remove_reference_t<decltype(ref)>>, &ref);
+        }
+
+        static bool Input(const char* name, refl::Hash type, void* ptr)
+        {
+            using namespace refl;
+
+            GUI::ItemLabel(name);
+
+            #define INPUT_POINTER(Type, Value, Input) \
+                case TypeHash<Type>:                  \
+                    return ImGui::Input(name, (Value*)ptr);
+            
+            #define INPUT_TYPE(Type, Input) INPUT_POINTER(Type, Type, Input)
+
+            #define INPUT_SCALAR(Type, Scalar) \
+                case TypeHash<Type>:           \
+                    return ImGui::InputScalar(name, ImGuiDataType_ ## Scalar, (Type*)ptr);
+            
+            switch (type)
+            {
+                INPUT_TYPE(float, InputFloat);
+                INPUT_TYPE(double, InputDouble);
+                INPUT_TYPE(std::string, InputText);
+                INPUT_SCALAR(int8,   S8);
+                INPUT_SCALAR(uint8,  U8);
+                INPUT_SCALAR(int16,  S16);
+                INPUT_SCALAR(uint16, U16);
+                INPUT_SCALAR(int32,  S32);
+                INPUT_SCALAR(uint32, U32);
+                INPUT_SCALAR(int64,  S64);
+                INPUT_SCALAR(uint64, U64);
+                INPUT_POINTER(Vector4, float, InputFloat4);
+                INPUT_POINTER(Vector3, float, InputFloat3);
+                INPUT_POINTER(Vector2, float, InputFloat2);
+
+                case TypeHash<Quaternion>: {
+                    Quaternion* q = (Quaternion*)ptr;
+                    // TODO: Improve euler -> quaternion -> euler roundtrip
+                    Vector3 angles = glm::eulerAngles(*q);
+                    Vector3 d = glm::degrees(angles);
+                    if (ImGui::InputFloat3(name, &d[0])) {
+                        *q = Quaternion(glm::radians(d));
+                        return true;
+                    }
+                    return false;
+                }
+                default: {
+                    ImGui::Text("%s", name);
+                    return false;
+                }
+            }
+        }
     };
 }
