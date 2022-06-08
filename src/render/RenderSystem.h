@@ -9,7 +9,7 @@
 #include "entity/Scene.h"
 #include "entity/components/Camera.h"
 
-#include "System.h"
+#include "engine/System.h"
 
 namespace engine
 {
