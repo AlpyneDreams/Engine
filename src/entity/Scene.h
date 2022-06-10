@@ -8,6 +8,11 @@ namespace engine
     // The global scene that contains all other scenes.
     extern inline struct Scene World;
 
+    /** 
+     *  A scene is a collection of entities with  
+     *  components assigned to them. All active scenes
+     *  are children of World.
+     */
     struct Scene : SystemGroup
     {
         Scene* parent = &World;

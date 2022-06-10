@@ -7,6 +7,12 @@
 
 namespace engine
 {
+    /**
+     * Behavior is a Component that provides per-entity
+     * System logic and can access its Entity's data.
+     *
+     * It is most similar to MonoBehaviour in Unity.
+     */
     struct Behavior : Entity, Component, System
     {
         // Handle will be updated by AddComponent

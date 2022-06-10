@@ -5,7 +5,11 @@
 
 namespace engine
 {
-    struct Component : Reflect {};
+    // Base class for all data or logic components.
+    // Provides runtime reflection.
+    struct Component : Reflect
+    {
+    };
 
     // Attribute to require other components. Must be publically inherited.
     template <class... Components>

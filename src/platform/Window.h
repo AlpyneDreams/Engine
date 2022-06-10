@@ -8,6 +8,9 @@
 
 namespace engine
 {
+    /** Interface to a window.
+     *  Backend could be SDL, for example.
+     */
     class Window
     {
     protected:

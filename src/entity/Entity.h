@@ -10,6 +10,12 @@
 
 namespace engine
 {
+    /**
+     * Entity is a handle for a scene entity.
+     *   - It consists of a scene registry and an ID.
+     *   - It is a container for components, which
+     *     provide both logic and data.
+     */
     struct Entity
     {
         // Handle: registry ptr + entity ID
@@ -42,6 +48,8 @@ namespace engine
             handle.registry()->destroy(handle.entity());
             handle = Handle(World.ents, EntityNull);
         }
+
+        // Component Management //
 
         template <class C>
         bool HasComponent() {
