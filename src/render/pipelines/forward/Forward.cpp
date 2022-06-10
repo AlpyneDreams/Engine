@@ -10,9 +10,6 @@
 #include <bx/bx.h>
 #include <bx/string.h>
 
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/ext/matrix_transform.hpp>
-
 #include <cstdio>
 
 namespace engine::render
@@ -75,16 +72,7 @@ namespace engine::render
         r.SetShader(shader);
         
         // Set view and proj matrices
-        {
-            Vector3 at = Vector3(0, 0, 0);
-            Vector3 eye = Vector3(0, 0, -35);
-            Matrix4x4 view = glm::lookAtLH(eye, at, Vector3(0, 1, 0));
-
-            
-            Matrix4x4 proj = glm::perspectiveLH_ZO(glm::radians(60.f), r.GetAspectRatio(), 0.1f, 100.f);
-
-            r.SetViewTransform(view, proj);
-        }
+        // ...
 
         float time = Time.fixed.time;
 

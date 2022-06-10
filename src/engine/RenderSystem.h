@@ -6,6 +6,9 @@
 #include "render/pipelines/forward/Forward.h"
 #include "imgui/Common.h"
 
+#include "entity/Scene.h"
+#include "entity/components/Camera.h"
+
 #include "System.h"
 
 namespace engine
@@ -32,7 +35,18 @@ namespace engine
             GUI::Update();
 
             render->BeginFrame();
-            renderPipeline.Update();
+
+            for (auto&& [ent, camera] : World.ents.view<Camera>().each())
+            {
+                using namespace render;
+                Render& r = *render;
+
+                camera.SetMatrices(r);
+
+                renderPipeline.Update();
+            }
+            
+            
             render->EndFrame();
 
             GUI::Render();

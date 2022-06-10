@@ -16,14 +16,36 @@ namespace engine
         // Aspect ratio W/H
         float aspectRatio = 16.0f / 9.0f;
 
+        float near = 0.1f;
+        float far  = 1000.f;
+
+    public:
+        // World to camera matrix
+        Matrix4x4 ViewMatrix()
+        {
+            // TODO: Cache this
+            Transform& transform = GetOrAddComponent<Transform>();
+            Vector3 a = glm::radians(transform.GetEulerAngles());
+            Matrix4x4 view = glm::eulerAngleZXY(-a.z, -a.x, -a.y);
+            view = glm::translate(view, -transform.position);
+            return view;
+
+        // Set custom world to camera matrix
+        }
+
+    public:
+        // Projection matrix
+        Matrix4x4 ProjMatrix()
+        {
+            // TODO: Cache this
+            return glm::perspectiveLH_ZO(glm::radians(fieldOfView), aspectRatio, near, far);
+        }
+
+    public:
         void SetMatrices(render::Render& r)
         {
-            Transform& transform = GetComponent<Transform>();
-            Matrix4x4 view = Matrix4x4(transform.rotation);
-            view[3].xyz = transform.position;
-
-            Matrix4x4 proj = glm::perspectiveLH_ZO(glm::radians(fieldOfView), aspectRatio, 0.1f, 100.f);
-
+            auto view = ViewMatrix();
+            auto proj = ProjMatrix();
             r.SetViewTransform(view, proj);
         }
     };
