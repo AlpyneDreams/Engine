@@ -2,34 +2,33 @@
 
 #include "common/Common.h"
 #include "render/Render.h"
+#include "GraphicsBuffer.h"
 
 #include <cstddef>
 
 namespace engine
 {
-    struct IndexBuffer {
+    struct IndexBuffer : GraphicsBuffer
+    {
         enum { UInt16, UInt32 } type = UInt32;
-        uint indexCount = 0;
         const void* indices;
-        render::Handle* handle;
 
         IndexBuffer() {}
 
         IndexBuffer(const uint32* indices, size_t size)
-          : type(UInt32),
-            indexCount(size / sizeof(uint32)),
-            indices(indices)
+          : GraphicsBuffer(size / sizeof(uint32)),
+            indices(indices),
+            type(UInt32)
         {}
 
         IndexBuffer(const uint16* indices, size_t size)
-          : type(UInt16),
-            indexCount(size / sizeof(uint16)),
-            indices(indices)
+          : GraphicsBuffer(size / sizeof(uint16)),
+            indices(indices),
+            type(UInt16)
         {}
 
-        inline size_t IndexSize() const { return type == UInt32 ? 4 : 2; }
-        inline size_t Size() const {
-            return indexCount * IndexSize();
+        inline size_t Stride() const override final {
+          return type == UInt32 ? 4 : 2;
         }
     };
 

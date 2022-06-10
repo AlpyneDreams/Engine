@@ -2,34 +2,30 @@
 
 #include "common/Common.h"
 #include "render/Render.h"
+#include "GraphicsBuffer.h"
 #include "VertexLayout.h"
 
 
 namespace engine
 {
-    struct VertexBuffer {
+    struct VertexBuffer : GraphicsBuffer
+    {
         VertexLayout* layout;
-        uint vertexCount = 0;
         union {
-            const void* vertices;
-            const float* vertexes;
+            const void* pointer;
+            const float* vertices;
         };
-        render::Handle* handle;
 
         VertexBuffer() {}
 
         VertexBuffer(VertexLayout* layout, const void* vertices, size_t size)
-          : layout(layout),
-            vertexCount(size / layout->Stride()),
-            vertices{vertices}
+          : GraphicsBuffer(size / layout->Stride()),
+            pointer(vertices),
+            layout(layout)
         {}
 
-        inline size_t Size() const {
-            if (layout == nullptr) {
-                return vertexCount;
-            } else {
-                return vertexCount * layout->Stride();
-            }
+        inline size_t Stride() const override final {
+            return layout == nullptr ? 1 : layout->Stride();
         }
     };
 

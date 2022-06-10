@@ -26,7 +26,7 @@ namespace engine
             return group;
         }
         
-        Mesh(VertexLayout& layout, const void* vertices, size_t vSize, const uint* indices, size_t iSize)
+        Mesh(VertexLayout& layout, const void* vertices, size_t vSize, const auto* indices, size_t iSize)
             : layout(layout)
         {
             groups.push_back(Group {
@@ -34,15 +34,6 @@ namespace engine
                 IndexBuffer(indices, iSize)
             });
         }
-
-        Mesh(VertexLayout& layout, const void* vertices, size_t vSize, const uint16* indices, size_t iSize)
-            : layout(layout)
-        {
-            groups.push_back(Group {
-                VertexBuffer(&layout, vertices, vSize),
-                IndexBuffer(indices, iSize)
-            });
-        }    
     };
 
     
