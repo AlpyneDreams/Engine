@@ -24,7 +24,7 @@ namespace engine
     using Matrix4x4  = glm::mat4x4;
 
     enum struct Space {
-        Global,
+        World,
         Local
     };
 }

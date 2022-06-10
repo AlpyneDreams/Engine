@@ -19,7 +19,7 @@ namespace engine::editor
 {
     struct Layout : System
     {
-        Space space = Space::Global;
+        Space space = Space::World;
 
         void Start() override
         {
@@ -51,7 +51,7 @@ namespace engine::editor
         void CoordinateSpacePicker()
         {
             const char* items[] = {
-                ICON_MC_WEB " Global",
+                ICON_MC_WEB " World",
                 ICON_MC_CUBE_OUTLINE " Local"
             };
             int i = int(space);
