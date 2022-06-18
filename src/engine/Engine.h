@@ -39,6 +39,13 @@ namespace engine
             Shutdown();
         }
 
+        // Immediately termintes the application cleanly
+        void Quit()
+        {
+            Shutdown();
+            exit(0);
+        }
+
     protected:
         void Init()
         {
@@ -111,5 +118,12 @@ namespace engine
     };
 
     inline class Engine Engine;
+
+    namespace commands
+    {
+        inline ConCommand quit("quit", "Quit the application", []() {
+            Engine.Quit();
+        }); 
+    }
 
 }

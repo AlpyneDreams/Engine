@@ -31,6 +31,14 @@ namespace engine::editor
         {
             if (ImGui::BeginMainMenuBar())
             {
+                if (ImGui::BeginMenu("File"))
+                {
+                    if (ImGui::MenuItem("Quit")) {
+                        Console.Execute("quit");
+                    }
+                    ImGui::EndMenu();
+                }
+
                 CoordinateSpacePicker();
 
                 if (ImGui::BeginMenu("Window"))
