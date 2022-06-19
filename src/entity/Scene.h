@@ -15,8 +15,11 @@ namespace engine
      */
     struct Scene : SystemGroup
     {
+        // TODO: Handle integrating subscenes into the parent.
         Scene* parent = &World;
+    private:
         entt::registry ents;
+    public:
 
         Scene(Scene* parent = &World) : parent(parent) {
             ents.ctx().emplace<Scene*>(this);
@@ -29,6 +32,20 @@ namespace engine
         void DeleteEntity(EntityID id) {
             ents.destroy(id);
         }
+
+
+        // TODO: Custom view class that wraps basic_view and is iterable?
+        template <typename... Components>
+        auto Each() {
+            return ents.view<Components...>().each();
+        }
+
+        // Run a function for each entity
+        void Each(auto function) const {
+            ents.each(function);
+        }
+    private:
+        friend struct Entity;
     };
 
     // The global scene that contains all other scenes.

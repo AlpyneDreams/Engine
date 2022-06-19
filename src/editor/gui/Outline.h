@@ -36,7 +36,7 @@ namespace engine::editor
                 ImGui::EndMenuBar();
             }
 
-            World.ents.each([this](auto& ent)
+            World.Each([this](auto& ent)
             {
                 ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth;
 

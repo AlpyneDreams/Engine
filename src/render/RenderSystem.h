@@ -36,7 +36,7 @@ namespace engine
 
             render->BeginFrame();
 
-            for (auto&& [ent, camera] : World.ents.view<Camera>().each())
+            for (auto&& [ent, camera] : World.Each<Camera>())
             {
                 using namespace render;
                 Render& r = *render;
