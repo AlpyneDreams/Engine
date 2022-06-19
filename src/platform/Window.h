@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <utility>
+#include <set>
 
 #include "common/Common.h"
 #include "input/Input.h"
@@ -14,11 +15,11 @@ namespace engine
     class Window
     {
     protected:
-        Window() {}
+        Window() { windows.insert(this); }
 
         std::function<void(uint, uint)> onResize;
     public:
-        virtual ~Window() {}
+        virtual ~Window() { windows.erase(this); }
         static Window* CreateWindow();
         static void Shutdown();
 
@@ -45,6 +46,7 @@ namespace engine
 
         void SetResizeCallback(std::function<void(uint, uint)> callback) { onResize = callback; }
 
+        static inline std::set<Window*> windows;
     protected:
         // Call this in PreUpdate
         static void SetKey(Key key, bool value) { Input.SetKey(key, value); }
