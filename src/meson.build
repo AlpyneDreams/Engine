@@ -4,6 +4,7 @@ python = import('python').find_installation('python3')
 engine_src = [
     'main/Main.cpp',
     'platform/sdl/WindowSDL.cpp',
+    'platform/sdl/CursorSDL.cpp',
     'render/bgfx/RenderBGFX.cpp',
     #'render/vk/RenderVK.cpp',
     'render/pipelines/Forward.cpp',
