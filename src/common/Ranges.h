@@ -7,15 +7,16 @@
 namespace engine
 {
     /** Simple iterable range on interval [first, last)
-     * Can be used with e.g. pairs returned by std::multimap::equal_range
+     * Similar to std::ranges::subrange. Can be used with iterator
+     * pairs returned by functions like std::multimap::equal_range
      */
-    template <std::bidirectional_iterator Iterator>
-    struct IteratorRange
+    template <std::input_or_output_iterator Iterator>
+    struct Subrange
     {
         Iterator first, last;
 
-        IteratorRange(std::pair<Iterator, Iterator> pair) : first(pair.first), last(pair.second) {}
-        IteratorRange(Iterator first, Iterator last) : first(first), last(last) {}
+        Subrange(std::pair<Iterator, Iterator> pair) : first(pair.first), last(pair.second) {}
+        Subrange(Iterator first, Iterator last) : first(first), last(last) {}
         
         Iterator begin() const { return first; }
         Iterator end() const { return last; }

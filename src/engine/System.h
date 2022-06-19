@@ -76,7 +76,7 @@ namespace engine
     public:
         // Can be destructured to a std::pair<std::type_index, std::shared_ptr<System>>
         using Iterator   = decltype(systems)::const_iterator;
-        using SystemList = IteratorRange<Iterator>;
+        using SystemList = Subrange<Iterator>;
 
         SystemGroup() {}
         SystemGroup(auto*... sys) {
