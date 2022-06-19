@@ -1,11 +1,12 @@
 - RTTI generation could be improved, or at least streamline rtti.py
   - Enum names !!!!
+  - Base classes
+    - Then add GetComponents<Base>()
+  - Fix RTTI<X> has already been instantiated bug
 
 - Editor should eventually link engine as a static lib to reduce compile times
   - So don't rely on ifdef too much!
 - For defines (PLATFORM_*, EDITOR), should they be either 1/0, or #ifdef-based
-
-- Replace entt::registry::view<...>().each() with better semantics
 
 - Change how we handle singletons?
   - Sharing name between type and instance is not ideal

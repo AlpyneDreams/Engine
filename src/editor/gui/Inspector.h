@@ -29,12 +29,9 @@ namespace engine::editor
 
             ImGui::Text("Entity %d", ent.handle.entity());
 
-            for (auto&& [id, storage] : ent.handle.registry()->storage())
+            for (auto&& [id, component] : ent.GetComponents())
             {
                 using namespace refl;
-
-                if (!storage.contains(ent))
-                    continue;
 
                 Class* cls = Class::Get(id);
 
@@ -44,9 +41,9 @@ namespace engine::editor
                 }
 
                 // Draw component inspector, remove component if removed
-                if (!DrawComponentInspector(*cls, ent, storage.get(ent)))
+                if (!DrawComponentInspector(*cls, ent, component))
                 {
-                    storage.remove(ent);
+                    ent.RemoveComponent(id);
                     continue;
                 }
             }
@@ -56,7 +53,7 @@ namespace engine::editor
             }
         }
 
-        bool DrawComponentInspector(refl::Class& component, Entity& ent, void* obj)
+        bool DrawComponentInspector(refl::Class& component, Entity& ent, Component* obj)
         {
             using namespace refl;
 

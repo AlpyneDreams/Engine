@@ -2,6 +2,7 @@
 
 #include <concepts>
 
+#include "common/Reflection.h"
 #include "common/Traits.h"
 
 #include "Common.h"
@@ -81,6 +82,25 @@ namespace engine
         template <class C>
         C& GetComponent() const {
             return handle.get<C>();
+        }
+        
+        // TODO: Potentially use custom iterators that check storage has entity on the fly
+        using ComponentList = std::vector<std::pair<ComponentID, Component*>>;
+    
+        // TODO: Get components with base class (this version would be for T = Component)
+        ComponentList GetComponents() const
+        {
+            using namespace refl;
+
+            ComponentList components;
+            for (auto&& [id, storage] : handle.registry()->storage())
+            {
+                if (!storage.contains(handle.entity()))
+                    continue;
+                
+                components.emplace_back(id, (Component*)storage.get(handle.entity()));
+            }
+            return components;
         }
 
         template <class C>
