@@ -7,6 +7,7 @@
 #include "entity/Entity.h"
 #include "entity/components/Transform.h"
 #include "imgui/Common.h"
+#include "editor/Icons.h"
 
 #include "console/Console.h"
 #include "math/Math.h"
@@ -62,6 +63,10 @@ namespace engine::editor
             auto id = std::to_string((uintmax_t)ent.handle.entity());
             auto ver = std::to_string(ent.handle.registry()->current(ent));
             auto label = std::string(component.displayName) + "##" + id + "/" + ver;
+
+            if (ComponentIcons.contains(component.type.hash())) {
+                label = ComponentIcons[component.type.hash()] + " " + label;
+            }
 
             bool visible = true;
             bool expanded = ImGui::CollapsingHeader(label.c_str(), &visible, ImGuiTreeNodeFlags_DefaultOpen);

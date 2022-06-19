@@ -44,7 +44,7 @@ namespace engine::editor
                     flags |= ImGuiTreeNodeFlags_Selected;
                 }
 
-                if (ImGui::TreeNodeEx(&ent, flags, "Entity %d", ent))
+                if (ImGui::TreeNodeEx(&ent, flags, ICON_MC_CUBE_OUTLINE " Entity %d", ent))
                 {
                     if (ImGui::IsItemClicked())
                     {
