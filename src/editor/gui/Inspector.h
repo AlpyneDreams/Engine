@@ -101,7 +101,9 @@ namespace engine::editor
         {
             using namespace refl;
             for (Field& field : component.fields) {
+                ImGui::PushID(&field);
                 Input(field.displayName, field.type.hash(), field.GetPointer<void>(obj));
+                ImGui::PopID();
             }
         }
 
@@ -170,6 +172,26 @@ namespace engine::editor
                         return true;
                     }
                     return false;
+                }
+                case TypeHash<Rect>: {
+                    Rect* rect = (Rect*)ptr;
+
+                    bool changed = false;
+                    if (ImGui::BeginTable(name, 2))
+                    {
+                        ImGui::TableNextColumn();
+                        changed |= ImGui::InputFloat("X", &rect->x);
+                        ImGui::TableNextColumn();
+                        changed |= ImGui::InputFloat("Y", &rect->y);
+                        ImGui::TableNextColumn();
+                        changed |= ImGui::InputFloat("W", &rect->w);
+                        ImGui::TableNextColumn();
+                        changed |= ImGui::InputFloat("H", &rect->h);
+
+                        ImGui::EndTable();
+                    }
+
+                    return changed;
                 }
                 default: {
                     ImGui::Text("%s", name);

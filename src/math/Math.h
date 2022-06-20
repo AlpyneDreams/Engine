@@ -27,6 +27,23 @@ namespace engine
         World,
         Local
     };
+
+    struct Rect
+    {
+        union {
+            struct { float x, y; };
+            Vector2 pos;
+        };
+        union {
+            struct { float w, h; };
+            struct { float width, height; };
+            Vector2 size;
+        };
+
+        Rect(auto x, auto y, auto w, auto h) : x(float(x)), y(float(y)), w(float(w)), h(float(h)) {}
+        Rect(Vector2 pos, Vector2 size) : pos(pos), size(size) {}
+    };
+
 }
 
 namespace glm
