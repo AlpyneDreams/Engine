@@ -18,8 +18,7 @@ namespace engine
     protected:
         friend struct Entity;
         static constexpr void AddRequiredComponents(Handle& h) {
-            //(std::printf("%s\n", typeid(Components).name()), ...);
-            (h.emplace<Components>(), ...);
+            ((void)h.get_or_emplace<Components>(), ...);
         }
     };
 
