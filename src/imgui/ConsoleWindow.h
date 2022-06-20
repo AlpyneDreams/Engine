@@ -24,7 +24,7 @@ namespace engine::GUI
 
         void Update() final override
         {
-            if (Input.GetKeyUp(Key::Grave)) {
+            if (Keyboard.GetKeyUp(Key::Grave)) {
                 open = !open;
                 focus = open;
             }

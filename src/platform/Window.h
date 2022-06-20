@@ -32,9 +32,10 @@ namespace engine
     
         virtual bool ShouldClose() = 0;
         // Read input and events. Begin frames.
+        // Should call Mouse.SetButton, Keyboard.SetKey, etc.
         virtual void PreUpdate() = 0;
-        // Present if necessary. Clear buffered input.
-        virtual void Update() { Finalize(); }
+        // Present if necessary.
+        virtual void Update() { }
 
         virtual std::pair<int, int> GetSize() = 0;
         virtual const char* GetTitle() = 0;
@@ -47,10 +48,5 @@ namespace engine
         void SetResizeCallback(std::function<void(uint, uint)> callback) { onResize = callback; }
 
         static inline std::set<Window*> windows;
-    protected:
-        // Call this in PreUpdate
-        static void SetKey(Key key, bool value) { Input.SetKey(key, value); }
-        // Call this in Update
-        static void Finalize() { Input.Update(); }
     };
 }

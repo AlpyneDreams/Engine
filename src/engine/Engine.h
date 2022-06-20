@@ -93,6 +93,9 @@ namespace engine
                 // Amount to lerp between physics steps
                 double alpha = accumulator / Time.fixed.deltaTime;
                 
+                // Clear buffered input
+                Input.Update();
+
                 // Process input
                 window->PreUpdate();
 

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "common/Common.h"
+#include "input/Input.h"
 #include "platform/Platform.h"
 #include "platform/Window.h"
 
@@ -53,6 +54,19 @@ namespace engine
             return shouldClose;
         }
 
+        constexpr MouseButton GetMouseButton(byte btn)
+        {
+            switch (btn)
+            {
+                case SDL_BUTTON_LEFT:   return Mouse.Left;
+                case SDL_BUTTON_RIGHT:  return Mouse.Right;
+                case SDL_BUTTON_MIDDLE: return Mouse.Middle;
+                case SDL_BUTTON_X1:     return Mouse.X1;
+                case SDL_BUTTON_X2:     return Mouse.X2;
+                default:                return MouseButton(btn);
+            }
+        }
+
         void PreUpdate()
         {
             SDL_Event e;
@@ -61,8 +75,16 @@ namespace engine
                 switch(e.type) {
                     case SDL_KEYDOWN:
                     case SDL_KEYUP:
-                        SetKey(Key(e.key.keysym.sym), e.key.type == SDL_KEYUP);
+                        Keyboard.SetKey(Key(e.key.keysym.sym), e.key.state == SDL_PRESSED);
                         break;
+                    case SDL_MOUSEBUTTONDOWN:
+                    case SDL_MOUSEBUTTONUP:
+                        Mouse.SetButton(GetMouseButton(e.button.button), e.button.state == SDL_PRESSED);
+                        break;
+                    case SDL_MOUSEMOTION:
+                        Mouse.SetMotion(Vector2(e.motion.xrel, e.motion.yrel));
+                        break;
+                    
                     case SDL_QUIT:
                         shouldClose = true;
                         break;
