@@ -24,7 +24,7 @@ namespace engine::GUI
             if (!open)
                 return;
             
-            ImGui::SetNextWindowSize(ImVec2(float(width), float(height)));
+            ImGui::SetNextWindowSize(ImVec2(float(width), float(height)), ImGuiCond_FirstUseEver);
             if (!ImGui::Begin(name, &open, flags))
             {
                 return ImGui::End();
