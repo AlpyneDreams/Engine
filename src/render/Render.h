@@ -23,21 +23,28 @@ namespace engine::render
         static Render* Create();
         virtual ~Render() {}
 
+    // Resource Uploading //
+
         virtual void UploadMesh(Mesh* mesh) = 0;
 
+    // Resource Creation and Loading //
+
         virtual Shader* LoadShader(const char* vertexShader, const char* pixelShader) = 0; // TODO: Probably replace this
-        virtual void    SetShader(Shader* shader) = 0;
+
+    // Per-Camera State //
+
+        virtual void SetViewTransform(Matrix4x4& view, Matrix4x4& proj) = 0;
+        virtual void SetClearColor(bool clear, Color color = Colors.Black) = 0;
+        virtual void SetClearDepth(bool clear, float depth = 1.0f) = 0;
+
+    // Per-Object State //
+
+        virtual void SetTransform(Matrix4x4& matrix) = 0;
+        virtual void SetShader(Shader* shader) = 0;
+
+    // Draw Calls //
 
         virtual void DrawMesh(Mesh* mesh) = 0;
 
-        virtual void Submit() = 0;
-
-        virtual float GetAspectRatio() = 0;
-
-        virtual void SetViewTransform(Matrix4x4& view, Matrix4x4& proj) = 0;
-        virtual void SetTransform(Matrix4x4& matrix) = 0;
-
-        virtual void SetClearColor(bool clear, Color color = Colors.Black) = 0;
-        virtual void SetClearDepth(bool clear, float depth = 1.0f) = 0;
     };
 }

@@ -174,6 +174,8 @@ namespace engine::render
         }
 
     public:
+    // Resource Uploading //
+
         void UploadMesh(Mesh* mesh)
         {
             bgfx::VertexLayout layout;
@@ -206,6 +208,8 @@ namespace engine::render
             }
         }
 
+    // Resource Creation and Loading //
+
         Shader* LoadShader(const char* vertexShader, const char* pixelShader)
         {
             bgfx::ShaderHandle vert = LoadShaderModule(vertexShader);
@@ -219,44 +223,11 @@ namespace engine::render
             return shader;
         }
 
-
-        void SetShader(Shader* shader)
-        {
-            state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
-        }
-
-        void DrawMesh(Mesh* mesh)
-        {
-            for (auto& group : mesh->groups) {
-                auto vb = static_cast<HandleBGFX*>(group.vertices.handle)->vb;
-                auto ib = static_cast<HandleBGFX*>(group.indices.handle)->ib;
-                bgfx::setVertexBuffer(0, vb);
-                bgfx::setIndexBuffer(ib);
-
-                bgfx::submit(0, state.currentProgram);
-            }
-        }
-
-
-        void Submit()
-        {
-            bgfx::submit(0, state.currentProgram);
-        }
-
-
-        float GetAspectRatio()
-        {
-            return float(state.width) / float(state.height);
-        }
+    // Per-Camera State //
 
         void SetViewTransform(Matrix4x4& view, Matrix4x4& proj)
         {
             bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
-        }
-
-        void SetTransform(Matrix4x4& matrix)
-        {
-            bgfx::setTransform(&matrix[0][0]);
         }
 
         static inline void UpdateClearState(const RenderState& state)
@@ -279,6 +250,33 @@ namespace engine::render
             state.clear.depth = depth;
             UpdateClearState(state);
         }
+
+    // Per-Object State //
+
+        void SetShader(Shader* shader)
+        {
+            state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
+        }
+
+        void SetTransform(Matrix4x4& matrix)
+        {
+            bgfx::setTransform(&matrix[0][0]);
+        }
+
+    // Draw Calls //
+
+        void DrawMesh(Mesh* mesh)
+        {
+            for (auto& group : mesh->groups) {
+                auto vb = static_cast<HandleBGFX*>(group.vertices.handle)->vb;
+                auto ib = static_cast<HandleBGFX*>(group.indices.handle)->ib;
+                bgfx::setVertexBuffer(0, vb);
+                bgfx::setIndexBuffer(ib);
+
+                bgfx::submit(0, state.currentProgram);
+            }
+        }
+
 
     private:
         const bgfx::Memory* LoadMem(const char* filePath)
