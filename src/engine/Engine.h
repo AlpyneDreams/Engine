@@ -13,22 +13,21 @@
 
 namespace engine
 {
-    // The global engine instance.
-    extern inline class Engine Engine;
-
     // Forward declarations.
     namespace editor { class Editor; }
     
-    class Engine
+    inline class Engine
     {
         friend class editor::Editor;
     protected:
         Window* window      = Window::CreateWindow();
-        RenderSystem render = RenderSystem(window);
+        RenderSystem renderSystem = RenderSystem(window);
 
         SystemGroup systems;
 
     public:
+        render::Render& Render = *renderSystem.render;
+
         void Run()
         {
             systems.AddSystem<GUI::ConsoleWindow>();
@@ -50,7 +49,7 @@ namespace engine
         void Init()
         {
             // (Load app info and configs)
-            render.Start();
+            renderSystem.Start();
             // (Load important resources)
             // (Load main scenes)
         }
@@ -103,7 +102,7 @@ namespace engine
                 systems.Update();
 
                 // Render
-                render.Update();
+                renderSystem.Update();
 
                 // Present
                 window->Update();
@@ -114,13 +113,11 @@ namespace engine
 
         void Shutdown()
         {
-            render.Shutdown();
+            renderSystem.Shutdown();
             delete window;
             Window::Shutdown();
         }
-    };
-
-    inline class Engine Engine;
+    } Engine;
 
     namespace commands
     {
