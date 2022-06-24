@@ -161,6 +161,10 @@ namespace engine::editor
                 INPUT_POINTER(Vector4, float, InputFloat4);
                 INPUT_POINTER(Vector3, float, InputFloat3);
                 INPUT_POINTER(Vector2, float, InputFloat2);
+                INPUT_POINTER(int4, int, InputInt4);
+                INPUT_POINTER(int3, int, InputInt3);
+                INPUT_POINTER(int2, int, InputInt2);
+
 
                 case TypeHash<Quaternion>: {
                     Quaternion* q = (Quaternion*)ptr;

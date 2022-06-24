@@ -26,22 +26,22 @@ namespace engine
         bool GetButtonUp(MouseButton btn) const { return buttons.GetButtonUp(btn); }
 
         // Relative (delta) motion this frame
-        Vector2 GetMotion() const { return motion; }
+        int2 GetMotion() const { return motion; }
 
         void SetButton(MouseButton btn, bool down) { buttons.SetButton(btn, down); }
-        void SetMotion(Vector2 delta) { motion = delta; }
+        void SetMotion(int2 delta) { motion = delta; }
 
         void Update()
         {
             buttons.Update();
 
             // Clear mouse delta
-            motion = Vector2(0, 0);
+            motion = int2(0, 0);
         }
 
     private:
         PressMap<MouseButton> buttons;
-        Vector2 motion;
+        int2 motion;
 
     } Mouse;
 

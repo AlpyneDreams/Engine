@@ -82,7 +82,7 @@ namespace engine
                         Mouse.SetButton(GetMouseButton(e.button.button), e.button.state == SDL_PRESSED);
                         break;
                     case SDL_MOUSEMOTION:
-                        Mouse.SetMotion(Vector2(e.motion.xrel, e.motion.yrel));
+                        Mouse.SetMotion(int2(e.motion.xrel, e.motion.yrel));
                         break;
                     
                     case SDL_QUIT:

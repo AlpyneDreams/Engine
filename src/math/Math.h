@@ -21,6 +21,16 @@ namespace engine
     using Vector4    = glm::vec4;
     using Quaternion = glm::quat;
 
+    // Signed integer vectors
+    using int4 = glm::ivec4;
+    using int3 = glm::ivec3;
+    using int2 = glm::ivec2;
+
+    // Unsigned integer vectors
+    using uint4 = glm::uvec4;
+    using uint3 = glm::uvec3;
+    using uint2 = glm::uvec2;
+
     using Matrix4x4  = glm::mat4x4;
 
     enum struct Space {
