@@ -33,13 +33,13 @@ namespace engine::render
 
     // Per-Camera State //
 
-        virtual void SetViewTransform(Matrix4x4& view, Matrix4x4& proj) = 0;
+        virtual void SetViewTransform(mat4x4& view, mat4x4& proj) = 0;
         virtual void SetClearColor(bool clear, Color color = Colors.Black) = 0;
         virtual void SetClearDepth(bool clear, float depth = 1.0f) = 0;
 
     // Per-Object State //
 
-        virtual void SetTransform(Matrix4x4& matrix) = 0;
+        virtual void SetTransform(mat4x4& matrix) = 0;
         virtual void SetShader(Shader* shader) = 0;
 
     // Draw Calls //

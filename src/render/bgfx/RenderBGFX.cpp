@@ -225,7 +225,7 @@ namespace engine::render
 
     // Per-Camera State //
 
-        void SetViewTransform(Matrix4x4& view, Matrix4x4& proj)
+        void SetViewTransform(mat4x4& view, mat4x4& proj)
         {
             bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
         }
@@ -258,7 +258,7 @@ namespace engine::render
             state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
         }
 
-        void SetTransform(Matrix4x4& matrix)
+        void SetTransform(mat4x4& matrix)
         {
             bgfx::setTransform(&matrix[0][0]);
         }

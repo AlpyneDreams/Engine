@@ -34,7 +34,7 @@ namespace engine::render
         vk::UniquePipeline  pipeline;
         vk::UniquePipelineLayout    pipelineLayout;
 
-        struct Vertex { Vector2 pos; Vector3 color; };
+        struct Vertex { vec2 pos; vec3 color; };
 
         const std::vector<Vertex> vertices = {
             {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -172,12 +172,12 @@ namespace engine::render
             return float(state.width) / float(state.height);
         }
 
-        void SetViewTransform(Matrix4x4& view, Matrix4x4& proj)
+        void SetViewTransform(mat4x4& view, mat4x4& proj)
         {
             //bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
         }
 
-        void SetTransform(Matrix4x4& matrix)
+        void SetTransform(mat4x4& matrix)
         {
             //bgfx::setTransform(&matrix[0][0]);
         }

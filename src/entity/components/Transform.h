@@ -7,13 +7,13 @@ namespace engine
 {
     struct Transform : Component
     {
-        Vector3     position;
-        Quaternion  rotation;
-        Vector3     scale;
+        vec3 position;
+        quat rotation;
+        vec3 scale;
 
-        void SetEulerAngles(Vector3 degrees)
+        void SetEulerAngles(vec3 degrees)
         {
-            rotation = Quaternion(glm::radians(degrees));
+            rotation = quat(glm::radians(degrees));
         #if defined(EDITOR)
             // Cache Euler angles. This avoids weird behavior when performing
             // round trip conversions from Euler -> Quaternion -> Euler in
@@ -23,7 +23,7 @@ namespace engine
         #endif
         }
 
-        Vector3 GetEulerAngles()
+        vec3 GetEulerAngles()
         {
         #if defined(EDITOR)
             // Return cached euler angles in edit mode
@@ -43,10 +43,10 @@ namespace engine
     private:
     #if defined(EDITOR)
         // Cached euler angles in degrees
-        Vector3     eulerAngles;
+        vec3 eulerAngles;
 
         // Rotation from cached eulerAngles
-        Quaternion  eulerAnglesRotation;
+        quat eulerAnglesRotation;
     #endif
 
     };

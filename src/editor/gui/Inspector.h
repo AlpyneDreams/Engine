@@ -115,7 +115,7 @@ namespace engine::editor
         {
             Input("Position", t.position);
 
-            Vector3 euler = t.GetEulerAngles();
+            auto euler = t.GetEulerAngles();
             if (Input("Rotation", euler)) {
                 t.SetEulerAngles(euler);
             }
@@ -158,21 +158,21 @@ namespace engine::editor
                 INPUT_SCALAR(uint32, U32);
                 INPUT_SCALAR(int64,  S64);
                 INPUT_SCALAR(uint64, U64);
-                INPUT_POINTER(Vector4, float, InputFloat4);
-                INPUT_POINTER(Vector3, float, InputFloat3);
-                INPUT_POINTER(Vector2, float, InputFloat2);
+                INPUT_POINTER(vec4, float, InputFloat4);
+                INPUT_POINTER(vec3, float, InputFloat3);
+                INPUT_POINTER(vec2, float, InputFloat2);
                 INPUT_POINTER(int4, int, InputInt4);
                 INPUT_POINTER(int3, int, InputInt3);
                 INPUT_POINTER(int2, int, InputInt2);
 
 
-                case TypeHash<Quaternion>: {
-                    Quaternion* q = (Quaternion*)ptr;
+                case TypeHash<quat>: {
+                    quat* q = (quat*)ptr;
                     // TODO: Improve euler -> quaternion -> euler roundtrip
-                    Vector3 angles = glm::eulerAngles(*q);
-                    Vector3 d = glm::degrees(angles);
+                    vec3 angles = glm::eulerAngles(*q);
+                    vec3 d = glm::degrees(angles);
                     if (ImGui::InputFloat3(name, &d[0])) {
-                        *q = Quaternion(glm::radians(d));
+                        *q = quat(glm::radians(d));
                         return true;
                     }
                     return false;

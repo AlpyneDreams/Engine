@@ -81,7 +81,7 @@ namespace engine::render
 
                 // Set object transform
                 {
-                    Matrix4x4 mtx = glm::translate(glm::identity<Matrix4x4>(), Vector3(-15 + xx*3, -15 + yy*3, 0));
+                    mat4x4 mtx = glm::translate(glm::identity<mat4x4>(), vec3(-15 + xx*3, -15 + yy*3, 0));
                     mtx *= glm::eulerAngleYX(-(time + yy*0.37f), -(time + xx*0.21f));
                     
                     r.SetTransform(mtx);

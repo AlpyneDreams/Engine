@@ -16,10 +16,15 @@
 
 namespace engine
 {
-    using Vector2    = glm::vec2;
-    using Vector3    = glm::vec3;
-    using Vector4    = glm::vec4;
-    using Quaternion = glm::quat;
+    // Standard vectors
+    using vec4 = glm::vec4;
+    using vec3 = glm::vec3;
+    using vec2 = glm::vec2;
+
+    // Float vectors
+    using float4 = glm::vec4;
+    using float3 = glm::vec3;
+    using float2 = glm::vec2;
 
     // Signed integer vectors
     using int4 = glm::ivec4;
@@ -30,8 +35,12 @@ namespace engine
     using uint4 = glm::uvec4;
     using uint3 = glm::uvec3;
     using uint2 = glm::uvec2;
+    
+    // Quaternion
+    using quat = glm::quat;
 
-    using Matrix4x4  = glm::mat4x4;
+    // Matrices
+    using mat4x4  = glm::mat4x4;
 
     enum struct Space {
         World,
@@ -42,16 +51,16 @@ namespace engine
     {
         union {
             struct { float x, y; };
-            Vector2 pos;
+            vec2 pos;
         };
         union {
             struct { float w, h; };
             struct { float width, height; };
-            Vector2 size;
+            vec2 size;
         };
 
         Rect(auto x, auto y, auto w, auto h) : x(float(x)), y(float(y)), w(float(w)), h(float(h)) {}
-        Rect(Vector2 pos, Vector2 size) : pos(pos), size(size) {}
+        Rect(vec2 pos, vec2 size) : pos(pos), size(size) {}
     };
 
 }
