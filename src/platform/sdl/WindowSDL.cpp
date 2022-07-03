@@ -30,15 +30,19 @@ namespace engine
 
         void Create(const char* name, uint width, uint height, bool resizable)
         {
-            int x = SDL_WINDOWPOS_UNDEFINED,
-                y = SDL_WINDOWPOS_UNDEFINED;
+            int x = SDL_WINDOWPOS_CENTERED,
+                y = SDL_WINDOWPOS_CENTERED;
             int flags = SDL_WINDOW_SHOWN | (resizable ? SDL_WINDOW_RESIZABLE : 0);
             
             // Create window!
             window = SDL_CreateWindow(name, x, y, width, height, flags);
+
             if (!window) {
                 throw std::runtime_error("[SDL] Failed to create window!");
             }
+
+            // Force window position
+            SDL_SetWindowPosition(window, x, y);
         }
 
         void OnAttach() {
