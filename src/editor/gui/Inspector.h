@@ -147,6 +147,9 @@ namespace engine::editor
             
             switch (type)
             {
+                case TypeHash<bool>:
+                    return ImGui::Checkbox((std::string("##") + name).c_str(), (bool*)ptr);
+                
                 INPUT_TYPE(float, InputFloat);
                 INPUT_TYPE(double, InputDouble);
                 INPUT_TYPE(std::string, InputText);
