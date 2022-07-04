@@ -20,7 +20,8 @@ namespace engine::editor
         outline   = &Engine.systems.AddSystem<editor::Outline>();
         inspector = &Engine.systems.AddSystem<editor::Inspector>();
 
-        editorCamera.AddComponent<Camera>();
+        Camera& camera = editorCamera.AddComponent<Camera>();
+        editorCamera.GetComponent<Transform>().position = vec3(0, 0, -35);
 
         Engine.Init();
         Engine.Loop();

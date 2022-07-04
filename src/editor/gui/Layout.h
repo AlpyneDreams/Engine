@@ -3,8 +3,11 @@
 #include "common/Common.h"
 #include "engine/System.h"
 #include "editor/Editor.h"
+#include "entity/components/Transform.h"
 #include "math/Math.h"
 #include "console/ConVar.h"
+#include "input/Input.h"
+#include "platform/Cursor.h"
 
 #include "imgui/Common.h"
 #include <imgui.h>
@@ -54,6 +57,24 @@ namespace engine::editor
             }
 
             ImGui::DockSpaceOverViewport(NULL, ImGuiDockNodeFlags_PassthruCentralNode);
+
+            if (Mouse.GetButtonDown(Mouse::Right) || Keyboard.GetKeyDown(Key::Z)) {
+                Cursor.SetMode(Cursor::Locked);
+                Cursor.SetVisible(false);
+            }
+
+            if (Mouse.GetButton(Mouse::Right) || Keyboard.GetKey(Key::Z))
+            {
+                Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+                vec3 euler = transform.GetEulerAngles();
+                int2 mouse = Mouse.GetMotion() / int2(2);
+                transform.SetEulerAngles(vec3(euler.x + mouse.y, euler.y + mouse.x, euler.z));
+            }
+
+            else if (Mouse.GetButtonUp(Mouse::Right) || Keyboard.GetKeyUp(Key::Z)) {
+                Cursor.SetMode(Cursor::Normal);
+                Cursor.SetVisible(true);
+            }
         }
 
         void CoordinateSpacePicker()
