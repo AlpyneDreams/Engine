@@ -42,11 +42,10 @@ namespace engine::editor
                     ImGui::EndMenu();
                 }
 
-                CoordinateSpacePicker();
-
                 if (ImGui::BeginMenu("Window"))
                 {
                     ImGui::MenuItem("Console", "", &Editor.console->open);
+                    ImGui::MenuItem("Scene", "", &Editor.sceneView->open);
                     ImGui::MenuItem("Outline", "", &Editor.outline->open);
                     ImGui::MenuItem("Inspector", "", &Editor.inspector->open);
                     ImGui::MenuItem("GUI Demo", "", &gui_demo.value);
@@ -56,7 +55,8 @@ namespace engine::editor
                 ImGui::EndMainMenuBar();
             }
 
-            ImGui::DockSpaceOverViewport(NULL, ImGuiDockNodeFlags_PassthruCentralNode);
+            // ImGuiDockNodeFlags_PassthruCentralNode
+            ImGui::DockSpaceOverViewport(NULL);
 
             if (Mouse.GetButtonDown(Mouse::Right) || Keyboard.GetKeyDown(Key::Z)) {
                 Cursor.SetMode(Cursor::Locked);

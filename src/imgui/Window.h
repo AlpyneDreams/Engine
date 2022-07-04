@@ -2,6 +2,7 @@
 
 #include "common/Common.h"
 #include "engine/System.h"
+#include "math/Math.h"
 #include "Common.h"
 #include <imgui.h>
 
@@ -25,6 +26,7 @@ namespace engine::GUI
                 return;
             
             ImGui::SetNextWindowSize(ImVec2(float(width), float(height)), ImGuiCond_FirstUseEver);
+            PreDraw();
             if (!ImGui::Begin(name, &open, flags))
             {
                 return ImGui::End();
@@ -32,7 +34,20 @@ namespace engine::GUI
 
             Draw();
             ImGui::End();
+            PostDraw();
         }
+        
+        // Subclasses will override this
+        virtual void PreDraw() {}
         virtual void Draw() {}
+        virtual void PostDraw() {}
+
+        // Get size in pixels
+        vec2 GetSize()
+        {
+            auto size = ImGui::GetWindowSize();
+            return vec2(size.x, size.y);
+        }
+
     };
 }
