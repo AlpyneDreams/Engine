@@ -42,6 +42,43 @@ namespace engine::render
         }
     };
 
+    struct RenderTargetBGFX final : public RenderTarget
+    {
+        bgfx::FrameBufferHandle fb;
+        uint width, height;
+        bgfx::TextureFormat::Enum format;
+        bgfx::TextureFormat::Enum depthFormat;
+
+        RenderTargetBGFX(uint width, uint height) : width(width), height(height)
+        {
+            format = bgfx::TextureFormat::RGBA32F;
+            depthFormat = bgfx::TextureFormat::D32F;
+            fb = bgfx::createFrameBuffer(width, height, format, depthFormat);
+        }
+
+        void* GetTexture() const {
+            return (void*)uintptr_t(bgfx::getTexture(fb).idx);
+        }
+
+        uint2 GetSize() const {
+            return uint2(width, height);
+        }
+
+        void Resize(uint w, uint h)
+        {
+            if (w == width && h == height)
+                return;
+
+            bgfx::destroy(fb);
+            width = w; height = h;
+            fb = bgfx::createFrameBuffer(w, h, format, depthFormat);
+        }
+
+        ~RenderTargetBGFX() {
+            bgfx::destroy(fb);
+        }
+    };
+
     struct HandleBGFX final : public Handle
     {
         union {
@@ -210,6 +247,11 @@ namespace engine::render
 
     // Resource Creation and Loading //
 
+        RenderTarget* CreateRenderTarget(uint width, uint height)
+        {
+            return new RenderTargetBGFX(width, height);
+        }
+
         Shader* LoadShader(const char* vertexShader, const char* pixelShader)
         {
             bgfx::ShaderHandle vert = LoadShaderModule(vertexShader);
@@ -224,6 +266,15 @@ namespace engine::render
         }
 
     // Per-Camera State //
+
+        void SetRenderTarget(RenderTarget* rt)
+        {
+            if (!rt) {
+                bgfx::setViewFrameBuffer(0, BGFX_INVALID_HANDLE);
+            } else {
+                bgfx::setViewFrameBuffer(0, static_cast<RenderTargetBGFX*>(rt)->fb);   
+            }
+        }
 
         void SetViewTransform(mat4x4& view, mat4x4& proj)
         {

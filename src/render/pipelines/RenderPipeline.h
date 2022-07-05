@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../Render.h"
-#include "engine/System.h"
+#include "render/Render.h"
+#include "render/RenderContext.h"
 
 namespace engine::render
 {
-    class RenderPipeline : public System
+    class RenderPipeline
     {
     protected:
         Render& r;
@@ -13,7 +13,7 @@ namespace engine::render
         RenderPipeline(Render& render) : r(render) {}
 
         virtual ~RenderPipeline() {}
-        virtual void Start() override = 0;
-        virtual void Update() override = 0;
+        virtual void Init() = 0;
+        virtual void Render(RenderContext& ctx) = 0;
     };
 }

@@ -4,6 +4,7 @@
 #include "render/Render.h"
 #include "render/pipelines/RenderPipeline.h"
 #include "render/pipelines/Forward.h"
+#include "render/RenderContext.h"
 #include "imgui/Common.h"
 
 #include "entity/Scene.h"
@@ -27,7 +28,7 @@ namespace engine
             window->Create("Engine", 1920, 1080, true);
             render->Init(window);
             window->OnAttach();
-            renderPipeline.Start();
+            renderPipeline.Init();
         }
 
         void Update()
@@ -39,11 +40,8 @@ namespace engine
             for (auto&& [ent, camera] : World.Each<Camera>())
             {
                 using namespace render;
-                Render& r = *render;
-
-                camera.SetMatrices(r);
-
-                renderPipeline.Update();
+                RenderContext ctx = RenderContext(*render, camera);
+                renderPipeline.Render(ctx);
             }
             
             

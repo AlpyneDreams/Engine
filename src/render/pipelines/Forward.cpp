@@ -5,6 +5,7 @@
 #include "platform/Platform.h"
 
 #include "engine/Time.h"
+#include "render/RenderContext.h"
 
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
@@ -48,7 +49,7 @@ namespace engine::render
     };
     
 
-    void Forward::Start()
+    void Forward::Init()
     {
         r.SetClearColor(true, Color(0.2, 0.2, 0.2));
         r.SetClearDepth(true, 1.0f);
@@ -66,13 +67,15 @@ namespace engine::render
         }
     }
 
-    void Forward::Update()
+    void Forward::Render(RenderContext& ctx)
     {
         // Set shader
         r.SetShader(shader);
         
-        // Set view and proj matrices
-        // ...
+        // Set viewport and matrices
+        ctx.SetupCamera();
+
+        ctx.DrawRenderers();
 
         float time = Time.fixed.time;
 

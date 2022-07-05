@@ -117,11 +117,11 @@ namespace engine
         }
 
 
-        std::pair<int, int> GetSize()
+        uint2 GetSize()
         {
             int width, height;
             SDL_GetWindowSize(window, &width, &height);
-            return {width, height};
+            return uint2(width, height);
         }
 
         const char* GetTitle()

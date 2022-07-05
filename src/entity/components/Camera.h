@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "entity/Behavior.h"
 
+#include "platform/Window.h"
 #include "render/Render.h"
 
 namespace engine
@@ -19,10 +20,16 @@ namespace engine
         float near = 0.1f;
         float far  = 1000.f;
 
+        // If not null then camera only renders to this texture
+        render::RenderTarget* renderTarget = nullptr;
+
     public:
         // World to camera matrix
         mat4x4 ViewMatrix()
         {
+            if (overrideViewMatrix)
+                return view;
+            
             // TODO: Cache this
             Transform& transform = GetOrAddComponent<Transform>();
             vec3 a = glm::radians(transform.GetEulerAngles());
@@ -31,12 +38,51 @@ namespace engine
             return view;
         }
 
+        // Set custom world to camera matrix
+        void SetViewMatrix(mat4x4& m)
+        {
+            overrideViewMatrix = true;
+            view = m;
+        }
+
+        void ResetViewMatrix() {
+            overrideViewMatrix = false;
+        }
+
     public:
+        float AspectRatio()
+        {
+            vec2 size;
+            if (renderTarget) {
+                size = renderTarget->GetSize();
+            } else {
+                size = Window::main->GetSize();
+            }
+
+            return size.x / size.y;
+        }
+
         // Projection matrix
         mat4x4 ProjMatrix()
         {
-            // TODO: Cache this
-            return glm::perspectiveLH_ZO(glm::radians(fieldOfView), aspectRatio, near, far);
+            if (overrideProjMatrix)
+                return proj;
+
+            // TOOD: Cache this
+            aspectRatio = AspectRatio();
+            proj = glm::perspectiveLH_ZO(glm::radians(fieldOfView), aspectRatio, near, far);
+            return proj;
+        }
+
+        // Set custom projection matrix
+        void SetProjMatrix(mat4x4& m)
+        {
+            overrideProjMatrix = true;
+            view = m;
+        }
+
+        void ResetProjMatrix() {
+            overrideProjMatrix = false;
         }
 
     public:
@@ -46,5 +92,16 @@ namespace engine
             auto proj = ProjMatrix();
             r.SetViewTransform(view, proj);
         }
+
+    private:
+        // World to camera matrix
+        mat4x4 view;
+
+        // Projection matrix
+        mat4x4 proj;
+
+        bool overrideViewMatrix = false;
+        bool overrideProjMatrix = false;
+
     };
 }
