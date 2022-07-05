@@ -3,13 +3,13 @@
 #include "editor/Editor.h"
 #include "entity/Common.h"
 #include "entity/components/Transform.h"
-#include "imgui.h"
-#include "imgui/Window.h"
 #include "editor/Selection.h"
 #include "entity/Scene.h"
 #include "entity/Entity.h"
 #include "entity/components/Camera.h"
 #include "engine/Engine.h"
+#include "input/Input.h"
+#include "platform/Cursor.h"
 
 #include "imgui/IconsMaterialCommunity.h"
 
@@ -43,13 +43,37 @@ namespace engine::editor
                 return;
             }
 
-            // Copy from scene view render target into viewport
             ImVec2 pos = ImGui::GetCursorScreenPos();
-            auto [width, height] = GetSize();
+            ImVec2 size = ImGui::GetContentRegionAvail();
+            ImVec2 max = ImVec2(pos.x + size.x, pos.y + size.y);
+
+            if (ImGui::IsMouseHoveringRect(pos, max))
+            {                
+                // TODO: Make Z toggle instead of hold
+                if (Mouse.GetButtonDown(Mouse::Right) || Keyboard.GetKeyDown(Key::Z))
+                {
+                    Cursor.SetMode(Cursor::Locked);
+                    Cursor.SetVisible(false);
+                }
+
+                if (Mouse.GetButton(Mouse::Right) || Keyboard.GetKey(Key::Z))
+                {
+                    Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+                    vec3 euler = transform.GetEulerAngles();
+                    int2 mouse = Mouse.GetMotion() / int2(2);
+                    transform.SetEulerAngles(vec3(euler.x + mouse.y, euler.y + mouse.x, euler.z));
+                }
+                else if (Mouse.GetButtonUp(Mouse::Right) || Keyboard.GetKeyUp(Key::Z))
+                {
+                    Cursor.SetMode(Cursor::Normal);
+                    Cursor.SetVisible(true);
+                }
+            }
+
+            // Copy from scene view render target into viewport
             ImGui::GetWindowDrawList()->AddImage(
                 Editor.rt_SceneView->GetTexture(),
-                ImVec2(pos),
-                ImVec2(pos.x + width, pos.y + height),
+                pos, max,
                 ImVec2(0, 1), ImVec2(1, 0)
             );
         }

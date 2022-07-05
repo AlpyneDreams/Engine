@@ -27,12 +27,11 @@ namespace engine::GUI
             
             ImGui::SetNextWindowSize(ImVec2(float(width), float(height)), ImGuiCond_FirstUseEver);
             PreDraw();
-            if (!ImGui::Begin(name, &open, flags))
+            if (ImGui::Begin(name, &open, flags))
             {
-                return ImGui::End();
+                Draw();
             }
 
-            Draw();
             ImGui::End();
             PostDraw();
         }
@@ -41,13 +40,5 @@ namespace engine::GUI
         virtual void PreDraw() {}
         virtual void Draw() {}
         virtual void PostDraw() {}
-
-        // Get size in pixels
-        vec2 GetSize()
-        {
-            auto size = ImGui::GetWindowSize();
-            return vec2(size.x, size.y);
-        }
-
     };
 }

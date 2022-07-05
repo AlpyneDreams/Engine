@@ -47,6 +47,7 @@ namespace engine
         Local
     };
 
+    // TODO: x,y/w,h or mins/maxs?
     struct Rect
     {
         union {
