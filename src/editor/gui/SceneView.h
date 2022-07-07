@@ -11,6 +11,9 @@
 #include "input/Input.h"
 #include "platform/Cursor.h"
 
+#include <imgui.h>
+#include <imgui_internal.h>
+
 #include "imgui/IconsMaterialCommunity.h"
 
 namespace engine::editor
@@ -21,22 +24,41 @@ namespace engine::editor
 
         Space space = Space::World;
 
-        void PreDraw() override {
+        void NoPadding() {
             // Set window padding to 0
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         }
 
-        void PostDraw() override {
+        void ResetPadding() {
             ImGui::PopStyleVar();
+        }
+
+        void PreDraw() override {
+            NoPadding();
+        }
+
+        void PostDraw() override {
+            ResetPadding();
         }
 
         void Draw() override
         {
+            ResetPadding();
+
             if (ImGui::BeginMenuBar())
             {
                 CoordinateSpacePicker();
+                ImGui::SameLine(ImGui::GetWindowWidth() - 40);
+                if (ImGui::BeginMenu(ICON_MC_VIDEO " " ICON_MC_MENU_DOWN))
+                {
+                    Camera& camera = Editor.editorCamera.GetComponent<Camera>();
+                    ImGui::TextUnformatted("Scene Camera");
+                    ImGui::InputFloat("FOV", &camera.fieldOfView);
+                    ImGui::EndMenu();
+                }
                 ImGui::EndMenuBar();
             }
+            NoPadding();
 
             // Return if window is collapsed
             if (!CheckResize()) {
@@ -48,7 +70,9 @@ namespace engine::editor
             ImVec2 max = ImVec2(pos.x + size.x, pos.y + size.y);
 
             if (ImGui::IsMouseHoveringRect(pos, max))
-            {                
+            {
+                Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+
                 // TODO: Make Z toggle instead of hold
                 if (Mouse.GetButtonDown(Mouse::Right) || Keyboard.GetKeyDown(Key::Z))
                 {
@@ -58,7 +82,7 @@ namespace engine::editor
 
                 if (Mouse.GetButton(Mouse::Right) || Keyboard.GetKey(Key::Z))
                 {
-                    Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+                    // Mouselook
                     vec3 euler = transform.GetEulerAngles();
                     int2 mouse = Mouse.GetMotion() / int2(2);
                     transform.SetEulerAngles(vec3(euler.x + mouse.y, euler.y + mouse.x, euler.z));
@@ -110,7 +134,6 @@ namespace engine::editor
             };
             int i = int(space);
             auto label = std::string(items[i]) + " " ICON_MC_MENU_DOWN;
-            PostDraw(); // revert 0 padding
             if (ImGui::BeginMenu(label.c_str())) {
                 for (int j = 0; j < std::size(items); j++) {
                     if (ImGui::MenuItem(items[j])) {
@@ -119,7 +142,6 @@ namespace engine::editor
                 }
                 ImGui::EndMenu();
             }
-            PreDraw(); // reset padding to 0
         }
 
     };
