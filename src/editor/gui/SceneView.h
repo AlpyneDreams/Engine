@@ -74,7 +74,7 @@ namespace engine::editor
             ImGui::GetWindowDrawList()->AddImage(
                 Editor.rt_SceneView->GetTexture(),
                 pos, max,
-                ImVec2(0, 1), ImVec2(1, 0)
+                ImVec2(0, 0), ImVec2(1, 1)
             );
         }
 
