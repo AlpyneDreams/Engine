@@ -9,6 +9,7 @@
 #include "entity/components/Camera.h"
 #include "engine/Engine.h"
 #include "input/Input.h"
+#include "input/Keyboard.h"
 #include "platform/Cursor.h"
 
 #include <imgui.h>
@@ -23,6 +24,7 @@ namespace engine::editor
         SceneView() : GUI::Window("Scene", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
 
         Space space = Space::World;
+        float cameraSpeed = 0.1f;
 
         void NoPadding() {
             // Set window padding to 0
@@ -54,6 +56,7 @@ namespace engine::editor
                     Camera& camera = Editor.editorCamera.GetComponent<Camera>();
                     ImGui::TextUnformatted("Scene Camera");
                     ImGui::InputFloat("FOV", &camera.fieldOfView);
+                    ImGui::InputFloat("Speed", &cameraSpeed);
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
@@ -92,6 +95,15 @@ namespace engine::editor
                     Cursor.SetMode(Cursor::Normal);
                     Cursor.SetVisible(true);
                 }
+
+                // WASD. TODO: Virtual axes, arrow keys
+                float w = Keyboard.GetKey(Key::W) ? 1.f : 0.f;
+                float s = Keyboard.GetKey(Key::S) ? 1.f : 0.f;
+                float a = Keyboard.GetKey(Key::A) ? 1.f : 0.f;
+                float d = Keyboard.GetKey(Key::D) ? 1.f : 0.f;
+
+                transform.position += transform.Forward() * (w-s) * cameraSpeed;
+                transform.position += transform.Right() * (d-a) * cameraSpeed;
             }
 
             // Copy from scene view render target into viewport
