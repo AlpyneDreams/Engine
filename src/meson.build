@@ -1,8 +1,9 @@
 fs = import('fs')
 python = import('python').find_installation('python3')
 
+main = 'main/Main.cpp'
+
 engine_src = [
-    'main/Main.cpp',
     'platform/sdl/WindowSDL.cpp',
     'platform/sdl/CursorSDL.cpp',
     'render/bgfx/RenderBGFX.cpp',
@@ -28,16 +29,22 @@ foreach file : engine_src + editor_src
         input: ['../tools/rtti.py', file],
         command: [python, '@INPUT@', '@OUTPUT@']
     )
-    editor_meta += [target]
+    if editor_src.contains(file)
+        editor_meta += [target]
+    endif
     if engine_src.contains(file)
         engine_meta += [target]
     endif
 endforeach
 
+# Deps which can be only built in engine_lib
 engine_deps = [
-    fmt_dep,
     sdl_dep,
     bgfx_dep,
+]
+
+shared_deps = [
+    fmt_dep,
     #vulkan_dep,
     #vookoo_dep,
     glm_dep,
@@ -46,17 +53,21 @@ engine_deps = [
     entt_dep
 ]
 
-# TODO: Shared static libs between engine and editor
-
-engine = executable('engine', files(engine_src), engine_meta,
-    dependencies    : engine_deps,
-    install         : true,
-    install_dir     : join_paths(meson.project_source_root(), 'runtime'),
-    win_subsystem   : 'console',
+engine_lib = static_library('engine', files(engine_src), engine_meta,
+    dependencies    : engine_deps + shared_deps,
 )
 
-editor = executable('editor', files(engine_src), files(editor_src), editor_meta,
-    dependencies    : engine_deps,
+engine = executable('engine', main,
+    dependencies  : shared_deps,
+    link_with     : [engine_lib],
+    install       : true,
+    install_dir   : join_paths(meson.project_source_root(), 'runtime'),
+    win_subsystem : 'console',
+)
+
+editor = executable('editor', files(editor_src), main, editor_meta,
+    dependencies    : shared_deps,
+    link_with       : [engine_lib],
     install         : true,
     install_dir     : join_paths(meson.project_source_root(), 'runtime'),
     win_subsystem   : 'console',
