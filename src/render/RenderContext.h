@@ -26,8 +26,10 @@ namespace engine::render
 
         void DrawRenderers()
         {
-            for (auto&& [ent, renderer] : World.Each<MeshRenderer>())
+            for (auto&& [ent, transform, renderer] : World.Each<Transform, MeshRenderer>())
             {
+                mat4x4 model = transform.GetTransformMatrix();
+                r.SetTransform(model);
                 r.DrawMesh(renderer.mesh);
             }
         }

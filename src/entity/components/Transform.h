@@ -26,6 +26,14 @@ namespace engine
             return rotation * Vectors.Right;
         }
 
+        mat4x4 GetTransformMatrix() const
+        {
+            mat4x4 trs = glm::translate(glm::mat4x4(1), position);
+            trs *= glm::mat4x4(rotation);
+            trs = glm::scale(trs, scale);
+            return trs;
+        }
+        
         void SetEulerAngles(vec3 degrees)
         {
             rotation = quat(glm::radians(degrees));
