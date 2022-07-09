@@ -42,6 +42,7 @@ engine_deps = [
     #vookoo_dep,
     glm_dep,
     imgui_dep,
+    imguizmo_dep,
     entt_dep
 ]
 

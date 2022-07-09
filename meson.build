@@ -11,8 +11,8 @@ vulkan_dep = dependency('vulkan')
 vookoo_dep = declare_dependency(include_directories: 'submodules/vookoo/include')
 glm_dep    = dependency('glm', static: true)
 imgui_dep  = dependency('imgui', static: true)
-
-entt_dep   = dependency('entt', required: not windows)
+imguizmo_dep  = dependency('imguizmo')
+entt_dep      = dependency('entt', required: not windows)
 
 # On Windows, we have to use CMake. required: false stops meson
 # from trying to find a meson.build file in the wrapped project.

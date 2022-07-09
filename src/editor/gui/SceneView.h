@@ -14,6 +14,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <imguizmo/ImGuizmo.h>
 
 #include "imgui/IconsMaterialCommunity.h"
 
@@ -23,7 +24,13 @@ namespace engine::editor
     {
         SceneView() : GUI::Window("Scene", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
 
+        enum class Tool {
+            Translate, Rotate, Scale, Universal
+        };
+
+        Tool activeTool = Tool::Translate;
         Space space = Space::World;
+        Rect viewport;
         float cameraSpeed = 0.1f;
 
         void NoPadding() {
@@ -39,8 +46,62 @@ namespace engine::editor
             NoPadding();
         }
 
-        void PostDraw() override {
+        static ImGuizmo::OPERATION GetOperation(Tool tool)
+        {
+            using enum ImGuizmo::OPERATION;
+            switch (tool) {
+                default:
+                case Tool::Translate: return TRANSLATE;
+                case Tool::Rotate:    return ROTATE;
+                case Tool::Scale:     return SCALE;
+                case Tool::Universal: return UNIVERSAL;
+            }
+        }
+
+        void PostDraw() override
+        {
             ResetPadding();
+            
+            // HACK: Set hovered window to NULL,
+            // this fixes mouse over with ImGui docking
+            ImGuiContext& g = *ImGui::GetCurrentContext();
+            ImGuiWindow* hovered = g.HoveredWindow;
+            g.HoveredWindow = NULL;
+
+            ImGuizmo::BeginFrame();
+            ImGuizmo::SetRect(viewport.x, viewport.y, viewport.w, viewport.h);
+
+            Camera& camera = Editor.editorCamera.GetComponent<Camera>();
+            //Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+
+            // Get camera matrices
+            mat4x4 view = camera.ViewMatrix();
+            mat4x4 proj = camera.ProjMatrix();
+        
+            
+            Entity active = Selection.Active();
+            if (active && active.HasComponent<Transform>())
+            {
+                Transform& transform = active.GetComponent<Transform>();
+                float mtx[16];
+                vec3 angles = transform.GetEulerAngles();
+                ImGuizmo::RecomposeMatrixFromComponents(&transform.position[0], &angles[0], &transform.scale[0], mtx);
+
+                ImGuizmo::MODE mode = space == Space::World ? ImGuizmo::MODE::WORLD : ImGuizmo::MODE::LOCAL;
+                ImGuizmo::Manipulate(&view[0][0], &proj[0][0], GetOperation(activeTool), mode, &mtx[0]);
+                
+                ImGuizmo::DecomposeMatrixToComponents(mtx, &transform.position[0], &angles[0], &transform.scale[0]);
+                transform.SetEulerAngles(angles);
+            }
+
+            //static mat4x4 grid = glm::identity<mat4x4>();
+            //static mat4x4 cube = glm::identity<mat4x4>();
+            //ImGuizmo::DrawGrid(&view[0][0], &proj[0][0], &grid[0][0], 100);
+            //ImGuizmo::DrawCubes(&view[0][0], &proj[0][0], &cube[0][0], 1);
+            //ImGuizmo::ViewManipulate(&view[0][0], 35.f, ImVec2(viewport.x, viewport.y), ImVec2(128, 128), 0x000000ff);
+
+            // HACK: Reset hovered window
+            g.HoveredWindow = hovered;
         }
 
         void Draw() override
@@ -50,6 +111,7 @@ namespace engine::editor
             if (ImGui::BeginMenuBar())
             {
                 CoordinateSpacePicker();
+
                 ImGui::SameLine(ImGui::GetWindowWidth() - 40);
                 if (ImGui::BeginMenu(ICON_MC_VIDEO " " ICON_MC_MENU_DOWN))
                 {
@@ -112,6 +174,10 @@ namespace engine::editor
                 pos, max,
                 ImVec2(0, 0), ImVec2(1, 1)
             );
+
+            viewport = Rect(pos.x, pos.y, size.x, size.y);
+
+            Toolbar();
         }
 
         // Returns true if window is not collapsed
@@ -154,6 +220,33 @@ namespace engine::editor
                 }
                 ImGui::EndMenu();
             }
+        }
+
+        void Toolbar()
+        {
+            ImGui::Spacing();
+
+            ImGui::Indent(5.f);
+            ToolbarButton(ICON_MC_ARROW_ALL, Tool::Translate);
+            ToolbarButton(ICON_MC_AUTORENEW, Tool::Rotate);
+            ToolbarButton(ICON_MC_RESIZE, Tool::Scale);
+            ToolbarButton(ICON_MC_ALPHA_U_BOX_OUTLINE, Tool::Universal);
+            ImGui::Unindent(5.f);
+
+        }
+
+        void ToolbarButton(const char* label, Tool tool)
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, 0.f));
+            ImGuiCol col = activeTool == tool ? ImGuiCol_TabActive : ImGuiCol_WindowBg;
+            ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(col));
+            
+            if (ImGui::Button(label)) {
+                activeTool = tool;
+            }
+
+            ImGui::PopStyleColor();
+            ImGui::PopStyleVar();
         }
 
     };
