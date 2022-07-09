@@ -9,7 +9,22 @@ namespace engine
     {
         vec3 position;
         quat rotation;
-        vec3 scale;
+        vec3 scale = vec3(1, 1, 1);
+        
+        // Normalized forward (+Z) direction vector
+        vec3 Forward() const {
+            return rotation * Vectors.Forward;
+        }
+
+        // Normalized up (+Y) direction vector
+        vec3 Up() const {
+            return rotation * Vectors.Up;
+        }
+        
+        // Normalized right (+X) direction vector
+        vec3 Right() const {
+            return rotation * Vectors.Right;
+        }
 
         void SetEulerAngles(vec3 degrees)
         {

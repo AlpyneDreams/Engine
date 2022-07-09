@@ -47,7 +47,26 @@ namespace engine
         Local
     };
 
-    // TODO: x,y/w,h or mins/maxs?
+    // Defines coordinate space vectors for a
+    // left-handed (+Z forward), Y-up system
+    inline struct Vectors
+    {
+        static constexpr vec3 One  = vec3(1, 1, 1);
+        static constexpr vec3 Zero = vec3(0, 0, 0);
+
+        // +Z forward, -Z backward
+        static constexpr vec3 Forward = vec3(0, 0, +1);
+        static constexpr vec3 Back    = vec3(0, 0, -1);
+
+        // +Y up, -Y down
+        static constexpr vec3 Up   = vec3(0, +1, 0);
+        static constexpr vec3 Down = vec3(0, -1, 0);
+
+        // +X right, -X left
+        static constexpr vec3 Right = vec3(+1, 0, 0);
+        static constexpr vec3 Left  = vec3(-1, 0, 0);
+    } Vectors;
+
     struct Rect
     {
         union {
