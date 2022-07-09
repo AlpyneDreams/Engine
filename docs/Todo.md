@@ -51,6 +51,8 @@ Renderer
 - Inheritance and downcasting feels icky
   - Template polymorphism or just per-build implementations
 - Surface interface as base for Window and RenderTarget
+- Choose default camera scale FOV base aspect ratio
+  - Currently using 16:9. Source uses 4:3. Does Unity use something?
  
 - Further troubleshoot mouse input lag for imgui (current solution: set bgfx maxFrameLatency = 1)
     - See issues: ocornut/imgui#1805, ocornut/imgui#2938, bkaradzic/bgfx#2015
