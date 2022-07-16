@@ -2,6 +2,9 @@
 
 #include "common/Common.h"
 #include "common/Reflection.h"
+#include "entity/Common.h"
+#include "imgui.h"
+#include "imgui/IconsMaterialCommunity.h"
 #include "imgui/Window.h"
 #include "editor/Selection.h"
 #include "entity/Entity.h"
@@ -21,13 +24,50 @@ namespace engine::editor
 {
     struct Inspector : public GUI::Window
     {
-        Inspector() : GUI::Window("Inspector", 512, 512, true) {}
+        Inspector() : GUI::Window("Inspector", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
+
+        bool debug = false;
+        bool locked = false;
+
+        Entity target = EntityNull;
 
         void Draw() override
         {
-            Entity ent = Selection.Active();
-            if (!ent)
+            if (ImGui::BeginMenuBar())
+            {
+                if (debug)
+                    ImGui::TextUnformatted("Debug");
+                
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 60);
+
+                // Draw lock toggle button
+                ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_MenuBarBg));
+                if (ImGui::Button(locked ? ICON_MC_LOCK : ICON_MC_LOCK_OPEN_OUTLINE)) {
+                    locked = !locked;
+                }
+                ImGui::PopStyleColor();
+                
+                // Draw options menu
+                ImGui::SameLine();
+                if (ImGui::BeginMenu(ICON_MC_DOTS_VERTICAL))
+                {
+                    ImGui::MenuItem("Debug", "", &debug);
+                    ImGui::MenuItem("Lock", "", &locked);
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndMenuBar();
+            }
+
+            // If not locked, inspect current selection
+            if (!locked)
+                target = Selection.Active();
+
+            Entity ent = target;
+            if (!ent) {
+                locked = false;
                 return;
+            }
 
             // Get entity name, if any
             const char* name = ent.GetName();
@@ -53,7 +93,7 @@ namespace engine::editor
                 }
 
                 // Internal component. Handled above.
-                if (cls->type.hash() == TypeHash<Name>) {
+                if (cls->type.hash() == TypeHash<Name> && !debug) {
                     continue;
                 }
 
@@ -95,6 +135,12 @@ namespace engine::editor
 
             if (!expanded)
                 return true;
+
+            // In debug mode, draw all components' raw values
+            if (debug) {
+                DrawComponent(component, ent, obj);
+                return true;
+            }
 
             // TODO: Custom inspector registration system
             switch (component.type.hash())
