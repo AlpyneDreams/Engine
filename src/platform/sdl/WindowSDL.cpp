@@ -5,6 +5,7 @@
 
 #include "common/Common.h"
 #include "input/Input.h"
+#include "platform/Cursor.h"
 #include "platform/Platform.h"
 #include "platform/Window.h"
 
@@ -74,9 +75,10 @@ namespace engine
         void PreUpdate()
         {
             SDL_Event e;
-            while (SDL_PollEvent(&e)) {
-                ImGui_ImplSDL2_ProcessEvent(&e);
-                switch(e.type) {
+            while (SDL_PollEvent(&e))
+            {
+                switch(e.type)
+                {
                     case SDL_KEYDOWN:
                     case SDL_KEYUP:
                         Keyboard.SetKey(Key(e.key.keysym.sym), e.key.state == SDL_PRESSED);
@@ -86,14 +88,22 @@ namespace engine
                         Mouse.SetButton(GetMouseButton(e.button.button), e.button.state == SDL_PRESSED);
                         break;
                     case SDL_MOUSEMOTION:
+                    {
                         Mouse.SetMotion(int2(e.motion.xrel, e.motion.yrel));
+
+                        // Don't send mouse event to ImGui if cursor is locked
+                        if (Cursor.GetMode() == Cursor.Locked)
+                            continue;
+                        
                         break;
-                    
+                    }
+
                     case SDL_QUIT:
                         shouldClose = true;
                         break;
 
-                    case SDL_WINDOWEVENT: {
+                    case SDL_WINDOWEVENT:
+                    {
                         const SDL_WindowEvent& wev = e.window;
                         switch (wev.event) {
                             case SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -108,8 +118,8 @@ namespace engine
                         }
                         break;
                     }
-
                 }
+                ImGui_ImplSDL2_ProcessEvent(&e);
             }
 
             ImGui_ImplSDL2_NewFrame();
