@@ -8,7 +8,6 @@ namespace engine::render
     class ForwardRenderPipeline final : public RenderPipeline
     {
         Shader* shader;
-        Mesh cube;
 
     public:
         using RenderPipeline::RenderPipeline;
