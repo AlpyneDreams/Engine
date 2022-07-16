@@ -1,9 +1,12 @@
 #pragma once
 
+#include "common/Common.h"
+
 #include <typeinfo>
 #include <typeindex>
 #include <string>
 #include <vector>
+#include <map>
 #include <unordered_map>
 #include <cstddef>
 
@@ -29,11 +32,35 @@ namespace engine::refl
     template <typename T>
     constexpr Hash TypeHash = entt::type_hash<T>::value();
 
+    template <typename T>
+    struct Registry
+    {
+        static inline T& Register(T&& c) {
+            registry.insert({ c.type.hash(), c });
+            return c;
+        }
+
+        template <typename U>
+        static inline T* Get() {
+            return Get(TypeHash<U>);
+        }
+
+        static inline T* Get(Hash hash) {
+            return registry.contains(hash) ? &registry.at(hash) : nullptr;
+        }
+
+        static inline T* Get(Type type) {
+            return Get(type.hash());
+        }
+
+        static inline std::unordered_map<Hash, T> registry;
+    };
+
     struct Field
     {
         const char* name;
         const char* displayName;
-        Type type;
+        Type type = TypeID<nullptr_t>();
         size_t offset;
 
         template <typename T>
@@ -47,28 +74,37 @@ namespace engine::refl
         }
     };
 
-    struct Class
+    struct Class : Registry<Class>
     {
         const char* name;
         const char* displayName;
         Type type = TypeID<nullptr_t>();
         size_t size;
         std::vector<Field> fields;
+    };
 
-        static inline Class& Register(Class&& c) {
-            classes.insert({ c.type.hash(), c });
-            return c;
+    struct Enum : Registry<Enum>
+    {
+        const char* name;
+        const char* displayName;
+        Type type = TypeID<nullptr_t>();
+        size_t size;
+        bool scoped = true;
+        std::map<std::string, uint64> values;
+        std::map<uint64, std::string> names;
+
+        template <typename T>
+        static std::string Name(auto value) {
+            return Enum::Get<T>()->GetName(value);
         }
 
-        static inline Class* Get(Hash hash) {
-            return classes.contains(hash) ? &classes.at(hash) : nullptr;
+        std::string GetName(auto value) const {
+            return names.at(value);
         }
 
-        static inline Class* Get(Type type) {
-            return Get(type.hash());
+        auto GetValue(std::string& name) const {
+            return values.at(name);
         }
-
-        static inline std::unordered_map<Hash, Class> classes;
     };
 };
 
@@ -78,5 +114,8 @@ namespace engine::rtti
     using namespace engine::refl;
 
     template <class T>
-    Class RTTI;
+    Class ClassDef;
+
+    template <class T>
+    Enum EnumDef;
 };

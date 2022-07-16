@@ -59,24 +59,6 @@ namespace engine::editor
             ImGui::DockSpaceOverViewport(NULL);
         }
 
-        void CoordinateSpacePicker()
-        {
-            const char* items[] = {
-                ICON_MC_WEB " World",
-                ICON_MC_CUBE_OUTLINE " Local"
-            };
-            int i = int(space);
-            auto label = std::string(items[i]) + " " ICON_MC_MENU_DOWN;
-            if (ImGui::BeginMenu(label.c_str())) {
-                for (int j = 0; j < std::size(items); j++) {
-                    if (ImGui::MenuItem(items[j])) {
-                        space = Space(j);
-                    }
-                }
-                ImGui::EndMenu();
-            }
-        }
-
         static void AddObjectMenu()
         {
             if (ImGui::MenuItem(ICON_MC_AXIS_ARROW " Entity")) {

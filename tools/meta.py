@@ -11,6 +11,7 @@ ARGS = [
     '-xc++', # allows inspecting headers
     '-std=c++20'
 ]
+INCLUDED_NAMESPACES = ['engine']
 
 # https://ansi.gabebanks.net/
 class Colors:
@@ -23,6 +24,7 @@ dummy = sys.argv[2] if len(sys.argv) > 2 else infile + '.meta.cpp'
 outfile = sys.argv[2] if len(sys.argv) > 2 else infile + '.meta.json'
 
 out_classes = {}
+out_enums = {}
 
 # Converts a property name to a fancy human-friendly name
 @cache
@@ -69,14 +71,83 @@ def is_reflectable(clazz):
 # Traverse the AST and find all reflected classes
 def traverse(nodes: list[Cursor], parent=None, ident=0):
     includes = []
+    # TODO: better namespace handling
+    ns_prefix = parent.spelling + '::' if parent is not None and parent.spelling not in INCLUDED_NAMESPACES else '' 
 
-    def write_class(node, prefix=''):
-        includes = []
+    def write_enum(node: Cursor, prefix=ns_prefix):
+        nonlocal includes, parent
+
+        if not node.is_definition():
+            return
+        print('Reflecting enum:', node.spelling)
+
+        # Get all enum values
+        values = {}
+        for n in node.get_children():
+            match n.kind:
+                case CursorKind.ENUM_CONSTANT_DECL:
+                    values[n.displayname] = n.enum_value
+                case default:
+                    # TODO: other stuff
+                    #print(n.spelling, n.kind)
+                    pass
+        
+        # Source file location of enum
+        file = f'{os.path.relpath(node.location.file.name, SRC_DIR)}'
+        location = f'{file}:{node.location.line}'
+
+        includes += [os.path.normpath(file)]
+
+        # Skip anonymous classes
+        if node.is_anonymous():
+            print('Skipping anonymous enum:', location)
+            return
+        
+        # Begin enum RTTI definition
+        name = f'{prefix}{node.displayname}'
+        out_enums[name] = {
+            'name': node.displayname,
+            'displayName': display_name(node.displayname),
+            'location': location,
+            'type': f'TypeID<{node.enum_type.spelling}>()',
+            'size': f'sizeof({name})',
+            'scoped': 'true' if node.is_scoped_enum else 'false',
+            'values': values
+        }
+
+    def write_class_children(node, prefix=ns_prefix):
+        classes = []
+        enums = []
+        for n in node.get_children():
+            match n.kind:
+                case CursorKind.CLASS_DECL | CursorKind.STRUCT_DECL:
+                    classes += [n]
+                case CursorKind.ENUM_DECL:
+                    enums += [n]
+                case default:
+                    pass
+        
+        # Write nested classes and enums
+        for c in classes:
+            write_class(c, prefix + node.displayname + '::')
+        for e in enums:
+            write_enum(e, prefix + node.displayname + '::')
+
+
+    def write_class(node, prefix=ns_prefix):
+        write_class_children(node, prefix)
+
+        if not node.is_definition() or not is_reflectable(node):
+            return
+        print('Reflecting class:', node.spelling)
+        
+        nonlocal includes
         keyword = 'struct' if node.kind == CursorKind.STRUCT_DECL else 'class'
 
         # Get all fields, methods, etc.
         fields = []
         classes = []
+        enums = []
         for n in node.get_children():
             match n.kind:
                 case CursorKind.CXX_BASE_SPECIFIER:
@@ -87,6 +158,8 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
                     pass # TODO: class methods
                 case CursorKind.CLASS_DECL | CursorKind.STRUCT_DECL:
                     classes += [n]
+                case CursorKind.ENUM_DECL:
+                    enums += [n]
                 case default:
                     # TODO: other stuff
                     #print(n.spelling, n.kind)
@@ -128,30 +201,23 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
         out_classes[name]['fields'] += [
             field(n) for n in fields if n.access_specifier == AccessSpecifier.PUBLIC
         ]
+
+        write_class_children(n, prefix)
         
-        # Write nested classes too
-        for c in classes:
-            includes += write_class(c, node.displayname + '::')
-        
-        return includes
-    
     for n in nodes:
         name = n.displayname
         match n.kind:
             case CursorKind.NAMESPACE:
-                # TODO: namespace handling
-                #write(f'namespace {n.spelling}::_rtti {{')
                 includes += traverse(n.get_children(), parent=n, ident=ident)
-                #write('}')
             
             case CursorKind.CLASS_DECL | CursorKind.STRUCT_DECL:
-                
-                if n.is_definition() and is_reflectable(n):
-                    print('Reflecting class:', n.spelling)
-                    #tokens = n.get_tokens()
-                    #print([t.spelling for t in tokens])
-                    includes += write_class(n)
+                #tokens = n.get_tokens()
+                #print([t.spelling for t in tokens])
+                write_class(n)
             
+            case CursorKind.ENUM_DECL:
+                write_enum(n)
+
             case default:
                 # TODO: other stuff
                 #print(name, n.kind)
@@ -187,6 +253,7 @@ def main():
     out = {}
     out['includes'] = list(includes)
     out['classes'] = out_classes
+    out['enums'] = out_enums
 
     output = open(outfile, 'w')
     output.write(json.dumps(out, indent=4))

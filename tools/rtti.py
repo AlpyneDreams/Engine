@@ -7,6 +7,7 @@ start_time = time.time()
 
 includes = set()
 classes = {}
+enums = {}
 
 for filename in infiles:
     filename = os.path.splitext(filename)[0] + '.json'
@@ -15,6 +16,7 @@ for filename in infiles:
     with open(filename) as file:
         meta = json.load(file)
         classes.update(meta['classes'])
+        enums.update(meta['enums'])
         for inc in meta['includes']:
             includes.add(inc)
 
@@ -34,11 +36,11 @@ write('namespace engine::rtti')
 write('{')
 global_indent += 1
 
+# Write classes
 for spelling, data in classes.items():
-
     write(f'// {data["location"]}')
     write('template <>')
-    write(f'Class& RTTI<{spelling}> = Class::Register(Class {{')
+    write(f'Class& ClassDef<{spelling}> = Class::Register(Class {{')
 
     # Write name, size
     write(f'.name = "{data["name"]}",', indent=1)
@@ -56,6 +58,34 @@ for spelling, data in classes.items():
     
     # End class RTTI
     write('});\n')
+
+# Write enums
+for spelling, data in enums.items():
+    write(f'// {data["location"]}')
+    write('template <>')
+    write(f'Enum& EnumDef<{spelling}> = Enum::Register(Enum {{')
+
+    # Write name, size
+    write(f'.name = "{data["name"]}",', indent=1)
+    write(f'.displayName = "{data["displayName"]}",', indent=1)
+    write(f'.type = {data["type"]},', indent=1)
+    write(f'.size = {data["size"]},', indent=1)
+    write(f'.scoped = {"true" if data["scoped"] else "false"},', indent=1)
+
+    write(f'.values = {{', indent=1)
+    values = data['values']
+    for name in values:
+        write(f'{{ "{name}", uint64({spelling}::{name}) }},', indent=2)
+    write('},', indent=1)
+
+    write(f'.names = {{', indent=1)
+    for name, value in values.items():
+        write(f'{{ uint64({spelling}::{name}), "{name}" }},', indent=2)
+    write('}', indent=1)
+    
+    # End class RTTI
+    write('});\n')
+
 
 # End RTTI namespace
 global_indent -= 1
