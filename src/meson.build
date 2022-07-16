@@ -25,9 +25,9 @@ engine_meta = []
 editor_meta = []
 foreach file : engine_src + editor_src
     target = custom_target(
-        fs.name(file) + '.meta.cpp',
-        output: fs.name(file) + '.meta.cpp',
-        input: ['../tools/rtti.py', file],
+        fs.name(file) + '.meta.json',
+        output: fs.name(file) + '.meta.json',
+        input: ['../tools/meta.py', file],
         command: [python, '@INPUT@', '@OUTPUT@']
     )
     if editor_src.contains(file)
@@ -37,6 +37,13 @@ foreach file : engine_src + editor_src
         engine_meta += [target]
     endif
 endforeach
+
+editor_rtti = custom_target(
+    'rtti.cpp',
+    output: 'rtti.cpp',
+    input: ['../tools/rtti.py', engine_meta, editor_meta],
+    command: [python, '@INPUT@', '@OUTPUT@']
+)
 
 # Deps which can be only built in engine_lib
 engine_deps = [
@@ -54,7 +61,7 @@ shared_deps = [
     entt_dep
 ]
 
-engine_lib = static_library('engine', files(engine_src), engine_meta,
+engine_lib = static_library('engine', files(engine_src),
     dependencies    : engine_deps + shared_deps,
 )
 
@@ -66,7 +73,7 @@ engine = executable('engine', main,
     win_subsystem : 'console',
 )
 
-editor = executable('editor', files(editor_src), main, editor_meta,
+editor = executable('editor', files(editor_src), main, editor_rtti,
     dependencies    : shared_deps,
     link_with       : [engine_lib],
     install         : true,
