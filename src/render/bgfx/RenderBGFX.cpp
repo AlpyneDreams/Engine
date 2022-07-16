@@ -44,16 +44,24 @@ namespace engine::render
 
     struct RenderTargetBGFX final : public RenderTarget
     {
+        bgfx::TextureHandle color, depth;
+        bgfx::TextureFormat::Enum format, depthFormat;
         bgfx::FrameBufferHandle fb;
         uint width, height;
-        bgfx::TextureFormat::Enum format;
-        bgfx::TextureFormat::Enum depthFormat;
 
         RenderTargetBGFX(uint width, uint height) : width(width), height(height)
         {
             format = bgfx::TextureFormat::RGBA32F;
             depthFormat = bgfx::TextureFormat::D32F;
-            fb = bgfx::createFrameBuffer(width, height, format, depthFormat);
+            Create();
+        }
+
+        void Create()
+        {
+            color = bgfx::createTexture2D(width, height, false, 1, format, BGFX_TEXTURE_RT);
+            depth = bgfx::createTexture2D(width, height, false, 1, depthFormat, BGFX_TEXTURE_RT);
+            bgfx::TextureHandle handles[] = {color, depth};
+            fb = bgfx::createFrameBuffer(2, handles, true);
         }
 
         void* GetTexture() const {
@@ -71,7 +79,7 @@ namespace engine::render
 
             bgfx::destroy(fb);
             width = w; height = h;
-            fb = bgfx::createFrameBuffer(w, h, format, depthFormat);
+            Create();
         }
 
         ~RenderTargetBGFX() {

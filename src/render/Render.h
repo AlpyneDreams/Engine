@@ -12,6 +12,7 @@ namespace engine::render
 
     struct RenderTarget
     {
+        // TODO: MRT attachment configuration
         virtual void* GetTexture() const = 0;
         virtual uint2 GetSize() const = 0;
         virtual void Resize(uint width, uint height) = 0;
