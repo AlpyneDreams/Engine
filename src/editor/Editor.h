@@ -3,6 +3,7 @@
 #include "entity/Entity.h"
 #include "imgui/Window.h"
 #include "render/Render.h"
+#include "editor/Selection.h"
 
 namespace engine::editor
 {
@@ -21,6 +22,13 @@ namespace engine::editor
         GUI::Window* outline;
         GUI::Window* inspector;
         GUI::Window* sceneView;
+
+        Entity AddEntity()
+        {
+            Entity ent = World.CreateEntity();
+            Selection.Select(ent);
+            return ent;
+        }
 
         void Run();
     };

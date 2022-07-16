@@ -1,9 +1,11 @@
 #pragma once
 
 #include "common/Common.h"
+#include "core/Primitives.h"
 #include "engine/System.h"
 #include "editor/Editor.h"
 #include "entity/components/Transform.h"
+#include "entity/components/MeshRenderer.h"
 #include "math/Math.h"
 #include "console/ConVar.h"
 
@@ -72,6 +74,21 @@ namespace engine::editor
                     }
                 }
                 ImGui::EndMenu();
+            }
+        }
+
+        static void AddObjectMenu()
+        {
+            if (ImGui::MenuItem(ICON_MC_AXIS_ARROW " Entity")) {
+                Entity ent = Editor.AddEntity();
+                ent.AddComponent<Transform>();
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem(ICON_MC_CUBE_OUTLINE " Cube")) {
+                Entity ent = Editor.AddEntity();
+                ent.SetName("Cube");
+                ent.AddComponent<Transform>();
+                ent.GetOrAddComponent<MeshRenderer>().mesh = &Primitives.Cube;
             }
         }
     };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "editor/gui/Layout.h"
 #include "entity/Common.h"
 #include "entity/components/Transform.h"
 #include "imgui.h"
@@ -17,21 +18,12 @@ namespace engine::editor
     {
         Outline() : GUI::Window(ICON_MC_FORMAT_LIST_BULLETED " Outline", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
 
-        void AddEntity()
-        {
-            Entity ent = World.CreateEntity();
-            Selection.Select(ent);
-        }
-
         void Draw() override
         {
             if (ImGui::BeginMenuBar())
             {
-                if (ImGui::BeginMenu(ICON_MC_PLUS ICON_MC_MENU_DOWN))
-                {
-                    if (ImGui::MenuItem(ICON_MC_CUBE_OUTLINE " Entity")) {
-                        AddEntity();
-                    }
+                if (ImGui::BeginMenu(ICON_MC_PLUS ICON_MC_MENU_DOWN)) {
+                    Layout::AddObjectMenu();
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
@@ -81,8 +73,9 @@ namespace engine::editor
                     ent.Delete();
                 }
                 ImGui::Separator();
-                if (ImGui::MenuItem("Create Entity")) {
-                    AddEntity();
+                if (ImGui::BeginMenu("Add")) {
+                    Layout::AddObjectMenu();
+                    ImGui::EndMenu();
                 }
                 ImGui::EndPopup();
             }
