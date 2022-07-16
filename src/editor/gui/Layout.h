@@ -6,6 +6,7 @@
 #include "editor/Editor.h"
 #include "entity/components/Transform.h"
 #include "entity/components/MeshRenderer.h"
+#include "entity/components/Camera.h"
 #include "math/Math.h"
 #include "console/ConVar.h"
 
@@ -71,6 +72,13 @@ namespace engine::editor
                 ent.SetName("Cube");
                 ent.AddComponent<Transform>();
                 ent.GetOrAddComponent<MeshRenderer>().mesh = &Primitives.Cube;
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem(ICON_MC_VIDEO " Camera")) {
+                Entity ent = Editor.AddEntity();
+                ent.SetName("Camera");
+                ent.AddComponent<Transform>();
+                ent.AddComponent<Camera>();
             }
         }
     };
