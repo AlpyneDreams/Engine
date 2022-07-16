@@ -31,7 +31,7 @@ namespace engine::editor
         Tool activeTool = Tool::Translate;
         Space space = Space::World;
         Rect viewport;
-        float cameraSpeed = 0.1f;
+        float cameraSpeed = 0.01f;
 
         void NoPadding() {
             // Set window padding to 0
@@ -149,10 +149,11 @@ namespace engine::editor
                 {
                     // Mouselook
                     vec3 euler = transform.GetEulerAngles();
-                    int2 mouse = Mouse.GetMotion() / int2(2);
+                    vec2 mouse = vec2(Mouse.GetMotion()) / vec2(2);
                     transform.SetEulerAngles(vec3(euler.x + mouse.y, euler.y + mouse.x, euler.z));
                 }
-                else if (Mouse.GetButtonUp(Mouse::Right) || Keyboard.GetKeyUp(Key::Z))
+
+                if (Mouse.GetButtonUp(Mouse::Right) || Keyboard.GetKeyUp(Key::Z))
                 {
                     Cursor.SetMode(Cursor::Normal);
                     Cursor.SetVisible(true);
