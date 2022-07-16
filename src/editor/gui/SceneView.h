@@ -14,7 +14,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
-#include <imguizmo/ImGuizmo.h>
+#include <ImGuizmo.h>
 
 #include "imgui/IconsMaterialCommunity.h"
 

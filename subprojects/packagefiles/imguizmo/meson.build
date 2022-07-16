@@ -9,6 +9,6 @@ imguizmo_dep = declare_dependency(
         'ImSequencer.cpp',
     ),
     include_directories: include_directories(
-        join_paths(meson.global_source_root(), 'subprojects')
+        '.'
     )
 )
