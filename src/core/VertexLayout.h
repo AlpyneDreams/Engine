@@ -13,6 +13,11 @@ namespace engine
     struct VertexAttribute {
         enum Mode { Default, None, Position, Normal, Tangent, Bitangent, Color, Indices, Weight, TexCoord };
 
+        template <typename T>
+        static VertexAttribute For(uint dimension, Mode mode = Default, bool normalized = false) {
+            return VertexAttribute {sizeof(T), dimension, std::type_index(typeid(T)), normalized, mode};
+        }
+
         uint size;
         uint dimension;
         std::type_index type;
@@ -25,10 +30,17 @@ namespace engine
     public:
         using Attribute = VertexAttribute;
 
+        VertexLayout() {}
+        VertexLayout(auto... attr) { (Add(attr), ...); }
+
         template<typename T>
         VertexLayout& Add(uint dimension, Attribute::Mode mode = Attribute::Default, bool normalized = false) {
-            layout.push_back(Attribute{sizeof(T), dimension, std::type_index(typeid(T)), normalized, mode});
-            stride += sizeof(T) * dimension;
+            return Add(Attribute{sizeof(T), dimension, std::type_index(typeid(T)), normalized, mode});
+        }
+
+        VertexLayout& Add(Attribute attr) {
+            layout.push_back(attr);
+            stride += attr.size * attr.dimension;
             return *this;
         }
 

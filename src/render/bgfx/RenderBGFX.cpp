@@ -3,6 +3,7 @@
 #include "platform/Platform.h"
 #include "engine/Time.h"
 
+#include <algorithm>
 #include <bgfx/bgfx.h>
 #include <bx/string.h>
 #include <bgfx/platform.h>
@@ -202,22 +203,6 @@ namespace engine::render
             bgfx::shutdown();
         }
 
-    private:
-        bgfx::Attrib::Enum GetAttribute(VertexAttribute::Mode mode) {
-            switch (mode) {
-                case VertexAttribute::Position: return bgfx::Attrib::Position;
-                case VertexAttribute::Normal:   return bgfx::Attrib::Normal;
-                case VertexAttribute::Tangent:  return bgfx::Attrib::Tangent;
-                case VertexAttribute::Bitangent: return bgfx::Attrib::Bitangent;
-                case VertexAttribute::Color:    return bgfx::Attrib::Color0;
-                case VertexAttribute::Indices:  return bgfx::Attrib::Indices;
-                case VertexAttribute::Weight:   return bgfx::Attrib::Weight;
-
-                default:
-                case VertexAttribute::TexCoord: return bgfx::Attrib::TexCoord0;
-            }
-        }
-
     public:
     // Resource Uploading //
 
@@ -226,6 +211,26 @@ namespace engine::render
             bgfx::VertexLayout layout;
             layout.begin();
 
+            int colors = -1;
+            int texcoords = -1;
+            auto GetAttribute = [&](VertexAttribute::Mode mode) {
+                switch (mode) {
+                    case VertexAttribute::Position: return bgfx::Attrib::Position;
+                    case VertexAttribute::Normal:   return bgfx::Attrib::Normal;
+                    case VertexAttribute::Tangent:  return bgfx::Attrib::Tangent;
+                    case VertexAttribute::Bitangent: return bgfx::Attrib::Bitangent;
+                    case VertexAttribute::Color:
+                        colors = std::min(colors+1, 3);
+                        return bgfx::Attrib::Enum(bgfx::Attrib::Color0 + colors);
+                    case VertexAttribute::Indices:  return bgfx::Attrib::Indices;
+                    case VertexAttribute::Weight:   return bgfx::Attrib::Weight;
+
+                    default:
+                    case VertexAttribute::TexCoord:
+                        texcoords = std::min(texcoords+1, 7);
+                        return bgfx::Attrib::Enum(bgfx::Attrib::TexCoord0 + texcoords);
+                }
+            };
             for (auto attr : mesh->layout.Attributes()) {
                 layout.add(GetAttribute(attr.mode), attr.dimension, bgfxAttribTypes[std::type_index(attr.type)], attr.normalized);
             }
