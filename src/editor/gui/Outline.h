@@ -15,7 +15,7 @@ namespace engine::editor
 {
     struct Outline : public GUI::Window
     {
-        Outline() : GUI::Window("Outline", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
+        Outline() : GUI::Window(ICON_MC_FORMAT_LIST_BULLETED " Outline", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
 
         void AddEntity()
         {

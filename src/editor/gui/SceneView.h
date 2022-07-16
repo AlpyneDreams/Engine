@@ -22,7 +22,7 @@ namespace engine::editor
 {
     struct SceneView : public GUI::Window
     {
-        SceneView() : GUI::Window("Scene", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
+        SceneView() : GUI::Window(ICON_MC_IMAGE_SIZE_SELECT_ACTUAL " Scene", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
 
         enum class Tool {
             Translate, Rotate, Scale, Universal

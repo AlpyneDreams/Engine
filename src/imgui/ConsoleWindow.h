@@ -10,11 +10,13 @@
 
 #include "input/Input.h"
 
+#include "imgui/IconsMaterialCommunity.h"
+
 namespace engine::GUI
 {
     struct ConsoleWindow : public Window
     {
-        ConsoleWindow() : Window("Console", 512, 512, false) {}
+        ConsoleWindow() : Window(ICON_MC_CONSOLE " Console", 512, 512, false) {}
 
         bool scrollToBottom = false;
         bool focus = false;

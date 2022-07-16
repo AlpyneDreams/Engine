@@ -24,7 +24,7 @@ namespace engine::editor
 {
     struct Inspector : public GUI::Window
     {
-        Inspector() : GUI::Window("Inspector", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
+        Inspector() : GUI::Window(ICON_MC_INFORMATION " Inspector", 512, 512, true, ImGuiWindowFlags_MenuBar) {}
 
         bool debug = false;
         bool locked = false;
