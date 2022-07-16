@@ -5,6 +5,7 @@
 #include "imgui/Window.h"
 #include "editor/Selection.h"
 #include "entity/Entity.h"
+#include "entity/components/Name.h"
 #include "entity/components/Transform.h"
 #include "imgui/Common.h"
 #include "editor/Icons.h"
@@ -28,7 +29,17 @@ namespace engine::editor
             if (!ent)
                 return;
 
-            ImGui::Text("Entity %d", ent.handle.entity());
+            // Get entity name, if any
+            const char* name = ent.GetName();
+            std::string buf;
+            if (name != nullptr)
+                buf = name;
+            
+            // Draw entity name field
+            GUI::ItemLabel("Name");
+            if (ImGui::InputTextWithHint("##Name", "Entity Name", &buf)) {
+                ent.SetName(buf);
+            }
 
             for (auto&& [id, component] : ent.GetComponents())
             {
@@ -38,6 +49,11 @@ namespace engine::editor
 
                 if (!cls) {
                     ImGui::Text("Component: %u", id);
+                    continue;
+                }
+
+                // Internal component. Handled above.
+                if (cls->type.hash() == TypeHash<Name>) {
                     continue;
                 }
 

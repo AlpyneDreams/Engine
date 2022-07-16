@@ -22,6 +22,7 @@ namespace engine::editor
         inspector = &Engine.systems.AddSystem<editor::Inspector>();
         sceneView = &Engine.systems.AddSystem<editor::SceneView>();
 
+        editorCamera.SetName("Editor Camera");
         Camera& camera = editorCamera.AddComponent<Camera>();
         editorCamera.GetComponent<Transform>().position = vec3(0, 0, -35);
 

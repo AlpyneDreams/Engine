@@ -9,6 +9,7 @@
 #include "entity/Entity.h"
 
 #include "imgui/IconsMaterialCommunity.h"
+#include <string>
 
 namespace engine::editor
 {
@@ -44,7 +45,15 @@ namespace engine::editor
                     flags |= ImGuiTreeNodeFlags_Selected;
                 }
 
-                if (ImGui::TreeNodeEx(&ent, flags, ICON_MC_CUBE_OUTLINE " Entity %d", ent))
+                Entity e = ent;
+                const char* name = e.GetName();
+                std::string temp;
+                if (name == nullptr) {
+                    temp = std::string("Entity ") + std::to_string(uint32(ent));
+                    name = temp.c_str();
+                }
+
+                if (ImGui::TreeNodeEx(&ent, flags, ICON_MC_CUBE_OUTLINE " %s", name))
                 {
                     if (ImGui::IsItemClicked())
                     {

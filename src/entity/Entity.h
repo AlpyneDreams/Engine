@@ -1,6 +1,7 @@
 #pragma once
 
 #include <concepts>
+#include <string>
 
 #include "common/Reflection.h"
 #include "common/Traits.h"
@@ -8,6 +9,8 @@
 #include "Common.h"
 #include "Scene.h"
 #include "Component.h"
+
+#include "components/Name.h"
 
 namespace engine
 {
@@ -50,10 +53,42 @@ namespace engine
             handle = Handle(World.ents, EntityNull);
         }
 
-        // Component Management //
+    // Name Component //
+
+        void SetName(const char* name)
+        {
+            if (name != nullptr) {
+                GetOrAddComponent<Name>().name = name;
+            } else {
+                RemoveComponent<Name>();
+            }
+        }
+
+        void SetName(std::string& name)
+        {
+            if (!name.empty()) {
+                GetOrAddComponent<Name>().name = name;
+            } else {
+                RemoveComponent<Name>();
+            }
+        }
+
+        const char* GetName() const
+        {
+            if (HasComponent<Name>())
+            {
+                std::string& name = GetComponent<Name>().name;
+                if (!name.empty())
+                    return name.c_str();
+            }
+
+            return nullptr;
+        }
+
+    // Component Management //
 
         template <class C>
-        bool HasComponent() {
+        bool HasComponent() const {
             return handle.any_of<C>();
         }
 
