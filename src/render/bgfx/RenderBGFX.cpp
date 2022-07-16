@@ -251,6 +251,8 @@ namespace engine::render
                 ih->ib = ib;
                 group.indices.handle = ih;
             }
+
+            mesh->uploaded = true;
         }
 
     // Resource Creation and Loading //
@@ -326,6 +328,9 @@ namespace engine::render
 
         void DrawMesh(Mesh* mesh)
         {
+            if (!mesh->uploaded) [[unlikely]] {
+                UploadMesh(mesh);
+            }
             for (auto& group : mesh->groups) {
                 auto vb = static_cast<HandleBGFX*>(group.vertices.handle)->vb;
                 auto ib = static_cast<HandleBGFX*>(group.indices.handle)->ib;
@@ -335,7 +340,6 @@ namespace engine::render
                 bgfx::submit(0, state.currentProgram);
             }
         }
-
 
     private:
         const bgfx::Memory* LoadMem(const char* filePath)

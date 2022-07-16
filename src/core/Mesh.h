@@ -17,6 +17,7 @@ namespace engine
 
         VertexLayout layout;
         std::vector<Group> groups;
+        bool uploaded = false;
 
         Mesh() {}
 
