@@ -4,7 +4,7 @@ python = import('python').find_installation('python3')
 main = 'main/Main.cpp'
 
 engine_src = [
-    'core/Primitives.cpp',
+    'assets/import/MeshOBJ.cpp',
     'platform/sdl/WindowSDL.cpp',
     'platform/sdl/CursorSDL.cpp',
     'render/bgfx/RenderBGFX.cpp',
@@ -63,6 +63,7 @@ shared_deps = [
 
 engine_lib = static_library('engine', files(engine_src),
     dependencies    : engine_deps + shared_deps,
+    include_directories: include_directories('../submodules')
 )
 
 engine = executable('engine', main,

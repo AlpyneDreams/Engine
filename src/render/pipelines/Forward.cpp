@@ -22,7 +22,7 @@ namespace engine::render
 {
     using Forward = ForwardRenderPipeline;
 
-    static Entity cube;
+    static Entity teapot;
 
     void Forward::Init()
     {
@@ -31,9 +31,9 @@ namespace engine::render
 
         shader = r.LoadShader("vs_cubes", "fs_cubes");
         
-        cube.SetName("Cube");
-        cube.AddComponent<Transform>();
-        cube.AddComponent<MeshRenderer>().mesh = &Primitives.Cube;
+        teapot.SetName("Teapot");
+        teapot.AddComponent<Transform>();
+        teapot.AddComponent<MeshRenderer>().mesh = &Primitives.Teapot;
     }
 
     void Forward::Render(RenderContext& ctx)

@@ -73,6 +73,12 @@ namespace engine::editor
                 ent.AddComponent<Transform>();
                 ent.GetOrAddComponent<MeshRenderer>().mesh = &Primitives.Cube;
             }
+            if (ImGui::MenuItem(ICON_MC_KETTLE_OUTLINE " Teapot")) {
+                Entity ent = Editor.AddEntity();
+                ent.SetName("Teapot");
+                ent.AddComponent<Transform>();
+                ent.GetOrAddComponent<MeshRenderer>().mesh = &Primitives.Teapot;
+            }
             ImGui::Separator();
             if (ImGui::MenuItem(ICON_MC_VIDEO " Camera")) {
                 Entity ent = Editor.AddEntity();

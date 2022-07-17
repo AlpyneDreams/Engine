@@ -8,6 +8,22 @@
 #include <string_view>
 #include <vector>
 
+namespace engine
+{
+    // Compile-time string
+    template <size_t N>
+    struct FixedString
+    {
+        char value[N];
+
+        constexpr inline FixedString(const char (&str)[N]) noexcept {
+            for (size_t i = 0; i < N; i++)
+                value[i] = str[i];
+        }
+    };
+
+}
+
 namespace engine::str
 {
     // Returns lowercased copy of str
