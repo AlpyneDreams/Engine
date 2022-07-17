@@ -30,6 +30,8 @@ namespace engine::editor
 
         render::Render& r = Engine.Render;
 
+        sh_Wireframe = r.LoadShader("vs_basic", "fs_wireframe");
+
         auto [width, height] = Engine.window->GetSize();
         rt_SceneView = r.CreateRenderTarget(uint(width), uint(height));
 

@@ -20,6 +20,9 @@ namespace engine::render
 
     struct Handle {};
 
+    enum class CompareFunc { Disabled, Never, Always, Less, LessEqual, Greater, GreaterEqual, Equal, NotEqual };
+    enum class PolygonMode { Points, Lines, Fill };
+
     class Render
     {
         friend struct ::engine::RenderSystem;
@@ -53,6 +56,8 @@ namespace engine::render
 
     // Per-Object State //
 
+        virtual void SetDepthTest(CompareFunc func) = 0;
+        virtual void SetPolygonMode(PolygonMode mode) = 0;
         virtual void SetTransform(mat4x4& matrix) = 0;
         virtual void SetShader(Shader* shader) = 0;
 

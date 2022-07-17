@@ -15,6 +15,8 @@ namespace engine::editor
     public:
         Entity editorCamera;
         
+        render::Shader* sh_Wireframe;
+
         render::RenderTarget* rt_SceneView;
         
         // TODO: Support multiple instances of each

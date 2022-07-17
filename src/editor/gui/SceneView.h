@@ -2,6 +2,7 @@
 
 #include "editor/Editor.h"
 #include "entity/Common.h"
+#include "entity/components/MeshRenderer.h"
 #include "entity/components/Transform.h"
 #include "editor/Selection.h"
 #include "entity/Scene.h"
@@ -17,6 +18,7 @@
 #include <ImGuizmo.h>
 
 #include "imgui/IconsMaterialCommunity.h"
+#include "render/Render.h"
 
 namespace engine::editor
 {
@@ -102,6 +104,22 @@ namespace engine::editor
 
             // HACK: Reset hovered window
             g.HoveredWindow = hovered;
+
+            // Draw wireframe of current selection
+            render::Render& r = Engine.Render;
+            Entity ent = Selection.Active();
+            if (ent && ent.HasComponent<MeshRenderer>()) {
+                if (ent.HasComponent<Transform>()) {
+                    mat4x4 matrix = ent.GetComponent<Transform>().GetTransformMatrix();
+                    r.SetTransform(matrix);
+                }
+                r.SetDepthTest(render::CompareFunc::LessEqual);
+                r.SetShader(Editor.sh_Wireframe);
+                r.SetPolygonMode(render::PolygonMode::Lines);
+                r.DrawMesh(ent.GetComponent<MeshRenderer>().mesh);
+                r.SetPolygonMode(render::PolygonMode::Fill);
+                r.SetDepthTest(render::CompareFunc::Less);
+            }
         }
 
         void Draw() override

@@ -328,6 +328,40 @@ namespace engine::render
 
     // Per-Object State //
 
+        void SetDepthTest(CompareFunc func)
+        {
+            state.state &= ~BGFX_STATE_DEPTH_TEST_MASK;
+            auto GetDepthTest = [&](CompareFunc mode) -> uint64 {
+                switch (mode) {
+                    case CompareFunc::Disabled:     default: return 0;
+                    case CompareFunc::Never:        return BGFX_STATE_DEPTH_TEST_NEVER;
+                    case CompareFunc::Always:       return BGFX_STATE_DEPTH_TEST_ALWAYS;
+                    case CompareFunc::Less:         return BGFX_STATE_DEPTH_TEST_LESS;
+                    case CompareFunc::LessEqual:    return BGFX_STATE_DEPTH_TEST_LEQUAL;
+                    case CompareFunc::Greater:      return BGFX_STATE_DEPTH_TEST_GREATER;
+                    case CompareFunc::GreaterEqual: return BGFX_STATE_DEPTH_TEST_GEQUAL;
+                    case CompareFunc::Equal:        return BGFX_STATE_DEPTH_TEST_EQUAL;
+                    case CompareFunc::NotEqual:     return BGFX_STATE_DEPTH_TEST_NOTEQUAL;
+                }
+            };
+            state.state |= GetDepthTest(func);
+        }
+
+        void SetPolygonMode(PolygonMode mode)
+        {
+            state.state &= ~BGFX_STATE_PT_MASK;
+            switch (mode) {
+                case PolygonMode::Points:
+                    state.state |= BGFX_STATE_PT_POINTS;
+                    return;
+                case PolygonMode::Lines:
+                    state.state |= BGFX_STATE_PT_LINES;
+                    return;
+                default:
+                    return;
+            }
+        }
+
         void SetShader(Shader* shader)
         {
             state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
