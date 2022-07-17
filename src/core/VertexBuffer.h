@@ -10,7 +10,7 @@ namespace engine
 {
     struct VertexBuffer : GraphicsBuffer
     {
-        VertexLayout* layout;
+        VertexLayout layout;
         union {
             const void* pointer;
             const float* vertices;
@@ -18,14 +18,14 @@ namespace engine
 
         VertexBuffer() {}
 
-        VertexBuffer(VertexLayout* layout, const void* vertices, size_t size)
-          : GraphicsBuffer(size / layout->Stride()),
-            pointer(vertices),
-            layout(layout)
+        VertexBuffer(VertexLayout layout, const void* vertices, size_t size)
+          : GraphicsBuffer(size / layout.Stride()),
+            layout(layout),
+            pointer(vertices)
         {}
 
         inline size_t Stride() const override final {
-            return layout == nullptr ? 1 : layout->Stride();
+            return layout.Stride();
         }
     };
 

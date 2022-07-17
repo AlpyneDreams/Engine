@@ -3,6 +3,7 @@
 #include "common/Common.h"
 
 #include <cstddef>
+#include <initializer_list>
 #include <vector>
 #include <utility>
 #include <typeinfo>
@@ -31,7 +32,12 @@ namespace engine
         using Attribute = VertexAttribute;
 
         VertexLayout() {}
-        VertexLayout(auto... attr) { (Add(attr), ...); }
+        VertexLayout(const VertexLayout& v) : stride(v.stride), layout(v.layout) {}
+        VertexLayout(std::initializer_list<Attribute> attrs) {
+            for (auto attr : attrs) {
+                Add(attr);
+            }
+        }
 
         template<typename T>
         VertexLayout& Add(uint dimension, Attribute::Mode mode = Attribute::Default, bool normalized = false) {
@@ -50,7 +56,7 @@ namespace engine
             return *this;
         }
 
-        inline uint Stride() const { return stride; }
+        inline uint Stride() const { return layout.empty() ? 1 : stride; }
 
         inline const std::vector<Attribute>& Attributes() const { return layout; }
     private:
