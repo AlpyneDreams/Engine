@@ -110,6 +110,15 @@ namespace engine::render
                 uint8 stencil = 0;
             } clear;
 
+            uint64 state = (0
+                | BGFX_STATE_WRITE_RGB
+                | BGFX_STATE_WRITE_A
+                | BGFX_STATE_WRITE_Z
+                | BGFX_STATE_DEPTH_TEST_LESS
+                | BGFX_STATE_CULL_CCW // Clockwise winding order
+                | BGFX_STATE_MSAA
+            );
+
             bgfx::ProgramHandle currentProgram;
         } state;
 
@@ -336,6 +345,9 @@ namespace engine::render
             if (!mesh->uploaded) [[unlikely]] {
                 UploadMesh(mesh);
             }
+
+            bgfx::setState(state.state);
+            
             for (auto& group : mesh->groups) {
                 auto vb = static_cast<HandleBGFX*>(group.vertices.handle)->vb;
                 auto ib = static_cast<HandleBGFX*>(group.indices.handle)->ib;
