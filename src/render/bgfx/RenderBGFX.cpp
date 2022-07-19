@@ -395,8 +395,8 @@ namespace engine::render
     private:
         const bgfx::Memory* LoadMem(const char* filePath)
         {
-            auto [buffer, len] = fs::readFile(filePath);
-            return bgfx::copy(buffer, len);
+            auto buffer = fs::readFile(filePath);
+            return bgfx::copy(buffer.data(), buffer.size());
         }
 
         bgfx::ShaderHandle LoadShaderModule(const char* _name)

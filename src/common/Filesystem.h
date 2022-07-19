@@ -1,37 +1,56 @@
 #pragma once
 
 #include "Common.h"
-#include <cstdio>
+#include <fstream>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 #include <tuple>
 #include <filesystem>
+#include <ostream>
+
+// Automatic path to string conversion
+namespace std::filesystem {
+    std::ostream& operator<<(std::ostream& os, const path& path);
+    std::string operator+(const std::string& str, const path& path);
+}
 
 namespace engine::fs
 {
-    // TODO: std::filesystem::path
+    using Path = std::filesystem::path;
 
-    inline bool exists(const std::string_view& path)
-    {
-        return std::filesystem::exists(path.data());
-    }
+    using std::filesystem::exists;
 
-    inline const std::tuple<char*, size_t> readFile(const char* path)
+    inline const std::string readFile(const Path& path)
     {
         using namespace std;
-        FILE* f = fopen(path, "rb");
-        if (!f)
-            throw runtime_error(string("[FS] Failed to open file: ") + path);
-        fseek(f, 0, SEEK_END);
-        long size = ftell(f);
-        rewind(f);
+        ifstream file(path, ios::in | ios::binary);
+        if (!file)
+            throw runtime_error(std::string("[FS] Failed to open file: ") + path);
 
-        char* buffer = (char*)malloc(size + 1);
-        fread(buffer, size, 1, f);
-        fclose(f);
+        std::string buffer;
 
-        return tuple<char*, size_t>{buffer, size};
+        // Resize buffer to file size
+        file.seekg(0, ios::end);
+        buffer.resize(file.tellg());
+        file.seekg(0, ios::beg);
+
+        // Read file into buffer
+        file.read(&buffer[0], buffer.size());
+
+        return buffer;
+    }
+}
+
+namespace std::filesystem
+{
+    // Write path to ostream
+    inline std::ostream& operator<<(std::ostream& os, const path& path) {
+        return os << path.string();
     }
 
-    
+    // Append path to string
+    inline std::string operator+(const std::string& str, const path& path) {
+        return str + path.string();
+    }
 }
