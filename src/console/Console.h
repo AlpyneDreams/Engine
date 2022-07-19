@@ -12,10 +12,7 @@ namespace engine
 {
     namespace GUI { struct ConsoleWindow; }
     
-    // The global Console instance.
-    extern inline struct Console Console;
-
-    struct Console
+    inline struct Console
     {
     public:
         enum class Level { Input = -1, Info = 0, Warning, Error };
@@ -81,7 +78,5 @@ namespace engine
 
         friend struct GUI::ConsoleWindow;
         friend struct ConCommand;
-    };
-
-    inline struct Console Console;
+    } Console;
 }

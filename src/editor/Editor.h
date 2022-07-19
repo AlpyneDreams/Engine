@@ -7,10 +7,7 @@
 
 namespace engine::editor
 {
-    // The global editor instance.
-    extern inline class Editor Editor;
-
-    class Editor
+    inline class Editor
     {
     public:
         Entity editorCamera;
@@ -33,7 +30,5 @@ namespace engine::editor
         }
 
         void Run();
-    };
-    
-    inline class Editor Editor;
+    } Editor;
 }

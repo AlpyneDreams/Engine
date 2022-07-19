@@ -11,9 +11,7 @@
 
 namespace engine
 {
-    extern inline struct Time Time;
-
-    struct Time
+    inline struct Time
     {
         using Seconds = double;
         using Frames = uint64;
@@ -56,9 +54,6 @@ namespace engine
             using namespace std::chrono;
             return duration<Seconds>(high_resolution_clock::now().time_since_epoch()).count();
         }
-    };
-
-    // The global engine time
-    inline struct Time Time;
+    } Time;
 
 }
