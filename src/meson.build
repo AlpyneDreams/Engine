@@ -4,7 +4,7 @@ python = import('python').find_installation('python3')
 main = 'main/Main.cpp'
 
 engine_src = [
-    'assets/import/MeshOBJ.cpp',
+    'assets/loaders/MeshOBJ.cpp',
     'platform/sdl/WindowSDL.cpp',
     'platform/sdl/CursorSDL.cpp',
     'render/bgfx/RenderBGFX.cpp',

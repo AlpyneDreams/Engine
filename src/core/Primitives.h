@@ -1,13 +1,13 @@
 #pragma once
 
 #include "core/Mesh.h"
-#include "assets/Asset.h"
+#include "assets/Assets.h"
 
 namespace engine
 {
     inline struct Primitives
     {
-        static inline Mesh Cube = *LoadAsset<Mesh, ".OBJ">("models/cube.obj");
-        static inline Mesh Teapot  = *LoadAsset<Mesh, ".OBJ">("models/teapot.obj");
+        static inline Mesh Cube = *Assets.Load<Mesh, ".OBJ">("models/cube.obj");
+        static inline Mesh Teapot  = *Assets.Load<Mesh, ".OBJ">("models/teapot.obj");
     } Primitives;
 }

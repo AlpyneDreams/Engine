@@ -1,4 +1,4 @@
-#include "assets/Asset.h"
+#include "assets/Assets.h"
 #include "core/IndexBuffer.h"
 #include "core/Mesh.h"
 #include "console/Console.h"
@@ -23,7 +23,7 @@ namespace engine
     };
 
     template <>
-    Mesh* ImportAsset<Mesh, FixedString(".OBJ")>(const char* path)
+    Mesh* ImportAsset<Mesh, FixedString(".OBJ")>(const fs::Path& path)
     {
         static VertexLayout LayoutOBJ = VertexLayout {
             VertexAttribute::For<float>(3, VertexAttribute::Position),
@@ -34,7 +34,7 @@ namespace engine
 
         ObjReader obj;
 
-        if (!obj.ParseFromFile(path)) {
+        if (!obj.ParseFromFile(path.string())) {
             if (!obj.Error().empty()) {
                 Console.Error("[OBJ Loader] Failed to load '{}': {}", path, obj.Error());
             }
