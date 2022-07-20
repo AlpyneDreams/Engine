@@ -151,8 +151,8 @@ namespace engine::editor
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
             ImVec2 max = ImVec2(pos.x + size.x, pos.y + size.y);
-
-            if (ImGui::IsMouseHoveringRect(pos, max))
+            
+            if (ImGui::IsMouseHoveringRect(pos, max) && !ImGui::GetIO().KeyCtrl)
             {
                 Transform& transform = Editor.editorCamera.GetComponent<Transform>();
 

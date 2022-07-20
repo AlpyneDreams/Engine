@@ -67,9 +67,13 @@ namespace engine::editor
         {
             auto flags = ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
             bool window = !ent;
-            if (window ? ImGui::BeginPopupContextWindow(NULL, flags) : ImGui::BeginPopupContextItem())
+            std::string uid = std::to_string((uintmax_t)ent.handle.entity());
+            if (window ? ImGui::BeginPopupContextWindow(NULL, flags) : ImGui::BeginPopupContextItem(uid.c_str()))
             {
                 // See Keybinds.h
+                if (ImGui::MenuItem("Duplicate", "Ctrl+D", false, !window)) {
+                    Editor.Duplicate(ent);
+                }
                 if (ImGui::MenuItem("Delete", "Delete", false, !window)) {
                     ent.Delete();
                 }

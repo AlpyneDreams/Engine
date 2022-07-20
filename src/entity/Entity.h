@@ -159,6 +159,24 @@ namespace engine
         void RemoveComponent(ComponentID id) {
             handle.registry()->storage(id)->second.remove(handle.entity());
         }
+    
+    // Entity Clone //
+
+        Entity Clone()
+        {
+            Entity clone = World.CreateEntity();
+            
+            // Clone components
+            for (auto&& [id, storage] : handle.registry()->storage())
+            {
+                if (!storage.contains(handle.entity()))
+                    continue;
+
+                storage.emplace(clone, storage.get(handle));
+            }
+            
+            return clone;
+        }
     };
 
     // A pure Entity cannot be a component.
