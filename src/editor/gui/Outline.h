@@ -69,7 +69,8 @@ namespace engine::editor
             bool window = !ent;
             if (window ? ImGui::BeginPopupContextWindow(NULL, flags) : ImGui::BeginPopupContextItem())
             {
-                if (ImGui::MenuItem("Delete", NULL, false, !window)) {
+                // See Keybinds.h
+                if (ImGui::MenuItem("Delete", "Delete", false, !window)) {
                     ent.Delete();
                 }
                 ImGui::Separator();
