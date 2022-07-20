@@ -45,10 +45,11 @@ namespace engine::editor
 
                 if (ImGui::BeginMenu("Window"))
                 {
-                    ImGui::MenuItem("Console", "", &Editor.console->open);
+                    ImGui::MenuItem("Console", "`", &Editor.console->open);
                     ImGui::MenuItem("Scene", "", &Editor.sceneView->open);
                     ImGui::MenuItem("Outline", "", &Editor.outline->open);
                     ImGui::MenuItem("Inspector", "", &Editor.inspector->open);
+                    ImGui::MenuItem("Files", "Ctrl+Space", &Editor.assetBrowser->open);
                     ImGui::MenuItem("GUI Demo", "", &gui_demo.value);
                     ImGui::EndMenu();
                 }

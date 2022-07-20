@@ -21,6 +21,7 @@ namespace engine::editor
         GUI::Window* outline;
         GUI::Window* inspector;
         GUI::Window* sceneView;
+        GUI::Window* assetBrowser;
 
         Entity AddEntity()
         {
