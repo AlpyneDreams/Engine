@@ -140,7 +140,7 @@ namespace engine
         }
 
         void* GetHandle() { return window; }
-    #ifdef PLATFORM_X11
+    #if PLATFORM_X11
         void* GetNativeDisplay() { return GetSysWMInfo().info.x11.display; }
         void* GetNativeWindow() { return (void*)(uintptr_t)GetSysWMInfo().info.x11.window; }
     #elif PLATFORM_WINDOWS
