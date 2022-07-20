@@ -1,5 +1,7 @@
 # ENGINE
 
+<img width="961" alt="editor_4LhbOctQWX" src="https://user-images.githubusercontent.com/3376691/179876459-36eae6dc-5d7c-43b9-a834-0d9fc675294b.png">
+
 This is engineering. Most of this code was written under the influence, so do not read too much into it. This codebase is not intended to have an orthodox structure or coherency. There are many branches with significant changes.
 
 Observations:
