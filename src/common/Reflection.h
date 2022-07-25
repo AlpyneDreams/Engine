@@ -89,9 +89,16 @@ namespace engine::refl
         const char* displayName;
         Type type = TypeID<nullptr_t>();
         size_t size;
+        Type underlyingType = TypeID<nullptr_t>();
         bool scoped = true;
         std::map<std::string, uint64> values;
         std::map<uint64, std::string> names;
+
+        // TODO: display names, preserve declaration order, flags
+
+        // Follows enum's integer order
+        auto begin() const { return names.begin(); }
+        auto end() const { return names.end(); }
 
         template <typename T>
         static std::string Name(auto value) {

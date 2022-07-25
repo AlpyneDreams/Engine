@@ -70,6 +70,7 @@ for spelling, data in enums.items():
     write(f'.displayName = "{data["displayName"]}",', indent=1)
     write(f'.type = {data["type"]},', indent=1)
     write(f'.size = {data["size"]},', indent=1)
+    write(f'.underlyingType = {data["underlyingType"]},', indent=1)
     write(f'.scoped = {"true" if data["scoped"] else "false"},', indent=1)
 
     write(f'.values = {{', indent=1)

@@ -109,8 +109,9 @@ def traverse(nodes: list[Cursor], parent=None, ident=0):
             'name': node.displayname,
             'displayName': display_name(node.displayname),
             'location': location,
-            'type': f'TypeID<{node.enum_type.spelling}>()',
+            'type': f'TypeID<{name}>()',
             'size': f'sizeof({name})',
+            'underlyingType': f'TypeID<{node.enum_type.spelling}>()',
             'scoped': 'true' if node.is_scoped_enum else 'false',
             'values': values
         }
