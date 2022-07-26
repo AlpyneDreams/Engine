@@ -35,6 +35,19 @@ namespace engine::render
         {std::type_index(typeid(float)), bgfx::AttribType::Float},
     };
 
+    
+    static bgfx::TextureFormat::Enum ConvertTextureFormat(TextureFormat format)
+    {
+        static std::unordered_map<TextureFormat, bgfx::TextureFormat::Enum> bgfxTextureFormats {
+            {TextureFormat::R32F, bgfx::TextureFormat::R32F},
+            {TextureFormat::RGBA32F, bgfx::TextureFormat::RGBA32F},
+            {TextureFormat::D32F, bgfx::TextureFormat::D32F},
+        };
+
+        return bgfxTextureFormats.contains(format) ? bgfxTextureFormats[format] : bgfx::TextureFormat::Unknown;
+    }
+
+
     struct ShaderBGFX final : public Shader
     {
         bgfx::ProgramHandle program;
@@ -44,30 +57,41 @@ namespace engine::render
         }
     };
 
+    // TODO: Refactor for arbitrary MRT RenderTarget
     struct RenderTargetBGFX final : public RenderTarget
     {
+        bool hasDepth = true;
         bgfx::TextureHandle color, depth;
         bgfx::TextureFormat::Enum format, depthFormat;
         bgfx::FrameBufferHandle fb;
         uint width, height;
 
-        RenderTargetBGFX(uint width, uint height) : width(width), height(height)
+        RenderTargetBGFX(uint width, uint height, TextureFormat color, TextureFormat depth) : width(width), height(height)
         {
-            format = bgfx::TextureFormat::RGBA32F;
-            depthFormat = bgfx::TextureFormat::D32F;
+            format = ConvertTextureFormat(color);
+            if (depth == TextureFormat::None)
+                hasDepth = false;
+            depthFormat = ConvertTextureFormat(depth);
             Create();
         }
 
         void Create()
         {
             color = bgfx::createTexture2D(width, height, false, 1, format, BGFX_TEXTURE_RT);
-            depth = bgfx::createTexture2D(width, height, false, 1, depthFormat, BGFX_TEXTURE_RT);
+            if (hasDepth)
+                depth = bgfx::createTexture2D(width, height, false, 1, depthFormat, BGFX_TEXTURE_RT);
             bgfx::TextureHandle handles[] = {color, depth};
-            fb = bgfx::createFrameBuffer(2, handles, true);
+            fb = bgfx::createFrameBuffer(hasDepth ? 2 : 1, handles, true);
         }
 
         void* GetTexture() const {
             return (void*)uintptr_t(bgfx::getTexture(fb).idx);
+        }
+
+        void* GetDepthTexture() const {
+            if (!hasDepth)
+                return nullptr;
+            return (void*)uintptr_t(bgfx::getTexture(fb, 1).idx);
         }
 
         uint2 GetSize() const {
@@ -272,9 +296,9 @@ namespace engine::render
 
     // Resource Creation and Loading //
 
-        RenderTarget* CreateRenderTarget(uint width, uint height)
+        RenderTarget* CreateRenderTarget(uint width, uint height, TextureFormat color, TextureFormat depth)
         {
-            return new RenderTargetBGFX(width, height);
+            return new RenderTargetBGFX(width, height, color, depth);
         }
 
         Shader* LoadShader(const char* vertexShader, const char* pixelShader)

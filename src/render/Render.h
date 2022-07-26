@@ -3,6 +3,7 @@
 #include "platform/Window.h"
 #include "math/Math.h"
 #include "math/Color.h"
+#include "render/TextureFormat.h"
 
 namespace engine { struct RenderSystem; struct Mesh; }
 
@@ -14,6 +15,7 @@ namespace engine::render
     {
         // TODO: MRT attachment configuration
         virtual void* GetTexture() const = 0;
+        virtual void* GetDepthTexture() const = 0;
         virtual uint2 GetSize() const = 0;
         virtual void Resize(uint width, uint height) = 0;
     };
@@ -41,8 +43,11 @@ namespace engine::render
 
     // Resource Creation and Loading //
 
-        // Default format with depth buffer.
-        virtual RenderTarget* CreateRenderTarget(uint width, uint height) = 0;
+        // Simple RT with optional depth
+        virtual RenderTarget* CreateRenderTarget(
+            uint width, uint height,
+            TextureFormat format = TextureFormat::RGBA32F,
+            TextureFormat depth = TextureFormat::D32F) = 0;
 
         virtual Shader* LoadShader(const char* vertexShader, const char* pixelShader) = 0; // TODO: Probably replace this
 
