@@ -151,6 +151,8 @@ namespace engine::render
             );
 
             bgfx::ProgramHandle currentProgram;
+
+            std::map<std::string_view, bgfx::UniformHandle> uniforms;
         } state;
 
     protected:
@@ -237,6 +239,10 @@ namespace engine::render
 
         void Shutdown()
         {
+            for (auto& [name, handle] : state.uniforms) {
+                bgfx::destroy(handle);
+            }
+
             ImGui_Implbgfx_Shutdown();
             ImGui::DestroyContext();
 
@@ -410,14 +416,26 @@ namespace engine::render
             }
         }
 
-        void SetShader(Shader* shader)
-        {
-            state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
-        }
-
         void SetTransform(mat4x4& matrix)
         {
             bgfx::setTransform(&matrix[0][0]);
+        }
+
+        void SetShader(Shader* shader)
+        {
+            state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
+            // TODO: get uniforms...
+        }
+
+        void SetUniform(std::string_view name, void* value, uint stride, uint count)
+        {
+            bgfx::UniformHandle uniform;
+            if (!state.uniforms.contains(name)) {
+                state.uniforms[name] = bgfx::createUniform(name.data(), stride <= 4 ? bgfx::UniformType::Vec4 : bgfx::UniformType::Mat4, count);
+            } else {
+                uniform = state.uniforms[name];
+            }
+            bgfx::setUniform(state.uniforms[name], value, count);
         }
 
     // Draw Calls //

@@ -5,6 +5,8 @@
 #include "math/Color.h"
 #include "render/TextureFormat.h"
 
+#include <string_view>
+
 namespace engine { struct RenderSystem; struct Mesh; }
 
 namespace engine::render
@@ -65,6 +67,10 @@ namespace engine::render
         virtual void SetPolygonMode(PolygonMode mode) = 0;
         virtual void SetTransform(mat4x4& matrix) = 0;
         virtual void SetShader(Shader* shader) = 0;
+        // TODO: Hashed strings...
+        virtual void SetUniform(std::string_view name, void* value, uint stride = 4, uint count = 1) = 0;
+        void SetUniform(std::string_view name, vec4 value, uint count = 1) { SetUniform(name, &value[0], 4, count); };
+        void SetUniform(std::string_view name, mat4x4 value, uint count = 1) { SetUniform(name, &value[0][0], 16, count); };
 
     // Draw Calls //
 
