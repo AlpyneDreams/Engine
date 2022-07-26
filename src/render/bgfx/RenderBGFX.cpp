@@ -22,6 +22,7 @@
 #include "core/Mesh.h"
 #include "engine/Time.h"
 #include "console/Console.h"
+#include "console/ConCommand.h"
 
 namespace engine::render
 {
@@ -443,4 +444,38 @@ namespace engine::render
         return new RenderBGFX();
     }
 
+    static ConCommand bgfx_caps = ConCommand("bgfx_caps", "Prints bgfx GPU capabilities", []() {
+        const bgfx::Caps* caps = bgfx::getCaps();
+        Console.Log("Supported: {} (BGFX_CAPS_*)", caps->supported);
+        Console.Log("Vendor ID: {}", caps->vendorId);
+        Console.Log("Device ID: {}", caps->deviceId);
+        Console.Log("Depth:     {}", caps->homogeneousDepth ? "[-1, 1]" : "[0, 1]");
+        Console.Log("Origin Bottom Left: {}", caps->originBottomLeft);
+        Console.Log("Num GPUs:  {}", caps->numGPUs);
+        Console.Log("Limits:");
+        Console.Log("  Draw Calls:          {}", caps->limits.maxDrawCalls);
+        Console.Log("  Blit Calls:          {}", caps->limits.maxBlits);
+        Console.Log("  Texture Size:        {}", caps->limits.maxTextureSize);
+        Console.Log("  Texture Layers:      {}", caps->limits.maxTextureLayers);
+        Console.Log("  Views:               {}", caps->limits.maxViews);
+        Console.Log("  Frame Buffers:       {}", caps->limits.maxFrameBuffers);
+        Console.Log("  FB Attachments:      {}", caps->limits.maxFBAttachments);
+        Console.Log("  Program Handles:     {}", caps->limits.maxPrograms);
+        Console.Log("  Shader Handles:      {}", caps->limits.maxShaders);
+        Console.Log("  Textures:            {}", caps->limits.maxTextures);
+        Console.Log("  Texture Samplers:    {}", caps->limits.maxTextureSamplers);
+        Console.Log("  Compute Bindings:    {}", caps->limits.maxComputeBindings);
+        Console.Log("  Vertex Layouts:      {}", caps->limits.maxVertexLayouts);
+        Console.Log("  Vertex Streams:      {}", caps->limits.maxVertexStreams);
+        Console.Log("  Index Buffers:       {}", caps->limits.maxIndexBuffers);
+        Console.Log("  Vertex Buffers:      {}", caps->limits.maxVertexBuffers);
+        Console.Log("  Dynamic IBs:         {}", caps->limits.maxDynamicIndexBuffers);
+        Console.Log("  Dynamic VBs:         {}", caps->limits.maxDynamicVertexBuffers);
+        Console.Log("  Uniforms:            {}", caps->limits.maxUniforms);
+        Console.Log("  Occlusion Queries:   {}", caps->limits.maxOcclusionQueries);
+        Console.Log("  Encoder Threads:     {}", caps->limits.maxEncoders);
+        Console.Log("  Minimum Resource Command Buffer Size: {}", caps->limits.minResourceCbSize);
+        Console.Log("  Transient VB Size:   {}", caps->limits.transientVbSize);
+        Console.Log("  Transient IB Size:   {}", caps->limits.transientIbSize);        
+    });
 }
