@@ -64,6 +64,7 @@ namespace engine::render
         bgfx::TextureHandle color, depth;
         bgfx::TextureFormat::Enum format, depthFormat;
         bgfx::FrameBufferHandle fb;
+        int view = -1;
         uint width, height;
 
         RenderTargetBGFX(uint width, uint height, TextureFormat color, TextureFormat depth) : width(width), height(height)
@@ -125,8 +126,13 @@ namespace engine::render
     {
         struct RenderState {
             uint width, height;
-            bgfx::ViewId clearView = 0;
-            bgfx::ViewId imguiView = 255;
+            bgfx::ViewId view = 0;
+            bgfx::ViewId nextView = 1;
+
+            const bgfx::ViewId defaultView = 0;
+            const bgfx::ViewId imguiView = 255;
+
+            mat4x4 mView, mProj;
 
             struct ClearState {
                 uint16 flags = BGFX_CLEAR_NONE;
@@ -172,7 +178,7 @@ namespace engine::render
             // Handle window resize
             window->SetResizeCallback([=, this](uint width, uint height) {
                 bgfx::reset(uint32(width), uint32(height), BGFX_RESET_VSYNC);
-                bgfx::setViewRect(state.clearView, 0, 0, bgfx::BackbufferRatio::Equal);
+                bgfx::setViewRect(state.defaultView, 0, 0, bgfx::BackbufferRatio::Equal);
             });
 
             if (!bgfx::init(init)) {
@@ -181,7 +187,7 @@ namespace engine::render
                 Console.Log("[BGFX] Initialized BGFX with {}!", bgfx::getRendererName(bgfx::getRendererType()));
             }
             
-            bgfx::setViewRect(state.clearView, 0, 0, bgfx::BackbufferRatio::Equal);
+            bgfx::setViewRect(state.defaultView, 0, 0, bgfx::BackbufferRatio::Equal);
 
             ImGui::CreateContext();
 
@@ -195,7 +201,7 @@ namespace engine::render
         void BeginFrame()
         {
             // Always clear this view even if no draw calls are made
-            bgfx::touch(state.clearView);
+            bgfx::touch(state.defaultView);
         }
 
         void EndFrame()
@@ -316,23 +322,40 @@ namespace engine::render
 
     // Per-Camera State //
 
-        void SetRenderTarget(RenderTarget* rt)
+        inline void SetView(uint16 view)
         {
-            if (!rt) {
-                bgfx::setViewFrameBuffer(0, BGFX_INVALID_HANDLE);
+            state.view = view;
+
+            // TODO: Preserve all per-view state
+            SetViewTransform(state.mView, state.mProj);
+            UpdateClearState(state);
+            bgfx::setViewRect(state.view, 0, 0, bgfx::BackbufferRatio::Equal);
+        }
+
+        void SetRenderTarget(RenderTarget* target)
+        {
+            if (!target) {
+                SetView(state.defaultView);
+                bgfx::setViewFrameBuffer(state.view, BGFX_INVALID_HANDLE);
             } else {
-                bgfx::setViewFrameBuffer(0, static_cast<RenderTargetBGFX*>(rt)->fb);   
+                RenderTargetBGFX* rt = static_cast<RenderTargetBGFX*>(target);
+                if (rt->view == -1) {
+                    rt->view = state.nextView++;
+                }
+                SetView(rt->view);
+                bgfx::setViewFrameBuffer(state.view, rt->fb);
             }
         }
 
         void SetViewTransform(mat4x4& view, mat4x4& proj)
         {
-            bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
+            state.mView = view; state.mProj = proj;
+            bgfx::setViewTransform(state.view, &view[0][0], &proj[0][0]);
         }
 
         static inline void UpdateClearState(const RenderState& state)
         {
-            bgfx::setViewClear(state.clearView, state.clear.flags, state.clear.rgba, state.clear.depth, state.clear.stencil);
+            bgfx::setViewClear(state.view, state.clear.flags, state.clear.rgba, state.clear.depth, state.clear.stencil);
         }
 
         void SetClearColor(bool clear, Color color)
@@ -413,7 +436,7 @@ namespace engine::render
                 bgfx::setVertexBuffer(0, vb);
                 bgfx::setIndexBuffer(ib);
 
-                bgfx::submit(0, state.currentProgram);
+                bgfx::submit(state.view, state.currentProgram);
             }
         }
 
