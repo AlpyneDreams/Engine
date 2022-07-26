@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/Event.h"
 #include "platform/Window.h"
 #include "render/Render.h"
 #include "render/pipelines/RenderPipeline.h"
@@ -21,6 +22,11 @@ namespace engine
         render::Render* render                       = render::Render::Create();
         render::ForwardRenderPipeline renderPipeline = render::ForwardRenderPipeline(*render);
 
+        Event<render::Render&> OnBeginFrame;
+        Event<render::Render&> OnEndFrame;
+        Event<render::RenderContext&> OnBeginCamera;
+        Event<render::RenderContext&> OnEndCamera;
+
         RenderSystem(Window* win) : window(win) {}
 
         void Start()
@@ -33,19 +39,26 @@ namespace engine
 
         void Update()
         {
+            using namespace render;
             GUI::Update();
+            
+            Render& r = *render;
 
-            render->BeginFrame();
+            r.BeginFrame();
+            OnBeginFrame(r);
 
+            // Render each camera with the render pipeline
             for (auto&& [ent, camera] : World.Each<Camera>())
             {
-                using namespace render;
-                RenderContext ctx = RenderContext(*render, camera);
+                RenderContext ctx = RenderContext(r, camera);
+
+                OnBeginCamera(ctx);
                 renderPipeline.Render(ctx);
+                OnEndCamera(ctx);
             }
             
-            
-            render->EndFrame();
+            OnEndFrame(r);
+            r.EndFrame();
 
             GUI::Render();
         }
