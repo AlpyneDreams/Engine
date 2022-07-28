@@ -32,8 +32,8 @@ namespace engine::GUI
                 Draw();
             }
 
-            ImGui::End();
             PostDraw();
+            ImGui::End();
         }
         
         // Subclasses will override this

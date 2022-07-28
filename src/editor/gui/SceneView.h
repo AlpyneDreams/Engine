@@ -93,6 +93,7 @@ namespace engine::editor
 
             ImGuizmo::BeginFrame();
             ImGuizmo::SetRect(viewport.x, viewport.y, viewport.w, viewport.h);
+            ImGuizmo::SetDrawlist();
 
             Camera& camera = Editor.editorCamera.GetComponent<Camera>();
             //Transform& transform = Editor.editorCamera.GetComponent<Transform>();
@@ -101,7 +102,6 @@ namespace engine::editor
             mat4x4 view = camera.ViewMatrix();
             mat4x4 proj = camera.ProjMatrix();
         
-            
             Entity active = Selection.Active();
             if (active && active.HasComponent<Transform>())
             {
