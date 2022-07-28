@@ -35,6 +35,7 @@ namespace engine::editor
         Space space         = Space::World;
         Rect  viewport;
         float cameraSpeed   = 0.01f;
+        bool  allowAxisFlip = true;
 
     // Draw Modes //
 
@@ -92,6 +93,7 @@ namespace engine::editor
             g.HoveredWindow = NULL;
 
             ImGuizmo::BeginFrame();
+            ImGuizmo::AllowAxisFlip(allowAxisFlip);
             ImGuizmo::SetRect(viewport.x, viewport.y, viewport.w, viewport.h);
             ImGuizmo::SetDrawlist();
 
@@ -288,6 +290,7 @@ namespace engine::editor
                         space = Space(j);
                     }
                 }
+                ImGui::MenuItem("Axis Flip", "", &allowAxisFlip);
                 ImGui::EndMenu();
             }
         }
