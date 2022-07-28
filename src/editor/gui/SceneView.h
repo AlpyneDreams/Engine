@@ -12,6 +12,7 @@
 #include "input/Input.h"
 #include "input/Keyboard.h"
 #include "platform/Cursor.h"
+#include "common/Reflection.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -30,10 +31,30 @@ namespace engine::editor
             Translate, Rotate, Scale, Universal
         };
 
-        Tool activeTool = Tool::Translate;
-        Space space = Space::World;
-        Rect viewport;
-        float cameraSpeed = 0.01f;
+        Tool  activeTool    = Tool::Translate;
+        Space space         = Space::World;
+        Rect  viewport;
+        float cameraSpeed   = 0.01f;
+
+    // Draw Modes //
+
+        enum class DrawMode {
+            Shaded, Depth
+        };
+
+        DrawMode drawMode = DrawMode::Shaded;
+
+        auto GetTexture(DrawMode mode)
+        {
+            switch (mode) {
+                default: case DrawMode::Shaded:
+                    return Editor.rt_SceneView->GetTexture();
+                case DrawMode::Depth:
+                    return Editor.rt_SceneView->GetDepthTexture();
+            }
+        }
+
+    // UI //
 
         void NoPadding() {
             // Set window padding to 0
@@ -126,11 +147,26 @@ namespace engine::editor
         void Draw() override
         {
             ResetPadding();
-
+            
+        // Menu Bar //
             if (ImGui::BeginMenuBar())
             {
                 CoordinateSpacePicker();
 
+                // Left side
+                ImGui::SameLine(ImGui::GetWindowWidth() - 90);
+                if (ImGui::BeginMenu(ICON_MC_IMAGE_MULTIPLE " " ICON_MC_MENU_DOWN))
+                {
+                    refl::Enum* modes = refl::Enum::Get<DrawMode>();
+                    for (auto& [value, name] : *modes)
+                    {
+                        if (ImGui::MenuItem(name.c_str(), "", drawMode == DrawMode(value)))
+                            drawMode = DrawMode(value);
+                    }
+                    ImGui::EndMenu();
+                }
+
+                // Right side
                 ImGui::SameLine(ImGui::GetWindowWidth() - 40);
                 if (ImGui::BeginMenu(ICON_MC_VIDEO " " ICON_MC_MENU_DOWN))
                 {
@@ -203,7 +239,7 @@ namespace engine::editor
 
             // Copy from scene view render target into viewport
             ImGui::GetWindowDrawList()->AddImage(
-                Editor.rt_SceneView->GetTexture(),
+                GetTexture(drawMode),
                 pos, max,
                 ImVec2(0, 0), ImVec2(1, 1)
             );
@@ -255,6 +291,8 @@ namespace engine::editor
                 ImGui::EndMenu();
             }
         }
+    
+    // Toolbar //
 
         void Toolbar()
         {
