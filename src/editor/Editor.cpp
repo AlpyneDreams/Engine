@@ -21,6 +21,7 @@ namespace engine::editor
 {
     void Editor::Run()
     {
+        // Add engine systems...
         Engine.systems.AddSystem<editor::Keybinds>();
         Engine.systems.AddSystem<editor::Layout>();
         console       = &Engine.systems.AddSystem<GUI::ConsoleWindow>();
@@ -29,22 +30,25 @@ namespace engine::editor
         sceneView     = &Engine.systems.AddSystem<editor::SceneView>();
         assetBrowser  = &Engine.systems.AddSystem<editor::AssetBrowser>();
 
-        editorCamera.SetName("Editor Camera");
-        Camera& camera = editorCamera.AddComponent<Camera>();
-        editorCamera.GetComponent<Transform>().position = vec3(0, 0, -35);
-
+        // Initialize engine
         Engine.Init();
 
         render::Render& r = Engine.Render;
-
+        
+        // Load editor shaders
         sh_Wireframe = r.LoadShader("vs_basic", "fs_wireframe");
         sh_Color  = r.LoadShader("vs_basic", "fs_color");
 
+        // Setup editor render targets
         auto [width, height] = Engine.window->GetSize();
         rt_SceneView = r.CreateRenderTarget(width, height);
         rt_ObjectID = r.CreateRenderTarget(width, height, render::TextureFormat::R32F, render::TextureFormat::None);
         rt_ObjectID->SetReadBack(true);
         
+        // Setup editor camera
+        editorCamera.SetName("Editor Camera");
+        Camera& camera = editorCamera.AddComponent<Camera>();
+        editorCamera.GetComponent<Transform>().position = vec3(0, 0, -35);
         camera.renderTarget = rt_SceneView;
 
         // Setup Object ID pass
@@ -61,6 +65,7 @@ namespace engine::editor
             });
         };
 
+        // Run engine loop
         Engine.Loop();
         Engine.Shutdown();
     }

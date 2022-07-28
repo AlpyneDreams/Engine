@@ -7,11 +7,16 @@
 
 namespace engine::editor
 {
+    /**
+     * Editor manages the editor viewport, 
+     * editor GUI windows, and general rendering.
+     */
     inline class Editor
     {
     public:
+    // Viewport //
         Entity editorCamera;
-        
+
         render::Shader* sh_Wireframe;
         render::Shader* sh_Color;
 
@@ -27,6 +32,7 @@ namespace engine::editor
         // Read object ID from scene view render target and update selection
         void PickObject(uint2 mouse);
 
+    // GUI //
         // TODO: Support multiple instances of each
         GUI::Window* console;
         GUI::Window* outline;
@@ -71,7 +77,10 @@ namespace engine::editor
             Selection.Select(clone);
             return clone;
         }
+    
+    // Editor Engine Loop //
 
         void Run();
+
     } Editor;
 }
