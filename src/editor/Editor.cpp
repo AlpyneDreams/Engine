@@ -37,6 +37,7 @@ namespace engine::editor
         
         // Load editor shaders
         sh_Color  = r.LoadShader("vs_basic", "fs_color");
+        sh_Grid   = r.LoadShader("vs_grid", "fs_grid");
 
         // Setup editor render targets
         auto [width, height] = Engine.window->GetSize();

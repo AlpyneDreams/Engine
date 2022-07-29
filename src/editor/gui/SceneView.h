@@ -5,6 +5,7 @@
 #include "entity/components/MeshRenderer.h"
 #include "entity/components/Transform.h"
 #include "editor/Selection.h"
+#include "editor/Handles.h"
 #include "entity/Scene.h"
 #include "entity/Entity.h"
 #include "entity/components/Camera.h"
@@ -37,6 +38,10 @@ namespace engine::editor
         float cameraSpeed   = 0.005f;
         bool  allowAxisFlip = true;
 
+        bool showGrid       = true;
+        bool gridSnap       = true;
+        vec3 gridSize       = vec3(0.25f);
+        bool gridUniform    = true;
 
         bool  popupOpen     = false;
 
@@ -126,7 +131,7 @@ namespace engine::editor
                 ImGuizmo::RecomposeMatrixFromComponents(&transform.position[0], &angles[0], &transform.scale[0], mtx);
 
                 ImGuizmo::MODE mode = space == Space::World ? ImGuizmo::MODE::WORLD : ImGuizmo::MODE::LOCAL;
-                ImGuizmo::Manipulate(&view[0][0], &proj[0][0], GetOperation(activeTool), mode, &mtx[0]);
+                ImGuizmo::Manipulate(&view[0][0], &proj[0][0], GetOperation(activeTool), mode, &mtx[0], NULL, gridSnap ? &gridSize.x : NULL);
                 
                 ImGuizmo::DecomposeMatrixToComponents(mtx, &transform.position[0], &angles[0], &transform.scale[0]);
                 transform.SetEulerAngles(angles);
@@ -141,11 +146,17 @@ namespace engine::editor
             // HACK: Reset hovered window
             g.HoveredWindow = hovered;
 
-            // Draw wireframe of current selection
+            // Begin scene view extra rendering
             render::Render& r = Engine.Render;
+            r.SetRenderTarget(Editor.rt_SceneView);
+
+            // Draw grid
+            if (showGrid)
+                Handles.DrawGrid(r);
+
+            // Draw wireframe of current selection
             Entity ent = Selection.Active();
             if (ent && ent.HasComponent<MeshRenderer>()) {
-                r.SetRenderTarget(Editor.rt_SceneView);
                 if (ent.HasComponent<Transform>()) {
                     mat4x4 matrix = ent.GetComponent<Transform>().GetTransformMatrix();
                     r.SetTransform(matrix);
@@ -168,7 +179,9 @@ namespace engine::editor
         // Menu Bar //
             if (ImGui::BeginMenuBar())
             {
+                // Left side
                 CoordinateSpacePicker();
+                GridMenu();
 
                 // Right side
                 ImGui::SameLine(ImGui::GetWindowWidth() - 90);
@@ -308,6 +321,38 @@ namespace engine::editor
                 }
                 ImGui::Checkbox("Axis Flip", &allowAxisFlip);
                 ImGui::EndMenu();
+            }
+        }
+
+    // Grid Menu //
+
+        void GridMenu()
+        {
+            static bool showingGrid = true;
+
+            const char* name = showingGrid
+                ? (ICON_MC_GRID " " ICON_MC_MENU_DOWN)
+                : (ICON_MC_GRID_OFF " " ICON_MC_MENU_DOWN);
+            if (BeginMenu(name))
+            {
+                ImGui::TextUnformatted("Grid");
+                const char* label = showGrid
+                    ? (ICON_MC_GRID " Show Grid")
+                    : (ICON_MC_GRID_OFF " Show Grid");
+                ImGui::Checkbox(label, &showGrid);
+                ImGui::Checkbox(ICON_MC_MAGNET " Snap to Grid", &gridSnap);
+                ImGui::Checkbox(ICON_MC_LINK " Uniform Grid Size", &gridUniform);
+                if (gridUniform) {
+                    if (ImGui::InputFloat("Grid Size", &gridSize.x))
+                        gridSize = gridSize.xxx;
+                } else {
+                    ImGui::InputFloat3("Grid Size", &gridSize.x);
+                }
+                ImGui::EndMenu();
+            }
+            else
+            {
+                showingGrid = showGrid;
             }
         }
     

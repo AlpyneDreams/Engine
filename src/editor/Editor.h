@@ -18,6 +18,7 @@ namespace engine::editor
         Entity editorCamera;
 
         render::Shader* sh_Color;
+        render::Shader* sh_Grid;
 
         render::RenderTarget* rt_SceneView;
         render::RenderTarget* rt_ObjectID;
