@@ -22,6 +22,9 @@ namespace engine
 
         GraphicsBuffer(uint count) : count(count) {}
 
+        // True if buffer contains any data
+        operator bool() const { return count > 0; }
+
         // Number of bytes per item in this buffer
         virtual size_t Stride() const = 0;
 

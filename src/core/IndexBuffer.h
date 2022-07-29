@@ -4,7 +4,7 @@
 #include "render/Render.h"
 #include "GraphicsBuffer.h"
 
-#include <cstddef>
+#include <vector>
 
 namespace engine
 {
@@ -25,6 +25,14 @@ namespace engine
           : GraphicsBuffer(size / sizeof(uint16)),
             indices(indices),
             type(UInt16)
+        {}
+
+        IndexBuffer(std::vector<uint32>& indices)
+          : IndexBuffer(indices.data(), indices.size() * sizeof(uint32))
+        {}
+
+        IndexBuffer(std::vector<uint16>& indices)
+          : IndexBuffer(indices.data(), indices.size() * sizeof(uint16))
         {}
 
         inline size_t Stride() const override final {

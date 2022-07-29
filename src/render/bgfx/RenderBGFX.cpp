@@ -330,8 +330,8 @@ namespace engine::render
 
         void UploadMesh(Mesh* mesh)
         {
-            for (auto& group : mesh->groups) {
-
+            for (auto& group : mesh->groups)
+            {
                 bgfx::VertexLayout layout;
                 layout.begin();
 
@@ -369,14 +369,17 @@ namespace engine::render
                 vh->vb = vb;
                 group.vertices.handle = vh;
                 
-                auto ib = bgfx::createIndexBuffer(
-                    bgfx::makeRef(group.indices.indices, group.indices.Size()),
-                    group.indices.type == IndexBuffer::UInt32 ? BGFX_BUFFER_INDEX32 : 0
-                );
+                if (group.indices)
+                {
+                    auto ib = bgfx::createIndexBuffer(
+                        bgfx::makeRef(group.indices.indices, group.indices.Size()),
+                        group.indices.type == IndexBuffer::UInt32 ? BGFX_BUFFER_INDEX32 : 0
+                    );
 
-                HandleBGFX* ih = new HandleBGFX();
-                ih->ib = ib;
-                group.indices.handle = ih;
+                    HandleBGFX* ih = new HandleBGFX();
+                    ih->ib = ib;
+                    group.indices.handle = ih;
+                }
             }
 
             mesh->uploaded = true;
@@ -526,9 +529,12 @@ namespace engine::render
             
             for (auto& group : mesh->groups) {
                 auto vb = static_cast<HandleBGFX*>(group.vertices.handle)->vb;
-                auto ib = static_cast<HandleBGFX*>(group.indices.handle)->ib;
                 bgfx::setVertexBuffer(0, vb);
-                bgfx::setIndexBuffer(ib);
+
+                if (group.indices.handle != nullptr) {
+                    auto ib = static_cast<HandleBGFX*>(group.indices.handle)->ib;
+                    bgfx::setIndexBuffer(ib);
+                }
 
                 bgfx::submit(state.view, state.currentProgram);
             }
