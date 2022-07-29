@@ -18,7 +18,7 @@ namespace engine::editor
         static inline std::vector<vec4> gridVertices;
 
     public:
-        // TODO: Grid major/minor lines. View based fade. Infinite grid
+        // TODO: Scale grid based on snap increment. View based fade. Infinite grid
         void DrawGrid(render::Render& r)
         {
             mat4x4 matrix = glm::translate(glm::identity<mat4x4>(), vec3(0, 0.015, 0));
