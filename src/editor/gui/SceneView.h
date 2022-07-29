@@ -34,9 +34,11 @@ namespace engine::editor
         Tool  activeTool    = Tool::Translate;
         Space space         = Space::World;
         Rect  viewport;
-        bool  canSelect     = true;
         float cameraSpeed   = 0.005f;
         bool  allowAxisFlip = true;
+
+
+        bool  popupOpen     = false;
 
     // Draw Modes //
 
@@ -57,6 +59,16 @@ namespace engine::editor
         }
 
     // UI //
+
+        bool BeginMenu(const char* label, bool enabled = true)
+        {
+            bool open = ImGui::BeginMenu(label, enabled);
+
+            // Prevent click on viewport when clicking menu
+            if (open && ImGui::IsWindowHovered())
+                popupOpen = true;
+            return open;
+        }
 
         void NoPadding() {
             // Set window padding to 0
@@ -150,7 +162,7 @@ namespace engine::editor
 
         void Draw() override
         {
-            canSelect = true;
+            popupOpen = false;
             ResetPadding();
             
         // Menu Bar //
@@ -158,9 +170,9 @@ namespace engine::editor
             {
                 CoordinateSpacePicker();
 
-                // Left side
+                // Right side
                 ImGui::SameLine(ImGui::GetWindowWidth() - 90);
-                if (ImGui::BeginMenu(ICON_MC_IMAGE_MULTIPLE " " ICON_MC_MENU_DOWN))
+                if (BeginMenu(ICON_MC_IMAGE_MULTIPLE " " ICON_MC_MENU_DOWN))
                 {
                     refl::Enum* modes = refl::Enum::Get<DrawMode>();
                     for (auto& [value, name] : *modes)
@@ -173,7 +185,7 @@ namespace engine::editor
 
                 // Right side
                 ImGui::SameLine(ImGui::GetWindowWidth() - 40);
-                if (ImGui::BeginMenu(ICON_MC_VIDEO " " ICON_MC_MENU_DOWN))
+                if (BeginMenu(ICON_MC_VIDEO " " ICON_MC_MENU_DOWN))
                 {
                     Camera& camera = Editor.editorCamera.GetComponent<Camera>();
                     ImGui::TextUnformatted("Scene Camera");
@@ -211,7 +223,7 @@ namespace engine::editor
                 Transform& transform = Editor.editorCamera.GetComponent<Transform>();
 
                 // Left-click: Select (or transform selection)
-                if (Mouse.GetButtonDown(Mouse::Left) && canSelect && (Selection.Empty() || !ImGuizmo::IsOver()))
+                if (Mouse.GetButtonDown(Mouse::Left) && !popupOpen && (Selection.Empty() || !ImGuizmo::IsOver()))
                 {
                     ImVec2 absolute = ImGui::GetMousePos();
                     uint2 mouse = uint2(absolute.x - pos.x, absolute.y - pos.y);
@@ -287,13 +299,10 @@ namespace engine::editor
             };
             int i = int(space);
             auto label = std::string(items[i]) + " " ICON_MC_MENU_DOWN;
-            if (ImGui::BeginMenu(label.c_str())) {
+            if (BeginMenu(label.c_str())) {
                 for (int j = 0; j < std::size(items); j++) {
                     if (ImGui::MenuItem(items[j])) {
                         space = Space(j);
-                    }
-                    if (ImGui::IsItemHovered()) {
-                        canSelect = false;
                     }
                 }
                 ImGui::MenuItem("Axis Flip", "", &allowAxisFlip);
@@ -326,7 +335,7 @@ namespace engine::editor
                 activeTool = tool;
             }
             if (ImGui::IsItemHovered()) {
-                canSelect = false;
+                popupOpen = true;
             }
 
             ImGui::PopStyleColor();
