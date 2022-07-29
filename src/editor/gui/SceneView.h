@@ -34,6 +34,7 @@ namespace engine::editor
         Tool  activeTool    = Tool::Translate;
         Space space         = Space::World;
         Rect  viewport;
+        bool  canSelect     = true;
         float cameraSpeed   = 0.01f;
         bool  allowAxisFlip = true;
 
@@ -148,6 +149,7 @@ namespace engine::editor
 
         void Draw() override
         {
+            canSelect = true;
             ResetPadding();
             
         // Menu Bar //
@@ -190,6 +192,17 @@ namespace engine::editor
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
             ImVec2 max = ImVec2(pos.x + size.x, pos.y + size.y);
+
+            // Copy from scene view render target into viewport
+            ImGui::GetWindowDrawList()->AddImage(
+                GetTexture(drawMode),
+                pos, max,
+                ImVec2(0, 0), ImVec2(1, 1)
+            );
+
+            viewport = Rect(pos.x, pos.y, size.x, size.y);
+
+            Toolbar();
             
             // If mouse is over viewport,
             if (ImGui::IsMouseHoveringRect(pos, max))
@@ -197,7 +210,7 @@ namespace engine::editor
                 Transform& transform = Editor.editorCamera.GetComponent<Transform>();
 
                 // Left-click: Select (or transform selection)
-                if (Mouse.GetButtonDown(Mouse::Left) && (Selection.Empty() || !ImGuizmo::IsOver()))
+                if (Mouse.GetButtonDown(Mouse::Left) && canSelect && (Selection.Empty() || !ImGuizmo::IsOver()))
                 {
                     ImVec2 absolute = ImGui::GetMousePos();
                     uint2 mouse = uint2(absolute.x - pos.x, absolute.y - pos.y);
@@ -238,17 +251,6 @@ namespace engine::editor
                     transform.position += transform.Right() * (d-a) * cameraSpeed;
                 }
             }
-
-            // Copy from scene view render target into viewport
-            ImGui::GetWindowDrawList()->AddImage(
-                GetTexture(drawMode),
-                pos, max,
-                ImVec2(0, 0), ImVec2(1, 1)
-            );
-
-            viewport = Rect(pos.x, pos.y, size.x, size.y);
-
-            Toolbar();
         }
 
         // Returns true if window is not collapsed
@@ -289,6 +291,9 @@ namespace engine::editor
                     if (ImGui::MenuItem(items[j])) {
                         space = Space(j);
                     }
+                    if (ImGui::IsItemHovered()) {
+                        canSelect = false;
+                    }
                 }
                 ImGui::MenuItem("Axis Flip", "", &allowAxisFlip);
                 ImGui::EndMenu();
@@ -318,6 +323,9 @@ namespace engine::editor
             
             if (ImGui::Button(label)) {
                 activeTool = tool;
+            }
+            if (ImGui::IsItemHovered()) {
+                canSelect = false;
             }
 
             ImGui::PopStyleColor();
