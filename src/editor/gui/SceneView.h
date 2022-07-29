@@ -35,7 +35,7 @@ namespace engine::editor
         Space space         = Space::World;
         Rect  viewport;
         bool  canSelect     = true;
-        float cameraSpeed   = 0.01f;
+        float cameraSpeed   = 0.005f;
         bool  allowAxisFlip = true;
 
     // Draw Modes //

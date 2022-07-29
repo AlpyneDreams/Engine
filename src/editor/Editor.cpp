@@ -47,7 +47,8 @@ namespace engine::editor
         // Setup editor camera
         editorCamera.SetName("Editor Camera");
         Camera& camera = editorCamera.AddComponent<Camera>();
-        editorCamera.GetComponent<Transform>().position = vec3(0, 0, -35);
+        editorCamera.GetComponent<Transform>().position = vec3(2, 2.5, -3.5);
+        editorCamera.GetComponent<Transform>().SetEulerAngles(vec3(30, -30, 0));
         camera.renderTarget = rt_SceneView;
 
         // Setup Object ID pass
