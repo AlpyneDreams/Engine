@@ -289,6 +289,7 @@ namespace engine::editor
 
             return true;
         }
+    
     // Coordinate Space Picker //
 
         void CoordinateSpacePicker()
@@ -301,11 +302,11 @@ namespace engine::editor
             auto label = std::string(items[i]) + " " ICON_MC_MENU_DOWN;
             if (BeginMenu(label.c_str())) {
                 for (int j = 0; j < std::size(items); j++) {
-                    if (ImGui::MenuItem(items[j])) {
+                    if (ImGui::MenuItem(items[j], "", space == Space(j))) {
                         space = Space(j);
                     }
                 }
-                ImGui::MenuItem("Axis Flip", "", &allowAxisFlip);
+                ImGui::Checkbox("Axis Flip", &allowAxisFlip);
                 ImGui::EndMenu();
             }
         }
