@@ -58,6 +58,7 @@ namespace engine::editor
             ctx.SetupCamera();
             ctx.r.SetRenderTarget(editor::Editor.rt_ObjectID);
             ctx.r.SetClearColor(true, Colors.Black);
+            ctx.r.SetBlendFunc(render::BlendFuncs::Normal);
             ctx.DrawRenderersWith([&](EntityID id) {
                 ctx.r.SetShader(editor::Editor.sh_Color);
                 uint i = uint(id);

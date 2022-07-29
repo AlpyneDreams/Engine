@@ -4,6 +4,7 @@
 #include "math/Math.h"
 #include "math/Color.h"
 #include "render/TextureFormat.h"
+#include "render/BlendMode.h"
 
 #include <functional>
 #include <string_view>
@@ -72,6 +73,7 @@ namespace engine::render
     // Per-Object State //
 
         virtual void SetDepthTest(CompareFunc func) = 0;
+        virtual void SetBlendFunc(BlendFunc func) = 0;
         virtual void SetPrimitiveType(PrimitiveType type) = 0;
         virtual void SetPolygonMode(PolygonMode mode) = 0;
         virtual void SetTransform(mat4x4& matrix) = 0;

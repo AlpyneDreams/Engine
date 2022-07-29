@@ -23,12 +23,14 @@ namespace engine::editor
         {
             mat4x4 matrix = glm::translate(glm::identity<mat4x4>(), vec3(0, 0.015, 0));
             r.SetTransform(matrix);
+            r.SetBlendFunc(render::BlendFuncs::Alpha);
             r.SetDepthTest(render::CompareFunc::LessEqual);
             r.SetPrimitiveType(render::PrimitiveType::Lines);
             r.SetShader(Editor.sh_Grid);
             r.DrawMesh(&grid);
             r.SetPrimitiveType(render::PrimitiveType::Triangles);
             r.SetDepthTest(render::CompareFunc::Less);
+            r.SetBlendFunc(render::BlendFuncs::Normal);
         }
 
         Handles()

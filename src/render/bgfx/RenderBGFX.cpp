@@ -480,6 +480,51 @@ namespace engine::render
             state.state |= GetDepthTest(func);
         }
 
+        static inline uint64 GetBlendMode(BlendMode mode)
+        {
+            switch (mode) {
+                default:
+                case BlendMode::Default:          return 0;
+                case BlendMode::Zero:             return BGFX_STATE_BLEND_ZERO;
+                case BlendMode::One:              return BGFX_STATE_BLEND_ONE;
+                case BlendMode::SrcColor:         return BGFX_STATE_BLEND_SRC_COLOR;
+                case BlendMode::OneMinusSrcColor: return BGFX_STATE_BLEND_INV_SRC_COLOR;
+                case BlendMode::DstColor:         return BGFX_STATE_BLEND_DST_COLOR;
+                case BlendMode::OneMinusDstColor: return BGFX_STATE_BLEND_INV_DST_COLOR;
+                case BlendMode::SrcAlpha:         return BGFX_STATE_BLEND_SRC_ALPHA;
+                case BlendMode::OneMinusSrcAlpha: return BGFX_STATE_BLEND_INV_SRC_ALPHA;
+                case BlendMode::DstAlpha:         return BGFX_STATE_BLEND_DST_ALPHA;
+                case BlendMode::OneMinusDstAlpha: return BGFX_STATE_BLEND_INV_DST_ALPHA;
+                case BlendMode::SrcAlphaSaturate: return BGFX_STATE_BLEND_SRC_ALPHA_SAT;
+            }
+        }
+
+        static inline uint64 GetBlendOp(BlendOp mode)
+        {
+            switch (mode) {
+                default:
+                case BlendOp::Default:            return 0;
+                case BlendOp::Add:                return BGFX_STATE_BLEND_EQUATION_ADD;
+                case BlendOp::Subtract:           return BGFX_STATE_BLEND_EQUATION_SUB;
+                case BlendOp::ReverseSubtract:    return BGFX_STATE_BLEND_EQUATION_REVSUB;
+                case BlendOp::Min:                return BGFX_STATE_BLEND_EQUATION_MIN;
+                case BlendOp::Max:                return BGFX_STATE_BLEND_EQUATION_MAX;
+            }
+        }
+
+        void SetBlendFunc(BlendFunc func)
+        {
+            state.state &= ~BGFX_STATE_BLEND_MASK;
+            state.state &= ~BGFX_STATE_BLEND_EQUATION_MASK;
+            state.state |= BGFX_STATE_BLEND_FUNC_SEPARATE(
+                GetBlendMode(func.src), GetBlendMode(func.dst),
+                GetBlendMode(func.srcAlpha), GetBlendMode(func.dstAlpha)
+            );
+            state.state |= BGFX_STATE_BLEND_EQUATION_SEPARATE(
+                GetBlendOp(func.rgbOp), GetBlendOp(func.alphaOp)
+            );
+        }
+
         void SetPrimitiveType(PrimitiveType type)
         {
             state.state &= ~BGFX_STATE_PT_MASK;
