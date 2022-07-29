@@ -9,4 +9,4 @@
 	url = https://github.com/bkaradzic/bimg.git
 [submodule "submodules/bgfx"]
 	path = submodules/bgfx
-	url = https://github.com/bkaradzic/bgfx.git
+	url = https://github.com/AlpyneDreams/bgfx.git
