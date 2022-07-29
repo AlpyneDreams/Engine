@@ -24,10 +24,10 @@ namespace engine::editor
             mat4x4 matrix = glm::translate(glm::identity<mat4x4>(), vec3(0, 0.015, 0));
             r.SetTransform(matrix);
             r.SetDepthTest(render::CompareFunc::LessEqual);
-            r.SetPolygonMode(render::PolygonMode::Lines);
+            r.SetPrimitiveType(render::PrimitiveType::Lines);
             r.SetShader(Editor.sh_Grid);
             r.DrawMesh(&grid);
-            r.SetPolygonMode(render::PolygonMode::Fill);
+            r.SetPrimitiveType(render::PrimitiveType::Triangles);
             r.SetDepthTest(render::CompareFunc::Less);
         }
 

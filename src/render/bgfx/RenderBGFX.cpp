@@ -480,15 +480,27 @@ namespace engine::render
             state.state |= GetDepthTest(func);
         }
 
-        void SetPolygonMode(PolygonMode mode)
+        void SetPrimitiveType(PrimitiveType type)
         {
             state.state &= ~BGFX_STATE_PT_MASK;
+            switch (type) {
+                case PrimitiveType::Points:     state.state |= BGFX_STATE_PT_POINTS; break;
+                case PrimitiveType::Lines:      state.state |= BGFX_STATE_PT_LINES; break;
+                case PrimitiveType::LineStrip:  state.state |= BGFX_STATE_PT_LINESTRIP; break;
+                case PrimitiveType::TriStrip:   state.state |= BGFX_STATE_PT_TRISTRIP; break;
+                case PrimitiveType::Triangles:  default: break;
+            }
+        }
+
+        void SetPolygonMode(PolygonMode mode)
+        {
+            state.state &= ~BGFX_STATE_WIREFRAME;
             switch (mode) {
                 case PolygonMode::Points:
-                    state.state |= BGFX_STATE_PT_POINTS;
+                    SetPrimitiveType(PrimitiveType::Points);
                     return;
-                case PolygonMode::Lines:
-                    state.state |= BGFX_STATE_PT_LINES;
+                case PolygonMode::Wireframe:
+                    state.state |= BGFX_STATE_WIREFRAME;
                     return;
                 default:
                     return;

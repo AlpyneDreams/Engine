@@ -162,7 +162,7 @@ namespace engine::editor
                     r.SetTransform(matrix);
                 }
                 r.SetDepthTest(render::CompareFunc::LessEqual);
-                r.SetPolygonMode(render::PolygonMode::Lines);
+                r.SetPolygonMode(render::PolygonMode::Wireframe);
                 r.SetShader(Editor.sh_Color);
                 r.SetUniform("u_color", vec4(1, 0.6, 0.25, 1));
                 r.DrawMesh(ent.GetComponent<MeshRenderer>().mesh);

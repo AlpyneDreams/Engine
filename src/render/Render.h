@@ -32,7 +32,8 @@ namespace engine::render
     struct Handle {};
 
     enum class CompareFunc { Disabled, Never, Always, Less, LessEqual, Greater, GreaterEqual, Equal, NotEqual };
-    enum class PolygonMode { Points, Lines, Fill };
+    enum class PrimitiveType { Points, Lines, Triangles, TriStrip, LineStrip  };
+    enum class PolygonMode { Points, Wireframe, Fill };
 
     class Render
     {
@@ -71,6 +72,7 @@ namespace engine::render
     // Per-Object State //
 
         virtual void SetDepthTest(CompareFunc func) = 0;
+        virtual void SetPrimitiveType(PrimitiveType type) = 0;
         virtual void SetPolygonMode(PolygonMode mode) = 0;
         virtual void SetTransform(mat4x4& matrix) = 0;
         virtual void SetShader(Shader* shader) = 0;
