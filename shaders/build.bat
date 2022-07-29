@@ -1,7 +1,11 @@
 @echo off
-..\tools\bgfx\shaderc -f vs_cubes.glsl -o ..\runtime\core\shaders\spirv\vs_cubes.bin --type v --platform linux -p spirv
-..\tools\bgfx\shaderc -f fs_cubes.glsl -o ..\runtime\core\shaders\spirv\fs_cubes.bin --type f --platform linux -p spirv
-..\tools\bgfx\shaderc -f vs_basic.glsl -o ..\runtime\core\shaders\spirv\vs_basic.bin --type v --platform linux -p spirv
-..\tools\bgfx\shaderc -f fs_wireframe.glsl -o ..\runtime\core\shaders\spirv\fs_wireframe.bin --type f --platform linux -p spirv
-..\tools\bgfx\shaderc -f fs_color.glsl -o ..\runtime\core\shaders\spirv\fs_color.bin --type f --platform linux -p spirv
+for %%F in (vs_*.glsl) do (
+    echo %%F
+    ..\tools\bgfx\shaderc -f %%F -o ..\runtime\core\shaders\spirv\%%~nF.bin --type v --platform linux -p spirv
+)
+
+for %%F in (fs_*.glsl) do (
+    echo %%F
+    ..\tools\bgfx\shaderc -f %%F -o ..\runtime\core\shaders\spirv\%%~nF.bin --type f --platform linux -p spirv
+)
 pause
