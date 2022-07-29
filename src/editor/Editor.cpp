@@ -36,7 +36,6 @@ namespace engine::editor
         render::Render& r = Engine.Render;
         
         // Load editor shaders
-        sh_Wireframe = r.LoadShader("vs_basic", "fs_wireframe");
         sh_Color  = r.LoadShader("vs_basic", "fs_color");
 
         // Setup editor render targets

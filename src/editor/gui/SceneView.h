@@ -139,8 +139,9 @@ namespace engine::editor
                     r.SetTransform(matrix);
                 }
                 r.SetDepthTest(render::CompareFunc::LessEqual);
-                r.SetShader(Editor.sh_Wireframe);
                 r.SetPolygonMode(render::PolygonMode::Lines);
+                r.SetShader(Editor.sh_Color);
+                r.SetUniform("u_color", vec4(1, 0.6, 0.25, 1));
                 r.DrawMesh(ent.GetComponent<MeshRenderer>().mesh);
                 r.SetPolygonMode(render::PolygonMode::Fill);
                 r.SetDepthTest(render::CompareFunc::Less);

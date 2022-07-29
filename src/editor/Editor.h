@@ -17,7 +17,6 @@ namespace engine::editor
     // Viewport //
         Entity editorCamera;
 
-        render::Shader* sh_Wireframe;
         render::Shader* sh_Color;
 
         render::RenderTarget* rt_SceneView;
