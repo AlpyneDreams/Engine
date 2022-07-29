@@ -5,6 +5,7 @@
 #include "math/Color.h"
 #include "render/TextureFormat.h"
 
+#include <functional>
 #include <string_view>
 
 namespace engine { struct RenderSystem; struct Mesh; }
@@ -15,11 +16,17 @@ namespace engine::render
 
     struct RenderTarget
     {
+        using ReadBackFunc = std::function<void(float* ptr, size_t size, size_t with)>;
+
         // TODO: MRT attachment configuration
         virtual void* GetTexture() const = 0;
         virtual void* GetDepthTexture() const = 0;
         virtual uint2 GetSize() const = 0;
         virtual void Resize(uint width, uint height) = 0;
+
+        // TODO: Should be settable as a flag on creation
+        virtual void SetReadBack(bool readBack) = 0;
+        virtual void ReadTexture(ReadBackFunc func) = 0;
     };
 
     struct Handle {};

@@ -109,6 +109,7 @@ namespace engine::editor
             render::Render& r = Engine.Render;
             Entity ent = Selection.Active();
             if (ent && ent.HasComponent<MeshRenderer>()) {
+                r.SetRenderTarget(Editor.rt_SceneView);
                 if (ent.HasComponent<Transform>()) {
                     mat4x4 matrix = ent.GetComponent<Transform>().GetTransformMatrix();
                     r.SetTransform(matrix);
@@ -152,39 +153,52 @@ namespace engine::editor
             ImVec2 size = ImGui::GetContentRegionAvail();
             ImVec2 max = ImVec2(pos.x + size.x, pos.y + size.y);
             
-            if (ImGui::IsMouseHoveringRect(pos, max) && !ImGui::GetIO().KeyCtrl)
+            // If mouse is over viewport,
+            if (ImGui::IsMouseHoveringRect(pos, max))
             {
                 Transform& transform = Editor.editorCamera.GetComponent<Transform>();
 
-                // TODO: Make Z toggle instead of hold
-                if (Mouse.GetButtonDown(Mouse::Right) || Keyboard.GetKeyDown(Key::Z))
+                // Left-click: Select (or transform selection)
+                if (Mouse.GetButtonDown(Mouse::Left) && (Selection.Empty() || !ImGuizmo::IsOver()))
                 {
-                    Cursor.SetMode(Cursor::Locked);
-                    Cursor.SetVisible(false);
+                    ImVec2 absolute = ImGui::GetMousePos();
+                    uint2 mouse = uint2(absolute.x - pos.x, absolute.y - pos.y);
+                    Editor.PickObject(mouse);
                 }
 
-                if (Mouse.GetButton(Mouse::Right) || Keyboard.GetKey(Key::Z))
+                if (!ImGui::GetIO().KeyCtrl)
                 {
-                    // Mouselook
-                    vec3 euler = transform.GetEulerAngles();
-                    vec2 mouse = vec2(Mouse.GetMotion()) / vec2(2);
-                    transform.SetEulerAngles(vec3(euler.x + mouse.y, euler.y + mouse.x, euler.z));
+                    // Right-click and hold (or press Z) to mouselook
+                    // TODO: Make Z toggle instead of hold
+                    if (Mouse.GetButtonDown(Mouse::Right) || Keyboard.GetKeyDown(Key::Z))
+                    {
+                        Cursor.SetMode(Cursor::Locked);
+                        Cursor.SetVisible(false);
+                    }
+
+                    if (Mouse.GetButton(Mouse::Right) || Keyboard.GetKey(Key::Z))
+                    {
+                        // Mouselook
+                        vec3 euler = transform.GetEulerAngles();
+                        vec2 mouse = vec2(Mouse.GetMotion()) / vec2(2);
+                        transform.SetEulerAngles(vec3(euler.x + mouse.y, euler.y + mouse.x, euler.z));
+                    }
+
+                    if (Mouse.GetButtonUp(Mouse::Right) || Keyboard.GetKeyUp(Key::Z))
+                    {
+                        Cursor.SetMode(Cursor::Normal);
+                        Cursor.SetVisible(true);
+                    }
+
+                    // WASD. TODO: Virtual axes, arrow keys
+                    float w = Keyboard.GetKey(Key::W) ? 1.f : 0.f;
+                    float s = Keyboard.GetKey(Key::S) ? 1.f : 0.f;
+                    float a = Keyboard.GetKey(Key::A) ? 1.f : 0.f;
+                    float d = Keyboard.GetKey(Key::D) ? 1.f : 0.f;
+
+                    transform.position += transform.Forward() * (w-s) * cameraSpeed;
+                    transform.position += transform.Right() * (d-a) * cameraSpeed;
                 }
-
-                if (Mouse.GetButtonUp(Mouse::Right) || Keyboard.GetKeyUp(Key::Z))
-                {
-                    Cursor.SetMode(Cursor::Normal);
-                    Cursor.SetVisible(true);
-                }
-
-                // WASD. TODO: Virtual axes, arrow keys
-                float w = Keyboard.GetKey(Key::W) ? 1.f : 0.f;
-                float s = Keyboard.GetKey(Key::S) ? 1.f : 0.f;
-                float a = Keyboard.GetKey(Key::A) ? 1.f : 0.f;
-                float d = Keyboard.GetKey(Key::D) ? 1.f : 0.f;
-
-                transform.position += transform.Forward() * (w-s) * cameraSpeed;
-                transform.position += transform.Right() * (d-a) * cameraSpeed;
             }
 
             // Copy from scene view render target into viewport
@@ -215,13 +229,14 @@ namespace engine::editor
                 height = uint(size.y);
 
                 // Resize framebuffer or viewport
-                Editor.rt_SceneView->Resize(width, height);
+                Editor.ResizeViewport(width, height);
 
                 return true;
             }
 
             return true;
         }
+    // Coordinate Space Picker //
 
         void CoordinateSpacePicker()
         {

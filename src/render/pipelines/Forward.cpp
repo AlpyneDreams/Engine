@@ -26,9 +26,6 @@ namespace engine::render
 
     void Forward::Init()
     {
-        r.SetClearColor(true, Color(0.2, 0.2, 0.2));
-        r.SetClearDepth(true, 1.0f);
-
         shader = r.LoadShader("vs_cubes", "fs_cubes");
         
         teapot.SetName("Teapot");
@@ -38,6 +35,9 @@ namespace engine::render
 
     void Forward::Render(RenderContext& ctx)
     {
+        r.SetClearColor(true, Color(0.2, 0.2, 0.2));
+        r.SetClearDepth(true, 1.0f);
+
         // Set shader
         r.SetShader(shader);
         

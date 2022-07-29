@@ -13,9 +13,20 @@ namespace engine::editor
         Entity editorCamera;
         
         render::Shader* sh_Wireframe;
+        render::Shader* sh_Color;
 
         render::RenderTarget* rt_SceneView;
-        
+        render::RenderTarget* rt_ObjectID;
+
+        void ResizeViewport(uint width, uint height)
+        {
+            rt_SceneView->Resize(width, height);
+            rt_ObjectID->Resize(width, height);
+        }
+
+        // Read object ID from scene view render target and update selection
+        void PickObject(uint2 mouse);
+
         // TODO: Support multiple instances of each
         GUI::Window* console;
         GUI::Window* outline;

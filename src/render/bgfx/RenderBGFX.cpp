@@ -60,12 +60,21 @@ namespace engine::render
     // TODO: Refactor for arbitrary MRT RenderTarget
     struct RenderTargetBGFX final : public RenderTarget
     {
-        bool hasDepth = true;
-        bgfx::TextureHandle color, depth;
-        bgfx::TextureFormat::Enum format, depthFormat;
+        bool hasDepth = true; // TEMP
+        bgfx::TextureHandle color, depth; // TEMP
+        bgfx::TextureFormat::Enum format, depthFormat; // TEMP
         bgfx::FrameBufferHandle fb;
         int view = -1;
         uint width, height;
+    
+        bool                       readBack       = false;
+        bgfx::TextureHandle        readBackBuffer = BGFX_INVALID_HANDLE;
+        uint                       readBackFrame  = 0;
+        ReadBackFunc               readBackFunc;
+        float*                     readBackData   = nullptr;
+        size_t                     readBackSize   = 0;
+
+        static inline std::set<RenderTargetBGFX*> pendingReadBacks;
 
         RenderTargetBGFX(uint width, uint height, TextureFormat color, TextureFormat depth) : width(width), height(height)
         {
@@ -83,7 +92,27 @@ namespace engine::render
                 depth = bgfx::createTexture2D(width, height, false, 1, depthFormat, BGFX_TEXTURE_RT);
             bgfx::TextureHandle handles[] = {color, depth};
             fb = bgfx::createFrameBuffer(hasDepth ? 2 : 1, handles, true);
+
+            if (readBack) {
+                readBackBuffer = bgfx::createTexture2D(width, height, false, 1, format,
+                    BGFX_TEXTURE_BLIT_DST | BGFX_TEXTURE_READ_BACK
+                );
+            } else {
+                readBackBuffer = BGFX_INVALID_HANDLE;
+            }
         }
+
+        void Destroy()
+        {
+            bgfx::destroy(fb);
+            bgfx::destroy(color);
+            if (hasDepth)
+                bgfx::destroy(depth);
+            if (readBack && bgfx::isValid(readBackBuffer))
+                bgfx::destroy(readBackBuffer);
+        }
+
+        void Recreate() { Destroy(); Create(); }
 
         void* GetTexture() const {
             return (void*)uintptr_t(bgfx::getTexture(fb).idx);
@@ -104,9 +133,54 @@ namespace engine::render
             if (w == width && h == height)
                 return;
 
-            bgfx::destroy(fb);
             width = w; height = h;
-            Create();
+            Recreate();
+        }
+
+        void SetReadBack(bool enabled)
+        {
+            readBack = enabled;
+            Recreate();
+        }
+
+        void ReadTexture(ReadBackFunc func)
+        {
+            // No readback, or already pending readback
+            if (!readBack || readBackFrame != 0)
+                return;
+            readBackSize = width * height;
+            readBackData = new float[readBackSize];
+            bgfx::blit(view + 1, readBackBuffer, 0, 0, color);
+            readBackFunc = func;
+            readBackFrame = bgfx::readTexture(readBackBuffer, readBackData);
+            pendingReadBacks.insert(this);
+        }
+
+        static void CheckPendingReadBacks(uint frame)
+        {
+            for (auto it = pendingReadBacks.begin(); it != pendingReadBacks.end(); )
+            {
+                auto* rt = *it;
+                // No pending readback
+                if (!rt->readBack || rt->readBackFrame == 0)
+                {
+                    pendingReadBacks.erase(it++);
+                    continue;
+                }
+
+                // Readback is ready!
+                if (rt->readBackFrame >= frame)
+                {
+                    rt->readBackFunc(rt->readBackData, rt->readBackSize, rt->width);
+                    rt->readBackFrame = 0;
+                    delete rt->readBackData;
+                    rt->readBackData = nullptr;
+                    pendingReadBacks.erase(it++);
+                    continue;
+                }
+                else
+                    ++it;
+            }
         }
 
         ~RenderTargetBGFX() {
@@ -234,7 +308,9 @@ namespace engine::render
             ImGui::Render();
             ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
 
-            bgfx::frame();
+            uint frame = bgfx::frame();
+
+            RenderTargetBGFX::CheckPendingReadBacks(frame);
         }
 
         void Shutdown()

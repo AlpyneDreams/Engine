@@ -4,6 +4,8 @@
 #include "entity/components/Camera.h"
 #include "entity/components/MeshRenderer.h"
 
+#include <functional>
+
 namespace engine::render
 {
     /** 
@@ -30,6 +32,17 @@ namespace engine::render
             {
                 mat4x4 model = transform.GetTransformMatrix();
                 r.SetTransform(model);
+                r.DrawMesh(renderer.mesh);
+            }
+        }
+
+        void DrawRenderersWith(std::function<void(EntityID)> func)
+        {
+            for (auto&& [ent, transform, renderer] : World.Each<Transform, MeshRenderer>())
+            {
+                mat4x4 model = transform.GetTransformMatrix();
+                r.SetTransform(model);
+                func(ent);
                 r.DrawMesh(renderer.mesh);
             }
         }

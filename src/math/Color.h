@@ -27,6 +27,9 @@ namespace engine
         explicit ColorRGBA(double r, double g, double b, double a = NormalMax)
             : r(r), g(g), b(b), a(a) {}
 
+        explicit ColorRGBA(auto r, auto g, auto b, auto a = NormalMax)
+            : r(float(r)), g(float(g)), b(float(b)), a(float(a)) {}
+
         uint32 Pack()
         {
             using std::clamp;
@@ -42,7 +45,8 @@ namespace engine
 
     // List of common colors
     const struct {
-        Color Black = Color(0.0, 0.0, 0.0, 1.0);
+        Color Black = Color(0, 0, 0, 1);
+        Color White = Color(1, 1, 1, 1);
     } Colors;
 
 }

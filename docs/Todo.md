@@ -36,6 +36,8 @@
   - Sharing name between type and instance is not ideal
   - Centralized global variable list?
   - inline struct {...} Name; ?
+    - This can create ambiguity sometimes !!
+      - Can typically be resolved by specifying namespace such as in the lambda in Editor::Run
   - old fashioned singleton?
     - Some kind of template bullshit?
   - static classes?

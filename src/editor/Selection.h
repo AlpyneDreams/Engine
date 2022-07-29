@@ -1,5 +1,6 @@
 #pragma once
 
+#include "entity/Common.h"
 #include "entity/Entity.h"
 
 namespace engine::editor
@@ -19,6 +20,10 @@ namespace engine::editor
             return selected == ent;
         }
 
+        bool Empty() {
+            return selected == EntityNull;
+        }
+
         void Select(EntityID ent) {
             selected = ent;
         }
@@ -27,6 +32,10 @@ namespace engine::editor
             if (selected == ent) {
                 selected = EntityNull;
             }
+        }
+
+        void Clear() {
+            selected = EntityNull;
         }
 
         void Toggle(EntityID ent) {

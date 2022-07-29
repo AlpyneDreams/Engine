@@ -3,4 +3,5 @@
 ..\tools\bgfx\shaderc -f fs_cubes.glsl -o ..\runtime\core\shaders\spirv\fs_cubes.bin --type f --platform linux -p spirv
 ..\tools\bgfx\shaderc -f vs_basic.glsl -o ..\runtime\core\shaders\spirv\vs_basic.bin --type v --platform linux -p spirv
 ..\tools\bgfx\shaderc -f fs_wireframe.glsl -o ..\runtime\core\shaders\spirv\fs_wireframe.bin --type f --platform linux -p spirv
+..\tools\bgfx\shaderc -f fs_color.glsl -o ..\runtime\core\shaders\spirv\fs_color.bin --type f --platform linux -p spirv
 pause
