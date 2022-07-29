@@ -41,11 +41,9 @@ namespace engine::editor
                 ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 60);
 
                 // Draw lock toggle button
-                ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_MenuBarBg));
-                if (ImGui::Button(locked ? ICON_MC_LOCK : ICON_MC_LOCK_OPEN_OUTLINE)) {
+                if (GUI::MenuBarButton(locked ? ICON_MC_LOCK : ICON_MC_LOCK_OPEN_OUTLINE)) {
                     locked = !locked;
                 }
-                ImGui::PopStyleColor();
                 
                 // Draw options menu
                 ImGui::SameLine();

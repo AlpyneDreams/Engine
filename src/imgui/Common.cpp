@@ -142,4 +142,12 @@ namespace engine
         else if (right)
             ImGui::SetCursorScreenPos(lineStart);
     }
+
+    bool GUI::MenuBarButton(std::string_view title)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_MenuBarBg));
+        bool clicked = ImGui::Button(title.data());
+        ImGui::PopStyleColor();
+        return clicked;
+    }
 }

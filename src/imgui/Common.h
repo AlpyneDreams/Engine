@@ -16,5 +16,7 @@ namespace engine
 
         // Aligned (left or right) item label (use before input controls)
         void ItemLabel(std::string_view title, bool right = false);
+
+        bool MenuBarButton(std::string_view title);
     }
 }
