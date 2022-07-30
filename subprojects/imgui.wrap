@@ -1,11 +1,8 @@
-[wrap-file]
+[wrap-git]
 directory = imgui-docking
-source_url = https://github.com/ocornut/imgui/archive/refs/heads/docking.zip
-source_filename = imgui-docking.zip
-source_hash = 4522e05788dd26802d740a0e013430303b24a1798d44a6c0d8ebe8c366ec1540
-#patch_filename = imgui_1.87-3_patch.zip
-#patch_url = https://wrapdb.mesonbuild.com/v2/imgui_1.87-3/get_patch
-#patch_hash = daedd65150ad24667190f915267515f36da68e46724a21175d667660c1b54918
+url = https://github.com/ocornut/imgui.git
+revision = docking
+depth = 1
 patch_directory = imgui
 wrapdb_version = 1.87-3
 
