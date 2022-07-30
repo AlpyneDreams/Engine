@@ -15,11 +15,11 @@ vookoo_dep = declare_dependency(include_directories: 'submodules/vookoo/include'
 glm_dep    = dependency('glm', static: true)
 imgui_dep  = dependency('imgui', static: true)
 imguizmo_dep  = dependency('imguizmo')
-entt_dep      = dependency('entt', required: not windows)
+entt_dep      = dependency('entt', required: false)
 
-# On Windows, we have to use CMake. required: false stops meson
+# For EnTT, we have to use CMake. required: false stops meson
 # from trying to find a meson.build file in the wrapped project.
-if not entt_dep.found() and windows
+if not entt_dep.found()
     cmake      = import('cmake')
     entt       = cmake.subproject('entt')
     entt_dep   = entt.dependency('EnTT')
