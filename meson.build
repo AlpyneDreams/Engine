@@ -13,7 +13,7 @@ sdl_dep    = dependency('sdl2', default_options: ['with_main=false'], static: tr
 vulkan_dep = dependency('vulkan')
 vookoo_dep = declare_dependency(include_directories: 'submodules/vookoo/include')
 glm_dep    = dependency('glm', static: true)
-imgui_dep  = dependency('imgui', static: true)
+imgui_dep  = dependency('imgui', default_options: ['vulkan=disabled'], static: true)
 imguizmo_dep  = dependency('imguizmo')
 entt_dep      = dependency('entt', required: false)
 
@@ -58,8 +58,8 @@ bgfx_dep = declare_dependency(
     compile_args: [
         '-DBX_CONFIG_DEBUG=0',
         '-DBGFX_CONFIG_RENDERER_OPENGL=0',
-    ] + (windows ? [
         '-DBGFX_CONFIG_RENDERER_VULKAN=1',
+    ] + (windows ? [
         '-DPRIxPTR="llx"', # This should not be needed
         '/Zc:__cplusplus',
     ] : [])
