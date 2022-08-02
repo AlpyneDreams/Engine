@@ -71,23 +71,21 @@ namespace engine
     struct Rect
     {
         union {
-            vec4 vec;
-            struct {
-                union {
-                    struct { float x, y; };
-                    vec2 pos;
-                };
-                union {
-                    struct { float w, h; };
-                    struct { float width, height; };
-                    vec2 size;
-                };
-            };
+            struct { float x, y; };
+            vec2 pos;
+        };
+        union {
+            struct { float w, h; };
+            struct { float width, height; };
+            vec2 size;
         };
 
-        Rect(auto x, auto y, auto w, auto h) : vec(float(x), float(y), float(w), float(h)) {}
-        Rect(vec2 pos, vec2 size) : vec(pos, size) {}
-        Rect() : vec(0) {}
+        Rect(auto x, auto y, auto w, auto h) : pos(float(x), float(y)), size(float(w), float(h)) {}
+        Rect(vec2 pos, vec2 size) : pos(pos), size(size) {}
+        Rect(vec4 vec) : pos(vec.xy), size(vec.zw) {}
+        Rect() : pos(0), size(0) {}
+
+        operator vec4() const { return vec4(pos, size); }
 
         vec2 Max() const { return pos + size; }
     };
