@@ -33,7 +33,7 @@ namespace engine::render
         teapot.AddComponent<MeshRenderer>().mesh = &Primitives.Teapot;
     }
 
-    void Forward::Render(RenderContext& ctx)
+    void Forward::RenderFrame(RenderContext& ctx)
     {
         r.SetClearColor(true, Color(0.2, 0.2, 0.2));
         r.SetClearDepth(true, 1.0f);

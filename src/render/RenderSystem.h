@@ -53,7 +53,7 @@ namespace engine
                 RenderContext ctx = RenderContext(r, camera);
 
                 OnBeginCamera(ctx);
-                renderPipeline.Render(ctx);
+                renderPipeline.RenderFrame(ctx);
                 OnEndCamera(ctx);
             }
             

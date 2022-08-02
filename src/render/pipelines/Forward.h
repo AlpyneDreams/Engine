@@ -13,6 +13,6 @@ namespace engine::render
         using RenderPipeline::RenderPipeline;
 
         void Init() final override;
-        void Render(RenderContext& ctx) final override;
+        void RenderFrame(RenderContext& ctx) final override;
     };
 }

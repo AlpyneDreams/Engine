@@ -14,6 +14,6 @@ namespace engine::render
 
         virtual ~RenderPipeline() {}
         virtual void Init() = 0;
-        virtual void Render(RenderContext& ctx) = 0;
+        virtual void RenderFrame(RenderContext& ctx) = 0;
     };
 }
