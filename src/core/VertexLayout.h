@@ -51,7 +51,7 @@ namespace engine
         }
 
         VertexLayout& Skip(uint bytes) {
-            layout.push_back(Attribute{1, bytes, std::type_index(typeid(nullptr_t)), false, Attribute::None});
+            layout.push_back(Attribute{1, bytes, std::type_index(typeid(std::nullptr_t)), false, Attribute::None});
             stride += bytes;
             return *this;
         }

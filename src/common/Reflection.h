@@ -60,7 +60,7 @@ namespace engine::refl
     {
         const char* name;
         const char* displayName;
-        Type type = TypeID<nullptr_t>();
+        Type type = TypeID<std::nullptr_t>();
         size_t offset;
 
         template <typename T>
@@ -78,7 +78,7 @@ namespace engine::refl
     {
         const char* name;
         const char* displayName;
-        Type type = TypeID<nullptr_t>();
+        Type type = TypeID<std::nullptr_t>();
         size_t size;
         std::vector<Field> fields;
     };
@@ -87,9 +87,9 @@ namespace engine::refl
     {
         const char* name;
         const char* displayName;
-        Type type = TypeID<nullptr_t>();
+        Type type = TypeID<std::nullptr_t>();
         size_t size;
-        Type underlyingType = TypeID<nullptr_t>();
+        Type underlyingType = TypeID<std::nullptr_t>();
         bool scoped = true;
         std::map<std::string, uint64> values;
         std::map<uint64, std::string> names;
