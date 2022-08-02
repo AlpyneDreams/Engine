@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    struct IndexBuffer : GraphicsBuffer
+    struct IndexBuffer final : GraphicsBuffer
     {
         enum { UInt16, UInt32 } type = UInt32;
         const void* indices;

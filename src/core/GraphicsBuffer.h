@@ -18,7 +18,7 @@ namespace engine
 
         GraphicsBuffer() {}
 
-        ~GraphicsBuffer() {}
+        virtual ~GraphicsBuffer() {}
 
         GraphicsBuffer(uint count) : count(count) {}
 

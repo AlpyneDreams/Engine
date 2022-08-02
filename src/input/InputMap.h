@@ -29,7 +29,7 @@ namespace engine
             keys[key] = down;
         }
 
-        virtual void Update()
+        void Update()
         {
             // Keyups and keydowns only persist for one frame.
             keysDown.Clear();

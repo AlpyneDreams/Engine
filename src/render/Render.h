@@ -19,6 +19,8 @@ namespace engine::render
     {
         using ReadBackFunc = std::function<void(float* ptr, size_t size, size_t with)>;
 
+        virtual ~RenderTarget() {}
+
         // TODO: MRT attachment configuration
         virtual void* GetTexture() const = 0;
         virtual void* GetDepthTexture() const = 0;

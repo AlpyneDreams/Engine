@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    struct VertexBuffer : GraphicsBuffer
+    struct VertexBuffer final : GraphicsBuffer
     {
         VertexLayout layout;
         union {
