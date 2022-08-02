@@ -17,14 +17,14 @@ namespace engine
 
         IndexBuffer(const uint32* indices, size_t size)
           : GraphicsBuffer(size / sizeof(uint32)),
-            indices(indices),
-            type(UInt32)
+            type(UInt32),
+            indices(indices)
         {}
 
         IndexBuffer(const uint16* indices, size_t size)
           : GraphicsBuffer(size / sizeof(uint16)),
-            indices(indices),
-            type(UInt16)
+            type(UInt16),
+            indices(indices)
         {}
 
         IndexBuffer(std::vector<uint32>& indices)
