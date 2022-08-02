@@ -36,6 +36,12 @@ write('namespace engine::rtti')
 write('{')
 global_indent += 1
 
+# Initialize registries
+write('// One Definition Rule: Ensure registries are initialized first.')
+write('static const auto& _class = Registry<Class>::registry;')
+write('static const auto& _enums = Registry<Enum>::registry;')
+write()
+
 # Write classes
 for spelling, data in classes.items():
     write(f'// {data["location"]}')

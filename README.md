@@ -11,7 +11,10 @@ Observations:
 ## Dependencies ##
 
 - [Meson](https://mesonbuild.com/) is required to build.
-  - [Python 3](https://www.python.org/) may also be required if Meson cannot find it for you.
+  - You may need [CMake](https://cmake.org/) to build EnTT
+- To generate RTTI information, you will need:
+  - [Python 3](https://www.python.org/)
+  - The `libclang` pip package
 
 Handled by Meson (via pkgconfig or WrapDB):
 - [fmt](https://fmt.dev/)
