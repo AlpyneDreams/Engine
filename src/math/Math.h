@@ -1,5 +1,6 @@
 #pragma once
 
+#define GLM_FORCE_INTRINSICS
 #define GLM_FORCE_SWIZZLE
 
 #include <glm/vec2.hpp>
@@ -51,20 +52,20 @@ namespace engine
     // left-handed (+Z forward), Y-up system
     inline struct Vectors
     {
-        static constexpr vec3 One  = vec3(1, 1, 1);
-        static constexpr vec3 Zero = vec3(0, 0, 0);
+        static const inline vec3 One  = vec3(1, 1, 1);
+        static const inline vec3 Zero = vec3(0, 0, 0);
 
         // +Z forward, -Z backward
-        static constexpr vec3 Forward = vec3(0, 0, +1);
-        static constexpr vec3 Back    = vec3(0, 0, -1);
+        static const inline vec3 Forward = vec3(0, 0, +1);
+        static const inline vec3 Back    = vec3(0, 0, -1);
 
         // +Y up, -Y down
-        static constexpr vec3 Up   = vec3(0, +1, 0);
-        static constexpr vec3 Down = vec3(0, -1, 0);
+        static const inline vec3 Up   = vec3(0, +1, 0);
+        static const inline vec3 Down = vec3(0, -1, 0);
 
         // +X right, -X left
-        static constexpr vec3 Right = vec3(+1, 0, 0);
-        static constexpr vec3 Left  = vec3(-1, 0, 0);
+        static const inline vec3 Right = vec3(+1, 0, 0);
+        static const inline vec3 Left  = vec3(-1, 0, 0);
     } Vectors;
 
     struct Rect

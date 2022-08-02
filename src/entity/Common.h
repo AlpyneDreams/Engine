@@ -5,7 +5,6 @@
 // Subject to change.
 #define ENTT_ID_TYPE    std::uint32_t
 #include <entt/entt.hpp>
-#include <entt/meta/ctx.hpp>
 
 namespace engine
 {
