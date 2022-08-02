@@ -18,13 +18,13 @@
             "linux": {
                 "problemMatcher": {
                     "base": "$gcc",
-                    "fileLocation": ["autoDetect", "${workspaceFolder}/src"]
+                    "fileLocation": ["autodetect", "${workspaceFolder}/build"]
                 },
             },
             "windows": {
                 "problemMatcher": {
                     "base": "$msCompile",
-                    "fileLocation": ["autoDetect", "${workspaceFolder}/src"]
+                    "fileLocation": ["autodetect", "${workspaceFolder}/build"]
                 }
             },
             "group": {
