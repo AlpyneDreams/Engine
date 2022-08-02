@@ -19,16 +19,15 @@
   - Maybe it's possible to make ImGui do left-aligned labels by default?
 
 - RTTI generation could be improved, or at least streamline rtti.py
-  - Probably generate one CPP or header for whole project.
-    - There is currently some redundancy and it doesn't always update right
-  - Enum names !!!!
   - Base classes
     - Then add GetComponents<Base>()
-  - Fix RTTI<X> has already been instantiated bug
   - Allow generating VertexLayout from structs
     - Could define attributes with an Attribute<T, ...> class or some other way
       of adding attributes/metadata to fields. Or just go by name.
   - Could generate VTable<T> with this method.
+  - offsetof works, but is not supported, for non-standard layout types
+    - Ideally we'd have pointers to data members (t.*ptr) but these must be explicitly typed
+    - One option is to evaluate uintptr_t(&(t.member)) - uintptr_t(&t) at runtime
 
 - Editor should eventually link engine as a static lib to reduce compile times
 

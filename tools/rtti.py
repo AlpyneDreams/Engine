@@ -30,6 +30,11 @@ write()
 for inc in includes:
     write(f'#include "{inc}"')
 
+# Suppress offsetof warnings (for non-standard layout structs)
+# TODO: This seems to work but is not guaranteed to
+write()
+write('#pragma GCC diagnostic ignored "-Winvalid-offsetof"')
+
 # Begin RTTI namesapce
 write()
 write('namespace engine::rtti')
