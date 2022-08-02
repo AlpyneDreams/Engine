@@ -13,6 +13,12 @@ ARGS = [
 ]
 INCLUDED_NAMESPACES = ['engine']
 
+# Linux: Add GCC headers
+if sys.platform.startswith('linux'):
+    import subprocess
+    includes = subprocess.check_output(['gcc', '--print-file-name=include'], encoding='utf-8')
+    ARGS += [f'-I{includes.strip()}']
+
 # https://ansi.gabebanks.net/
 class Colors:
     DIM = '\033[2m'
