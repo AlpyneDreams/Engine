@@ -100,9 +100,15 @@ namespace engine::refl
         auto begin() const { return names.begin(); }
         auto end() const { return names.end(); }
 
-        template <typename T>
+        template <typename E>
         static std::string Name(auto value) {
-            return Enum::Get<T>()->GetName(value);
+            return Enum::Get<E>()->GetName(value);
+        }
+
+        // Returns the largest possible value of the given enum
+        template <typename E>
+        static E Max() {
+            return E(Enum::Get<E>()->names.rbegin()->first);
         }
 
         std::string GetName(auto value) const {
