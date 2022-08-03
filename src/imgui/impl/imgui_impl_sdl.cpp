@@ -354,6 +354,29 @@ bool ImGui_ImplSDL2_ProcessEvent(const SDL_Event* event)
     return false;
 }
 
+// Get native window handle (viewport->PlatformHandleRaw)
+static void* ImGui_ImplSDL2_GetNWH(SDL_Window* window)
+{
+    SDL_SysWMinfo info;
+    SDL_VERSION(&info.version);
+    if (SDL_GetWindowWMInfo(window, &info)) {
+#if defined(_WIN32)
+        return info.info.win.window;
+#else
+    #if defined(SDL_VIDEO_DRIVER_X11)
+        if (info.subsystem == SDL_SYSWM_X11)
+            return (void*)info.info.x11.window;
+    #endif
+    #if defined(SDL_VIDEO_DRIVER_WAYLAND)
+        // TODO: Wayland surface
+        if (info.subsystem == SDL_SYSWM_WAYLAND)
+            return (void*)nullptr;
+    #endif
+#endif
+    }
+    return nullptr;
+}
+
 static bool ImGui_ImplSDL2_Init(SDL_Window* window, SDL_Renderer* renderer, void* sdl_gl_context)
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -408,12 +431,7 @@ static bool ImGui_ImplSDL2_Init(SDL_Window* window, SDL_Renderer* renderer, void
     // Our mouse update function expect PlatformHandle to be filled for the main viewport
     ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     main_viewport->PlatformHandle = (void*)window;
-#ifdef _WIN32
-    SDL_SysWMinfo info;
-    SDL_VERSION(&info.version);
-    if (SDL_GetWindowWMInfo(window, &info))
-        main_viewport->PlatformHandleRaw = (void*)info.info.win.window;
-#endif
+    main_viewport->PlatformHandleRaw = ImGui_ImplSDL2_GetNWH(window);
 
     // Set SDL hint to receive mouse click events on window focus, otherwise SDL doesn't emit the event.
     // Without this, when clicking to gain focus, our widgets wouldn't activate even though they showed as hovered.
@@ -748,12 +766,7 @@ static void ImGui_ImplSDL2_CreateWindow(ImGuiViewport* viewport)
         SDL_GL_MakeCurrent(vd->Window, backup_context);
 
     viewport->PlatformHandle = (void*)vd->Window;
-#if defined(_WIN32)
-    SDL_SysWMinfo info;
-    SDL_VERSION(&info.version);
-    if (SDL_GetWindowWMInfo(vd->Window, &info))
-        viewport->PlatformHandleRaw = info.info.win.window;
-#endif
+    viewport->PlatformHandleRaw = ImGui_ImplSDL2_GetNWH(vd->Window);
 }
 
 static void ImGui_ImplSDL2_DestroyWindow(ImGuiViewport* viewport)
