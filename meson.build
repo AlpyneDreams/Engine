@@ -8,8 +8,10 @@ add_global_arguments('-DIMGUI_USE_WCHAR32', language: 'cpp')
 
 windows    = build_machine.system() == 'windows'
 
+# Force use local WrapDB SDL2 version
+sdl_dep    = dependency('libsdl2', fallback: 'sdl2', default_options: ['with_main=false'], static: true)
+
 fmt_dep    = dependency('fmt', static: true)
-sdl_dep    = dependency('sdl2', default_options: ['with_main=false'], static: true)
 vulkan_dep = dependency('vulkan')
 vookoo_dep = declare_dependency(include_directories: 'submodules/vookoo/include')
 glm_dep    = dependency('glm', static: true)

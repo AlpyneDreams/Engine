@@ -10,4 +10,4 @@ wrapdb_version = 2.0.20-6
 
 [provide]
 sdl2 = sdl2_dep
-
+libsdl2 = sdl2_dep
