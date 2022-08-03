@@ -118,12 +118,22 @@ namespace engine
                         }
                         break;
                     }
+                    default:
+                        break;
                 }
                 ImGui_ImplSDL2_ProcessEvent(&e);
             }
 
             ImGui_ImplSDL2_NewFrame();
             ImGui::NewFrame();
+
+        #if PLATFORM_X11
+            // ImGui on X11: Un-capture mouse.
+            // Otherwise debugger will be stuck with no mouse clicks
+            // if breaking on a frame with SDL_MOUSEBUTTONDOWN
+            if (SDL_GetWindowFlags(window) & SDL_WINDOW_MOUSE_CAPTURE)
+                SDL_CaptureMouse(SDL_FALSE);
+        #endif
         }
 
 
