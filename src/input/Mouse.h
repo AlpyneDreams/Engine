@@ -5,8 +5,19 @@
 
 namespace engine
 {
-    enum class MouseButton {
-        Left = 0, Right = 1, Middle = 2, X1 = 3, X2 = 4, Max = 64
+    enum class MouseButton
+    {    
+        Left = 0,       // The user's primary mouse button
+                        // (usually, but not always, the left button)
+
+        Right = 1,      // The user's secondary mouse button
+                        // (usually, but not always, the right button)
+        
+        Middle = 2,     // Middle mouse button or scroll-wheel click
+        
+        X1 = 3, X2 = 4, // Additional mouse buttons (typically forward/back)
+                        
+        Max = 4
     };
     
     /** Interface to mouse input.
