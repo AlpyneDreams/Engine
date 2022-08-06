@@ -31,5 +31,6 @@ Included as Git submodules:
 
 Already included in repo:
 - [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader)
+- [stb](https://github.com/nothings/stb) image loader and writer
 - [imgui_impl_bgfx.cpp](https://gist.github.com/RichardGale/6e2b74bc42b3005e08397236e4be0fd0)
 - [Material Design Icons Font](https://materialdesignicons.com/)

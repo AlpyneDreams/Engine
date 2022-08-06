@@ -4,6 +4,7 @@ python = import('python').find_installation('python3')
 main = 'main/Main.cpp'
 
 engine_src = [
+    'assets/loaders/Textures.cpp',
     'assets/loaders/MeshOBJ.cpp',
     'platform/sdl/WindowSDL.cpp',
     'platform/sdl/CursorSDL.cpp',
