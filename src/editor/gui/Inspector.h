@@ -91,7 +91,7 @@ namespace engine::editor
                 }
 
                 // Internal component. Handled above.
-                if (cls->type.hash() == TypeHash<Name> && !debug) {
+                if (cls->type.hash == TypeHash<Name> && !debug) {
                     continue;
                 }
 
@@ -118,8 +118,8 @@ namespace engine::editor
             auto ver = std::to_string(ent.handle.registry()->current(ent));
             auto label = std::string(component.displayName) + "##" + id + "/" + ver;
 
-            if (ComponentIcons.contains(component.type.hash())) {
-                label = ComponentIcons[component.type.hash()] + " " + label;
+            if (ComponentIcons.contains(component.type.hash)) {
+                label = ComponentIcons[component.type.hash] + " " + label;
             }
 
             bool visible = true;
@@ -127,7 +127,7 @@ namespace engine::editor
 
             // X button pressed - remove component
             if (!visible) {
-                ent.RemoveComponent(component.type.hash());
+                ent.RemoveComponent(component.type.hash);
                 return false;
             }
 
@@ -141,7 +141,7 @@ namespace engine::editor
             }
 
             // TODO: Custom inspector registration system
-            switch (component.type.hash())
+            switch (component.type.hash)
             {
                 case TypeHash<Transform>:
                     Inspect((Transform*)obj);
@@ -162,7 +162,7 @@ namespace engine::editor
             using namespace refl;
             for (Field& field : component.fields) {
                 ImGui::PushID(&field);
-                Input(field.displayName, field.type.hash(), field.GetPointer<void>(obj));
+                Input(field.displayName, field.type.hash, field.GetPointer<void>(obj));
                 ImGui::PopID();
             }
         }
