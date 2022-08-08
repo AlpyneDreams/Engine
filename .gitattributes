@@ -1,1 +1,1 @@
-src/**.h linguist-language=C++
+*.h linguist-language=C++
