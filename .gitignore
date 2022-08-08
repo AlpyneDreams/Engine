@@ -21,3 +21,4 @@
 # Keep Meson .wrap and package files
 !/subprojects/*.wrap
 !/subprojects/packagefiles
+!/subprojects/rain
