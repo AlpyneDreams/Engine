@@ -4,10 +4,6 @@
 
 This is engineering. Most of this code was written under the influence, so do not read too much into it. This codebase is not intended to have an orthodox structure or coherency. There are many branches with significant changes.
 
-Observations:
-- Vulkan is an incredibly obtuse API.
-- BGFX is \~*quirky*\~
-
 ## Dependencies ##
 
 - [Meson](https://mesonbuild.com/) is required to build.
@@ -26,6 +22,7 @@ Handled by Meson (via pkgconfig or WrapDB):
 - ~~[Vulkan](https://www.vulkan.org/)~~ (currently not used)
 
 Included as Git submodules:
+- [rain](https://github.com/AlpyneDreams/rain) - RTTI library
 - [bgfx](https://github.com/bkaradzic/bgfx) (with [bx](https://github.com/bkaradzic/bx) and [bimg](https://github.com/bkaradzic/bimg))
 - ~~[Vookoo](https://github.com/andy-thomason/Vookoo)~~ (currently not used)
 
