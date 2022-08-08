@@ -10,3 +10,6 @@
 [submodule "submodules/bgfx"]
 	path = submodules/bgfx
 	url = https://github.com/AlpyneDreams/bgfx.git
+[submodule "subprojects/rain"]
+	path = subprojects/rain
+	url = https://github.com/AlpyneDreams/rain.git

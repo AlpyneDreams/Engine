@@ -28,7 +28,7 @@ foreach file : engine_src + editor_src
     target = custom_target(
         fs.name(file) + '.meta.json',
         output: fs.name(file) + '.meta.json',
-        input: ['../tools/meta.py', file],
+        input: [rain.get_variable('rain_meta_py'), file],
         command: [python, '@INPUT@', '@OUTPUT@']
     )
     if editor_src.contains(file)
@@ -42,7 +42,7 @@ endforeach
 editor_rtti = custom_target(
     'rtti.cpp',
     output: 'rtti.cpp',
-    input: ['../tools/rtti.py', engine_meta, editor_meta],
+    input: [rain.get_variable('rain_rtti_py'), engine_meta, editor_meta],
     command: [python, '@INPUT@', '@OUTPUT@']
 )
 
@@ -53,6 +53,7 @@ engine_deps = [
 ]
 
 shared_deps = [
+    rain_dep,
     fmt_dep,
     #vulkan_dep,
     #vookoo_dep,

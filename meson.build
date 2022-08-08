@@ -8,6 +8,9 @@ add_global_arguments('-DIMGUI_USE_WCHAR32', language: 'cpp')
 
 windows    = build_machine.system() == 'windows'
 
+rain       = subproject('rain')
+rain_dep   = rain.get_variable('rain_dep')
+
 # Force use local WrapDB SDL2 version
 sdl_dep    = dependency('libsdl2', fallback: 'sdl2', default_options: ['with_main=false'], static: true)
 

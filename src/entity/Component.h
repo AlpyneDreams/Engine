@@ -7,7 +7,7 @@ namespace engine
 {
     // Base class for all data or logic components.
     // Provides runtime reflection.
-    struct Component : Reflect
+    struct Component : rain::Reflect
     {
     };
 
