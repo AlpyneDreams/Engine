@@ -314,7 +314,7 @@ namespace engine::editor
             int i = int(space);
             auto label = std::string(items[i]) + " " ICON_MC_MENU_DOWN;
             if (BeginMenu(label.c_str())) {
-                for (int j = 0; j < std::size(items); j++) {
+                for (size_t j = 0; j < std::size(items); j++) {
                     if (ImGui::MenuItem(items[j], "", space == Space(j))) {
                         space = Space(j);
                     }

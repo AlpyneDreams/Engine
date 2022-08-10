@@ -17,6 +17,12 @@ engine_src = [
     'imgui/impl/imgui_impl_bgfx.cpp',
 ]
 
+engine_args = windows ? [
+
+] : [
+    '-Wno-shadow'
+]
+
 editor_src = [
     'editor/Editor.cpp'
 ]
@@ -65,7 +71,8 @@ shared_deps = [
 
 engine_lib = static_library('engine', files(engine_src),
     dependencies    : engine_deps + shared_deps,
-    include_directories: include_directories('../submodules')
+    include_directories: include_directories('../submodules'),
+    cpp_args        : engine_args
 )
 
 engine = executable('engine', main,
@@ -74,6 +81,7 @@ engine = executable('engine', main,
     install       : true,
     install_dir   : join_paths(meson.project_source_root(), 'runtime'),
     win_subsystem : 'console',
+    cpp_args      : engine_args
 )
 
 editor = executable('editor', files(editor_src), main, editor_rtti,
@@ -82,5 +90,5 @@ editor = executable('editor', files(editor_src), main, editor_rtti,
     install         : true,
     install_dir     : join_paths(meson.project_source_root(), 'runtime'),
     win_subsystem   : 'console',
-    cpp_args        : ['-DEDITOR=1']
+    cpp_args        : engine_args + ['-DEDITOR=1']
 )
