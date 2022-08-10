@@ -9,10 +9,12 @@
 #include <functional>
 #include <string_view>
 
-namespace engine { struct RenderSystem; struct Mesh; }
+namespace engine { struct RenderSystem; struct Mesh; struct Texture; }
 
 namespace engine::render
 {
+    // TODO: Consistent API for GPU child objects and uploading
+
     struct Shader {};
 
     struct RenderTarget
@@ -32,7 +34,11 @@ namespace engine::render
         virtual void ReadTexture(ReadBackFunc func) = 0;
     };
 
-    struct Handle {};
+    struct Handle
+    {
+        virtual void* Value() const = 0;
+        virtual ~Handle() {}
+    };
 
     enum class CompareFunc { Disabled, Never, Always, Less, LessEqual, Greater, GreaterEqual, Equal, NotEqual };
     enum class PrimitiveType { Points, Lines, Triangles, TriStrip, LineStrip  };
@@ -53,6 +59,7 @@ namespace engine::render
     // Resource Uploading //
 
         virtual void UploadMesh(Mesh* mesh) = 0;
+        virtual void UploadTexture(Texture* texture, bool release = true) = 0;
 
     // Resource Creation and Loading //
 

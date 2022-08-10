@@ -23,6 +23,7 @@
 #include "engine/Time.h"
 #include "console/Console.h"
 #include "console/ConCommand.h"
+#include "render/Texture.h"
 
 namespace engine::render
 {
@@ -39,9 +40,13 @@ namespace engine::render
     static bgfx::TextureFormat::Enum ConvertTextureFormat(TextureFormat format)
     {
         static std::unordered_map<TextureFormat, bgfx::TextureFormat::Enum> bgfxTextureFormats {
-            {TextureFormat::R32F, bgfx::TextureFormat::R32F},
-            {TextureFormat::RGBA32F, bgfx::TextureFormat::RGBA32F},
-            {TextureFormat::D32F, bgfx::TextureFormat::D32F},
+            {TextureFormat::R8,         bgfx::TextureFormat::R8},
+            {TextureFormat::RG8,        bgfx::TextureFormat::RG8},
+            {TextureFormat::RGB8,       bgfx::TextureFormat::RGB8},
+            {TextureFormat::RGBA8,      bgfx::TextureFormat::RGBA8},
+            {TextureFormat::R32F,       bgfx::TextureFormat::R32F},
+            {TextureFormat::RGBA32F,    bgfx::TextureFormat::RGBA32F},
+            {TextureFormat::D32F,       bgfx::TextureFormat::D32F},
         };
 
         return bgfxTextureFormats.contains(format) ? bgfxTextureFormats[format] : bgfx::TextureFormat::Unknown;
@@ -193,7 +198,13 @@ namespace engine::render
         union {
             bgfx::VertexBufferHandle vb;
             bgfx::IndexBufferHandle ib;
+            bgfx::TextureHandle texture;
+            void* value;
         };
+
+        void* Value() const override {
+            return value;
+        }
     };
 
     class RenderBGFX final : public Render
@@ -383,6 +394,39 @@ namespace engine::render
             }
 
             mesh->uploaded = true;
+        }
+
+        void UploadTexture(Texture* texture, bool release)
+        {
+            if (texture->uploaded)
+                return;
+
+            if (!texture->hasData) {
+                Console.Error("Tried to upload texture '{}' but it has no data!", texture->path);
+                return;
+            }
+
+            auto releaseFn = [](void* data, void* userData) {
+                ((Texture*)userData)->Free();
+            };
+
+            auto tex = bgfx::createTexture2D(
+                uint16(texture->width),
+                uint16(texture->height),
+                false,
+                1,
+                ConvertTextureFormat(texture->format),
+                BGFX_TEXTURE_NONE,
+                release
+                  ? bgfx::makeRef(texture->data, texture->Size(), releaseFn, texture)
+                  : bgfx::makeRef(texture->data, texture->Size())
+            );
+
+            HandleBGFX* handle = new HandleBGFX();
+            handle->texture = tex;
+            texture->handle = handle;
+
+            texture->uploaded = true;
         }
 
     // Resource Creation and Loading //
@@ -578,6 +622,10 @@ namespace engine::render
 
         void DrawMesh(Mesh* mesh)
         {
+            if (!mesh) {
+                return;
+            }
+            
             if (!mesh->uploaded) [[unlikely]] {
                 UploadMesh(mesh);
             }
