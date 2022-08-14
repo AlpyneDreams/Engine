@@ -3,7 +3,7 @@ python = import('python').find_installation('python3')
 
 main = 'main/Main.cpp'
 
-engine_src = [
+engine_src = files(
     'assets/loaders/Textures.cpp',
     'assets/loaders/MeshOBJ.cpp',
     'platform/sdl/WindowSDL.cpp',
@@ -15,7 +15,7 @@ engine_src = [
     'imgui/Common.cpp',
     'imgui/impl/imgui_impl_sdl.cpp',
     'imgui/impl/imgui_impl_bgfx.cpp',
-]
+)
 
 engine_args = windows ? [
 
@@ -23,9 +23,9 @@ engine_args = windows ? [
     '-Wno-shadow'
 ]
 
-editor_src = [
+editor_src = files(
     'editor/Editor.cpp'
-]
+)
 
 # Build meta files
 engine_meta = []
@@ -34,8 +34,9 @@ foreach file : engine_src + editor_src
     target = custom_target(
         fs.name(file) + '.meta.json',
         output: fs.name(file) + '.meta.json',
-        input: [rain.get_variable('rain_meta_py'), file],
-        command: [python, '@INPUT@', '@OUTPUT@']
+        input: [rain.get_variable('rain_update_py'), file],
+        command: [python, '@INPUT@', '@OUTPUT@'],
+        console: true
     )
     if editor_src.contains(file)
         editor_meta += [target]
@@ -49,7 +50,8 @@ editor_rtti = custom_target(
     'rtti.cpp',
     output: 'rtti.cpp',
     input: [rain.get_variable('rain_rtti_py'), engine_meta, editor_meta],
-    command: [python, '@INPUT@', '@OUTPUT@']
+    command: [python, '@INPUT@', '@OUTPUT@', '@CURRENT_SOURCE_DIR@'],
+    console: true
 )
 
 # Deps which can be only built in engine_lib
@@ -69,7 +71,7 @@ shared_deps = [
     entt_dep
 ]
 
-engine_lib = static_library('engine', files(engine_src),
+engine_lib = static_library('engine', engine_src,
     dependencies    : engine_deps + shared_deps,
     include_directories: include_directories('../submodules'),
     cpp_args        : engine_args
@@ -84,7 +86,7 @@ engine = executable('engine', main,
     cpp_args      : engine_args
 )
 
-editor = executable('editor', files(editor_src), main, editor_rtti,
+editor = executable('editor', editor_src, main, editor_rtti,
     dependencies    : shared_deps,
     link_with       : [engine_lib],
     install         : true,
