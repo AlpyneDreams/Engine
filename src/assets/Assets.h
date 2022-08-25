@@ -5,11 +5,16 @@
 #include "common/Filesystem.h"
 #include "core/Mesh.h"
 
+#include <vector>
+#include <map>
+
 namespace engine
 {
     // TODO: Better way to define asset loaders.
+    // TODO: Exceptions or Result<T> for FindFile, Load, etc...
 
-    // Override this to support different asset formats
+    // Override this to support different asset formats.
+    // Ext - all uppercase, starts with a dot
     template <class Asset, FixedString Ext>
     Asset* ImportAsset(const fs::Path& path);
 
@@ -17,6 +22,8 @@ namespace engine
     {
         using Path = fs::Path;
         std::vector<Path> searchPaths;
+        // TODO: Hashing...
+        std::map<Path, void*> loadedAssets;
 
         Assets()
         {
@@ -29,7 +36,25 @@ namespace engine
         template <class T, FixedString Ext>
         T* Load(const char* path)
         {
-            return ImportAsset<T, Ext>(FindFile(path));
+            Path file = FindFile(path);
+            if (file.empty())
+                return nullptr;
+
+            // Cache hit
+            if (loadedAssets.contains(file))
+                return (T*)loadedAssets[file];
+
+            // Attempt to load asset for first time
+            T* ptr = ImportAsset<T, Ext>(file);
+            if (!ptr) {
+                Console.Error("[Assets] Failed to import %s asset: %s", Ext.value, path);
+                return ptr;
+            }
+            
+            // Cache loaded asset
+            loadedAssets[path] = ptr;
+            
+            return ptr;
         }
 
         // TODO: Dynamic extension

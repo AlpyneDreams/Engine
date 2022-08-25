@@ -26,6 +26,8 @@ namespace engine
         texture->path = path;
 
         // This frees data when the upload completes.
+        // TODO: This requires renderer to be initialized.
+        // Ideally we should upload the texture on first use like with meshes.
         Engine.Render.UploadTexture(texture);
 
         return texture;
