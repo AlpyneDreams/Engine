@@ -26,6 +26,9 @@ namespace engine
         Mode mode = Default;
     };
 
+    // TODO: Consider having a template class for this?
+    // TODO: Auto-generate this from structs using rain
+
     class VertexLayout
     {
     public:

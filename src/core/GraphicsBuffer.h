@@ -14,7 +14,7 @@ namespace engine
         uint count = 0;
 
         // GPU buffer handle
-        render::Handle* handle;
+        render::Handle* handle = nullptr;
 
         GraphicsBuffer() {}
 

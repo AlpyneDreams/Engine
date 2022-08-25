@@ -32,6 +32,16 @@ namespace engine
                 IndexBuffer(indices, iSize)
             });
         }
+
+        // Mesh without index buffer
+        Mesh(VertexLayout& layout, const void* vertices, size_t vSize)
+        {
+            groups.push_back(Group {
+                VertexBuffer(layout, vertices, vSize),
+                IndexBuffer()
+            });
+        }
+
     };
 
     
