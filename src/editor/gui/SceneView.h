@@ -36,7 +36,7 @@ namespace engine::editor
         Tool  activeTool    = Tool::Translate;
         Space space         = Space::World;
         Rect  viewport;
-        float cameraSpeed   = 0.005f;
+        float cameraSpeed   = 0.01f;
         bool  allowAxisFlip = true;
 
         bool showGrid       = true;
