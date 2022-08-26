@@ -9,6 +9,7 @@
 #include "editor/gui/Inspector.h"
 #include "editor/gui/SceneView.h"
 #include "editor/gui/AssetBrowser.h"
+#include "editor/Gizmos.h"
 
 #include "entity/components/Transform.h"
 #include "entity/components/Camera.h"
@@ -34,6 +35,9 @@ namespace engine::editor
         Engine.Init();
 
         render::Render& r = Engine.Render;
+
+        // Initialize gizmos
+        Gizmos.Init();
         
         // Load editor shaders
         sh_Color  = r.LoadShader("vs_basic", "fs_color");

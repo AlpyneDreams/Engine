@@ -6,6 +6,7 @@
 #include "entity/components/Transform.h"
 #include "editor/Selection.h"
 #include "editor/Handles.h"
+#include "editor/Gizmos.h"
 #include "entity/Scene.h"
 #include "entity/Entity.h"
 #include "entity/components/Camera.h"
@@ -169,6 +170,8 @@ namespace engine::editor
                 r.SetPolygonMode(render::PolygonMode::Fill);
                 r.SetDepthTest(render::CompareFunc::Less);
             }
+
+            Gizmos.DrawIcon(vec3(0), Gizmos.icnLight);
         }
 
         void Draw() override
