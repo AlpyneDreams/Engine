@@ -202,6 +202,8 @@ namespace engine::render
             void* value;
         };
 
+        bgfx::UniformHandle sampler;
+
         void* Value() const override {
             return value;
         }
@@ -424,6 +426,7 @@ namespace engine::render
 
             HandleBGFX* handle = new HandleBGFX();
             handle->texture = tex;
+            handle->sampler = bgfx::createUniform(texture->path.c_str(), bgfx::UniformType::Sampler);
             texture->handle = handle;
 
             texture->uploaded = true;
@@ -504,6 +507,14 @@ namespace engine::render
         }
 
     // Per-Object State //
+
+        void SetDepthWrite(bool write)
+        {
+            if (write)
+                state.state |= BGFX_STATE_WRITE_Z;
+            else
+                state.state &= ~BGFX_STATE_WRITE_Z;
+        }
 
         void SetDepthTest(CompareFunc func)
         {
@@ -605,6 +616,16 @@ namespace engine::render
         {
             state.currentProgram = static_cast<ShaderBGFX*>(shader)->program;
             // TODO: get uniforms...
+        }
+
+        void SetTexture(uint slot, Texture* texture)
+        {
+            if (!texture->uploaded) [[unlikely]] {
+                UploadTexture(texture, true);
+            }
+
+            HandleBGFX* handle = static_cast<HandleBGFX*>(texture->handle);
+            bgfx::setTexture(slot, handle->sampler, handle->texture);
         }
 
         void SetUniform(std::string_view name, void* value, uint stride, uint count)

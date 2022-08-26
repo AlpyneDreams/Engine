@@ -82,11 +82,13 @@ namespace engine::render
     // Per-Object State //
 
         virtual void SetDepthTest(CompareFunc func) = 0;
+        virtual void SetDepthWrite(bool write) = 0;
         virtual void SetBlendFunc(BlendFunc func) = 0;
         virtual void SetPrimitiveType(PrimitiveType type) = 0;
         virtual void SetPolygonMode(PolygonMode mode) = 0;
         virtual void SetTransform(const mat4x4& matrix) = 0;
         virtual void SetShader(Shader* shader) = 0;
+        virtual void SetTexture(uint slot, Texture* texture) = 0;
         // TODO: Hashed strings...
         virtual void SetUniform(std::string_view name, void* value, uint stride = 4, uint count = 1) = 0;
         void SetUniform(std::string_view name, vec4 value, uint count = 1) { SetUniform(name, &value[0], 4, count); };
