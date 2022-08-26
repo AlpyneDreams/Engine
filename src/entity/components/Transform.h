@@ -10,6 +10,9 @@ namespace engine
         vec3 position;
         quat rotation;
         vec3 scale = vec3(1, 1, 1);
+
+        Transform(vec3 pos = Vectors.Zero, quat rot = quat(), vec3 scale = Vectors.One)
+            : position(pos), rotation(rot), scale(scale) {}
         
         // Normalized forward (+Z) direction vector
         vec3 Forward() const {
