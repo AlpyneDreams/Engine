@@ -476,7 +476,7 @@ namespace engine::render
             }
         }
 
-        void SetViewTransform(mat4x4& view, mat4x4& proj)
+        void SetViewTransform(const mat4x4& view, const mat4x4& proj)
         {
             state.mView = view; state.mProj = proj;
             bgfx::setViewTransform(state.view, &view[0][0], &proj[0][0]);
@@ -596,7 +596,7 @@ namespace engine::render
             }
         }
 
-        void SetTransform(mat4x4& matrix)
+        void SetTransform(const mat4x4& matrix)
         {
             bgfx::setTransform(&matrix[0][0]);
         }

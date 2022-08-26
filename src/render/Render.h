@@ -75,7 +75,7 @@ namespace engine::render
 
         // nullptr = default backbuffer
         virtual void SetRenderTarget(RenderTarget* rt) = 0;
-        virtual void SetViewTransform(mat4x4& view, mat4x4& proj) = 0;
+        virtual void SetViewTransform(const mat4x4& view, const mat4x4& proj) = 0;
         virtual void SetClearColor(bool clear, Color color = Colors.Black) = 0;
         virtual void SetClearDepth(bool clear, float depth = 1.0f) = 0;
 
@@ -85,7 +85,7 @@ namespace engine::render
         virtual void SetBlendFunc(BlendFunc func) = 0;
         virtual void SetPrimitiveType(PrimitiveType type) = 0;
         virtual void SetPolygonMode(PolygonMode mode) = 0;
-        virtual void SetTransform(mat4x4& matrix) = 0;
+        virtual void SetTransform(const mat4x4& matrix) = 0;
         virtual void SetShader(Shader* shader) = 0;
         // TODO: Hashed strings...
         virtual void SetUniform(std::string_view name, void* value, uint stride = 4, uint count = 1) = 0;
