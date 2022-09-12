@@ -36,7 +36,7 @@ namespace engine::editor
         Tool  activeTool    = Tool::Translate;
         Space space         = Space::World;
         Rect  viewport;
-        float cameraSpeed   = 0.01f;
+        float cameraSpeed   = 7; // (m/s)
         bool  allowAxisFlip = true;
 
         bool showGrid       = true;
@@ -206,7 +206,7 @@ namespace engine::editor
                     Camera& camera = Editor.editorCamera.GetComponent<Camera>();
                     ImGui::TextUnformatted("Scene Camera");
                     ImGui::InputFloat("FOV", &camera.fieldOfView);
-                    ImGui::InputFloat("Speed", &cameraSpeed);
+                    ImGui::InputFloat("Speed (m/s)", &cameraSpeed);
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
@@ -276,8 +276,8 @@ namespace engine::editor
                     float a = Keyboard.GetKey(Key::A) ? 1.f : 0.f;
                     float d = Keyboard.GetKey(Key::D) ? 1.f : 0.f;
 
-                    transform.position += transform.Forward() * (w-s) * cameraSpeed;
-                    transform.position += transform.Right() * (d-a) * cameraSpeed;
+                    transform.position += transform.Forward() * (w-s) * cameraSpeed * float(Time.deltaTime);
+                    transform.position += transform.Right() * (d-a) * cameraSpeed * float(Time.deltaTime);
                 }
             }
         }
