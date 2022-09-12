@@ -8,6 +8,10 @@ add_global_arguments('-DIMGUI_USE_WCHAR32', language: 'cpp')
 
 windows    = build_machine.system() == 'windows'
 
+if windows
+    add_global_arguments('/std:c++20', language: 'cpp')
+endif
+
 rain       = subproject('rain')
 rain_dep   = rain.get_variable('rain_dep')
 
