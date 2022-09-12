@@ -426,7 +426,7 @@ namespace engine::render
 
             HandleBGFX* handle = new HandleBGFX();
             handle->texture = tex;
-            handle->sampler = bgfx::createUniform(texture->path.c_str(), bgfx::UniformType::Sampler);
+            handle->sampler = bgfx::createUniform(texture->path.string().c_str(), bgfx::UniformType::Sampler);
             texture->handle = handle;
 
             texture->uploaded = true;
