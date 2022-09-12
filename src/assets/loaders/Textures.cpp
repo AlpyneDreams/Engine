@@ -17,7 +17,7 @@ namespace engine
         int x, y, n;
 
         // 8 bits per channel
-        byte* data = stbi_load(path.c_str(), &x, &y, &n, 0);
+        byte* data = stbi_load(path.string().c_str(), &x, &y, &n, 0);
 
         if (!data)
             return nullptr;
