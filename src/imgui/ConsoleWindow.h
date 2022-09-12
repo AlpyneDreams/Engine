@@ -16,7 +16,7 @@ namespace engine::GUI
 {
     struct ConsoleWindow : public Window
     {
-        ConsoleWindow() : Window(ICON_MC_CONSOLE " Console", 512, 512, false) {}
+        ConsoleWindow() : Window(ICON_MC_CONSOLE, "Console", 512, 512, false) {}
 
         bool scrollToBottom = false;
         bool focus = false;

@@ -9,7 +9,7 @@ namespace engine::editor
 {
     struct AssetBrowser : public GUI::Window
     {
-        AssetBrowser() : GUI::Window(ICON_MC_FOLDER " Files", 512, 512, false) {}
+        AssetBrowser() : GUI::Window(ICON_MC_FOLDER, "Files", 512, 512, false) {}
 
         void Update() final override
         {
