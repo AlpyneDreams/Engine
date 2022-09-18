@@ -150,4 +150,28 @@ namespace engine
         ImGui::PopStyleColor();
         return clicked;
     }
+
+    bool GUI::Thumbnail(const char* name, Texture* icon, bool selected)
+    {
+        bool clicked = false;
+        ImVec2 itemSize = {80, 80};
+        float iconSize = 48;
+        float iconPadding = (itemSize.x - iconSize) * 0.5;
+        float textSize = ImGui::CalcTextSize(name).x;
+        float textPadding = (itemSize.x - textSize) * 0.5;
+
+        ImGui::BeginGroup();
+        if (ImGui::Selectable((std::string("##") + name).c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick, itemSize)) {
+            clicked = true;
+        }
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() - itemSize.y);
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + iconPadding);
+        if (icon != nullptr)
+            ImGui::Image(icon->handle->Value(), {iconSize, iconSize});
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + textPadding);
+        ImGui::TextUnformatted(name);
+        ImGui::EndGroup();
+
+        return clicked;
+    }
 }

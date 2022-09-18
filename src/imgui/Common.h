@@ -2,6 +2,8 @@
 
 #include <string_view>
 
+#include "render/Texture.h"
+
 struct ImFont;
 
 namespace engine
@@ -18,5 +20,7 @@ namespace engine
         void ItemLabel(std::string_view title, bool right = false);
 
         bool MenuBarButton(std::string_view title);
+
+        bool Thumbnail(const char* name, Texture* icon = nullptr, bool selected = false);
     }
 }
