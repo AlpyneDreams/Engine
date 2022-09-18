@@ -85,7 +85,8 @@ namespace engine::editor
             ImGui::PopStyleVar();
         }
 
-        void PreDraw() override {
+        void PreDraw() override
+        {
             NoPadding();
         }
 
@@ -104,6 +105,9 @@ namespace engine::editor
         void PostDraw() override
         {
             ResetPadding();
+
+            if (!visible)
+                return;
             
             // HACK: Set hovered window to NULL,
             // this fixes mouse over with ImGui docking

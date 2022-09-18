@@ -5,6 +5,7 @@
 #include "math/Math.h"
 #include "Common.h"
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <string>
 
 namespace engine::GUI
@@ -15,6 +16,7 @@ namespace engine::GUI
         uint width = 512;
         uint height = 512;
         bool open = true;
+        bool visible = false;
         ImGuiWindowFlags flags;
 
         Window() {}
@@ -29,23 +31,34 @@ namespace engine::GUI
 
         void Update() override
         {
-            if (!open)
+            if (!open) {
+                visible = false;
                 return;
+            }
             
             ImGui::SetNextWindowSize(ImVec2(float(width), float(height)), ImGuiCond_FirstUseEver);
             PreDraw();
             if (ImGui::Begin(name.c_str(), &open, flags))
             {
+                visible = true;
                 Draw();
+            }
+            else
+            {
+                visible = false;
             }
 
             PostDraw();
             ImGui::End();
         }
-        
-        // Subclasses will override this
-        virtual void PreDraw() {}
+
+        // Subclasses should override this.
         virtual void Draw() {}
+        
+        // Subclasses can override these.
+        // Unlike Draw, PreDraw and PostDraw run regardless of whether
+        // the window is visible, so you should check this->visible in them.
+        virtual void PreDraw() {}
         virtual void PostDraw() {}
     };
 }
