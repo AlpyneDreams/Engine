@@ -164,7 +164,7 @@ namespace engine
         }
 
         inline auto RegisterCallback(auto& event, System* system, SystemFunc* func) {
-            return event.emplace(event.end(), system, func);
+            return event.insert(event.end(), Callback {system, func});
         }
 
         inline void UnregisterCallbacks(const SystemRecord& record)
