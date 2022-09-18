@@ -12,8 +12,11 @@
 
 #include "imgui/Common.h"
 #include <imgui.h>
+#include <imgui_internal.h>
 
 #include "imgui/IconsMaterialCommunity.h"
+
+#include "editor/Icons.h"
 
 namespace engine {
     extern ConVar<bool> gui_demo;
@@ -45,20 +48,41 @@ namespace engine::editor
 
                 if (ImGui::BeginMenu("Window"))
                 {
-                    ImGui::MenuItem("Console", "`", &Editor.console->open);
-                    ImGui::MenuItem("Scene", "", &Editor.sceneView->open);
-                    ImGui::MenuItem("Outline", "", &Editor.outline->open);
-                    ImGui::MenuItem("Inspector", "", &Editor.inspector->open);
-                    ImGui::MenuItem("Files", "Ctrl+Space", &Editor.assetBrowser->open);
-                    ImGui::MenuItem("GUI Demo", "", &gui_demo.value);
+                    ImGui::MenuItem(Editor.console->name.c_str(), "`", &Editor.console->open);
+                    ImGui::MenuItem(Editor.sceneView->name.c_str(), "", &Editor.sceneView->open);
+                    ImGui::MenuItem(Editor.outline->name.c_str(), "", &Editor.outline->open);
+                    ImGui::MenuItem(Editor.inspector->name.c_str(), "", &Editor.inspector->open);
+                    ImGui::MenuItem(Editor.assetBrowser->name.c_str(), "Ctrl+Space", &Editor.assetBrowser->open);
+                    ImGui::MenuItem(ICON_MC_APPLICATION_OUTLINE " GUI Demo", "", &gui_demo.value);
                     ImGui::EndMenu();
                 }
 
                 ImGui::EndMainMenuBar();
             }
 
+            if (ImGui::BeginViewportSideBar("BottomBar", ImGui::GetMainViewport(), ImGuiDir_Down, 20.0f, ImGuiWindowFlags_MenuBar))
+            {
+                if (ImGui::BeginMenuBar())
+                {
+                    WindowToggleButton(Editor.assetBrowser, 64.0f, "Ctrl+Space");
+                    WindowToggleButton(Editor.console, 72.0f, "`");
+                    ImGui::EndMenuBar();
+                }
+                ImGui::End();
+            }
+
             // ImGuiDockNodeFlags_PassthruCentralNode
             ImGui::DockSpaceOverViewport(NULL);
+        }
+
+        static void WindowToggleButton(GUI::Window* window, float width = 64.0f, const char* tooltip = nullptr)
+        {
+            if (ImGui::Selectable(window->name.c_str(), window->visible, ImGuiSelectableFlags_None, ImVec2(width, 20.0f)))
+            {
+                window->ToggleOrFocus();
+            }
+            if (tooltip && ImGui::IsItemHovered())
+                ImGui::SetTooltip("%s", tooltip);
         }
 
         static void AddObjectMenu()

@@ -19,6 +19,10 @@ namespace engine::GUI
         bool visible = false;
         ImGuiWindowFlags flags;
 
+    private:
+        ImGuiWindow* m_window = nullptr;
+    public:
+
         Window() {}
         Window(const char* name, uint width, uint height, bool open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
           : name(name), width(width), height(height), open(open), flags(flags) {}
@@ -40,6 +44,7 @@ namespace engine::GUI
             PreDraw();
             if (ImGui::Begin(name.c_str(), &open, flags))
             {
+                m_window = ImGui::GetCurrentWindow();
                 visible = true;
                 Draw();
             }
@@ -50,6 +55,19 @@ namespace engine::GUI
 
             PostDraw();
             ImGui::End();
+        }
+
+        // Focuses the window if it's hidden, 
+        // otherwise toggles it open/closed.
+        void ToggleOrFocus()
+        {
+            if (visible) {
+                open = false;
+            } else {
+                open = true;
+                if (m_window)
+                    ImGui::FocusWindow(m_window);
+            }
         }
 
         // Subclasses should override this.
