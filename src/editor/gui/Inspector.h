@@ -7,6 +7,7 @@
 #include "imgui/IconsMaterialCommunity.h"
 #include "imgui/Window.h"
 #include "editor/Selection.h"
+#include "editor/gui/Layout.h"
 #include "entity/Entity.h"
 #include "entity/components/Name.h"
 #include "entity/components/Transform.h"
@@ -103,8 +104,13 @@ namespace engine::editor
                 }
             }
             
-            if (ImGui::Button("Add Component")) {
-                ent.AddComponent<Transform>();
+            if (ImGui::Button(ICON_MC_PLUS " Add Component")) {
+                ImGui::OpenPopup("AddComponentList");
+            }
+
+            if (ImGui::BeginPopup("AddComponentList")) {
+                Layout::AddComponentMenu(ent);
+                ImGui::EndPopup();
             }
         }
 

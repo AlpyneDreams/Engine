@@ -118,5 +118,27 @@ namespace engine::editor
                 ent.AddComponent<Camera>();
             }
         }
+
+        static void AddComponentMenu(Entity& ent)
+        {
+            using namespace rain;
+            static auto componentTypes = Class::Get<Component>()->GetDerivedClasses();
+            static std::unordered_set<Hash> internalComponents = {
+                TypeHash<Name>, TypeHash<Behavior>
+            };
+            for (auto* component : componentTypes) {
+                // Skip internal or invalid components
+                if (!component || internalComponents.contains(component->type.hash)) {
+                    continue;
+                }
+                std::string name = component->displayName;
+                if (ComponentIcons.contains(component->type.hash)) {
+                    name = ComponentIcons[component->type.hash] + " " + name;
+                }
+                if (ImGui::MenuItem(name.c_str(), NULL, false, !ent.HasComponent(component->type.hash))) {
+                    ent.AddComponent(component->type.hash);
+                }
+            }
+        }
     };
 }
