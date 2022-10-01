@@ -20,7 +20,8 @@ engine_src = files(
 engine_args = windows ? [
 
 ] : [
-    '-Wno-shadow'
+    '-Wno-shadow',
+    '-Wno-volatile' # for GLM
 ]
 
 editor_src = files(
