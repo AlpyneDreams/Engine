@@ -31,3 +31,19 @@ Already included in repo:
 - [stb](https://github.com/nothings/stb) image loader and writer
 - [imgui_impl_bgfx.cpp](https://gist.github.com/RichardGale/6e2b74bc42b3005e08397236e4be0fd0)
 - [Material Design Icons Font](https://materialdesignicons.com/)
+
+## Building ##
+
+After installing all dependencies, use the tasks in `.vscode/tasks.json` to quickly setup and build. 
+Or use the following commands to 
+
+To setup (run once):
+```
+meson build
+```
+
+To build:
+```
+meson install -C build
+```
+
