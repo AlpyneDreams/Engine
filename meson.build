@@ -15,8 +15,8 @@ endif
 rain       = subproject('rain')
 rain_dep   = rain.get_variable('rain_dep')
 
-# Force use local WrapDB SDL2 version
-sdl_dep    = dependency('libsdl2', fallback: 'sdl2', default_options: ['with_main=false'], static: true)
+# Force use local WrapDB SDL2 version on Windows
+sdl_dep    = dependency(windows ? 'libsdl2' : 'sdl2', fallback: 'sdl2', default_options: ['with_main=false'], static: true)
 
 fmt_dep    = dependency('fmt', static: true)
 vulkan_dep = dependency('vulkan')
