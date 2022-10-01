@@ -22,4 +22,15 @@ namespace engine
         virtual void Update() override {}
         virtual void Tick() override {}
     };
+
+    inline void Entity::Attach(Behavior& behavior)
+    {
+        // TODO: attach behavior System
+        behavior.handle = handle;
+    }
+
+    inline void Entity::Detach(Behavior& behavior)
+    {
+        // TOOD: detach behavior System
+    }
 }

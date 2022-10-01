@@ -12,6 +12,8 @@
 
 #include "components/Name.h"
 
+#include "rain/rain.h"
+
 namespace engine
 {
     /**
@@ -20,7 +22,7 @@ namespace engine
      *   - It is a container for components, which
      *     provide both logic and data.
      */
-    struct Entity
+    struct Entity : rain::Reflect
     {
         // Handle: registry ptr + entity ID
         Handle handle;
@@ -93,7 +95,8 @@ namespace engine
         }
 
         template <class C>
-        C& AddComponent() {
+        C& AddComponent()
+        {
             // Add required components, if any
             if constexpr (derived_from_template<C, RequireComponents>) {
                 C::AddRequiredComponents(handle);
@@ -102,13 +105,9 @@ namespace engine
             // Create component instance (get if it already exists)
             C& component = handle.get_or_emplace<C>();
             
-            // If this component is an entity, then share our handle with it
-            if constexpr (std::derived_from<C, Entity>) {
-                static_cast<Entity&>(component).handle = handle;
-            }
-            
+            // If this component is a behavior, then share our handle with it
             if constexpr (std::derived_from<C, Behavior>) {
-
+                Attach(static_cast<Behavior&>(component));
             }
             
             return component;
@@ -125,8 +124,6 @@ namespace engine
         // TODO: Get components with base class (this version would be for T = Component)
         ComponentList GetComponents() const
         {
-            using namespace refl;
-
             ComponentList components;
             for (auto&& [id, storage] : handle.registry()->storage())
             {
@@ -148,18 +145,63 @@ namespace engine
         }
 
         template <class C>
-        void RemoveComponent() {
+        void RemoveComponent()
+        {
             if constexpr (std::derived_from<C, Behavior>) {
-
+                if (HasComponent<C>())
+                    Detach(static_cast<Behavior&>(GetComponent<C>()));
             }
             // remove<C>(): the component does not need to exist
             handle.remove<C>();
         }
 
+    // Low-Level Component Management //
+
+        entt::sparse_set& GetStorage(ComponentID id)
+        {
+            auto registry   = handle.registry();
+            auto storage    = registry->storage(id);
+            auto end        = registry->storage().cend();
+            if (storage == end) [[unlikely]] // TODO: Runtime component storage
+                return registry->storage<entt::any>(id); // This will not work.
+            return storage->second;
+        }
+
+        bool HasComponent(ComponentID id)
+        {
+            return GetStorage(id).contains(handle.entity());
+        }
+
+        Component* GetComponent(ComponentID id)
+        {
+            return (Component*)GetStorage(id).get(handle.entity());
+        }
+
+        // TODO: This should behave 1:1 with AddComponent.
+        // Perhaps there should be only one implementation of this logic.
+        void* AddComponent(ComponentID id)
+        {
+            if (HasComponent(id))
+                return GetComponent(id);
+            
+            // TODO: Add required components
+            
+            GetStorage(id).emplace(handle.entity());
+
+            Component* component = GetComponent(id);
+
+            // If this component is a behavior, then share our handle with it
+            if (rain::Class::Get(id)->DerivedFrom<Behavior>()) {
+                Attach(*(Behavior*)component);
+            }
+            
+            return component;
+        }
+
         void RemoveComponent(ComponentID id) {
             handle.registry()->storage(id)->second.remove(handle.entity());
         }
-    
+
     // Entity Clone //
 
         Entity Clone()
@@ -177,6 +219,11 @@ namespace engine
             
             return clone;
         }
+
+    private:
+        // Implemented in Behavior.h
+        void Attach(Behavior& behavior);
+        void Detach(Behavior& behavior);
     };
 
     // A pure Entity cannot be a component.
