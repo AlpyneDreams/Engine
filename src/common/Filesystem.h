@@ -9,6 +9,8 @@
 #include <filesystem>
 #include <ostream>
 
+#include <fmt/ostream.h>
+
 // Automatic path to string conversion
 namespace std::filesystem {
     std::ostream& operator<<(std::ostream& os, const path& path);
@@ -54,3 +56,5 @@ namespace std::filesystem
         return str + path.string();
     }
 }
+
+template <> struct fmt::formatter<engine::fs::Path> : ostream_formatter {};
