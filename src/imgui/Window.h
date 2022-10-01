@@ -12,6 +12,9 @@ namespace engine::GUI
 {
     struct Window : public System
     {
+        const char* icon = "";
+        const char* title = "";
+        const char* id = "";
         std::string name = "##"; // (unnamed)
         uint width = 512;
         uint height = 512;
@@ -24,14 +27,22 @@ namespace engine::GUI
     public:
 
         Window() {}
-        Window(const char* name, uint width, uint height, bool open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
-          : name(name), width(width), height(height), open(open), flags(flags) {}
 
+        // Icon, Title, and ID
+        Window(const char* icon, const char* title, const char* id, uint width, uint height, bool open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
+          : icon(icon), title(title), id(id)
+          , name(std::string(icon) + " " + title + "###" + id)
+          , width(width), height(height), open(open), flags(flags) {}
+        
+        // Icon, Title == ID
         Window(const char* icon, const char* name, uint width, uint height, bool open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
           : Window(icon, name, name, width, height, open, flags) {}
+
+        // No Icon
+        Window(const char* name, uint width, uint height, bool open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
+          : title(name), id(name), name(name)
+          , width(width), height(height), open(open), flags(flags) {}
         
-        Window(const char* icon, const char* title, const char* id, uint width, uint height, bool open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
-          : Window((std::string(icon) + " " + title + "###" + id).c_str(), width, height, open, flags) {}
 
         void Update() override
         {
