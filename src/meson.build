@@ -98,3 +98,13 @@ editor = executable('editor', editor_src, main, editor_rtti,
     win_subsystem   : 'console',
     cpp_args        : engine_args + ['-DEDITOR=1']
 )
+
+# TODO: Link editor_src as a lib
+hammer = executable('hammer', 'hammer/Hammer.cpp', editor_src, editor_rtti,
+    dependencies    : shared_deps,
+    link_with       : [engine_lib],
+    install         : true,
+    install_dir     : join_paths(meson.project_source_root(), 'runtime'),
+    win_subsystem   : 'console',
+    cpp_args        : engine_args + ['-DEDITOR=1']
+)

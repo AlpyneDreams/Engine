@@ -54,5 +54,30 @@
                 "console": "integratedTerminal"
             }
         },
+        {
+            "name": "Hammer",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/hammer",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/runtime",
+            "environment": [],
+            "linux": {
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],    
+            },
+            "windows": {
+                "type": "cppvsdbg",
+                "console": "integratedTerminal"
+            }
+        },
     ]
 }
