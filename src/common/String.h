@@ -43,14 +43,14 @@ namespace engine::str
     }
 
     // Trim characters from left side of string
-    constexpr std::string_view trimStart(std::string_view str, std::string_view chars = " ")
+    constexpr std::string_view trimStart(std::string_view str, std::string_view chars = " \n\r")
     {
         str.remove_prefix(std::min(str.find_first_not_of(chars), str.size()));
         return str;
     }
 
     // Trim characters from right side of string
-    constexpr std::string_view trimEnd(std::string_view str, std::string_view chars = " ")
+    constexpr std::string_view trimEnd(std::string_view str, std::string_view chars = " \n\r")
     {
         auto pos = str.find_last_not_of(chars);
         if (pos != str.npos)
@@ -59,7 +59,7 @@ namespace engine::str
     }
 
     // Trim characters surrounding string
-    constexpr std::string_view trim(std::string_view str, std::string_view chars = " ")
+    constexpr std::string_view trim(std::string_view str, std::string_view chars = " \n\r")
     {
         return trimEnd(trimStart(str));
     }
