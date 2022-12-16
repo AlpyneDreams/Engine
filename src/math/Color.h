@@ -12,7 +12,7 @@ namespace engine
     struct ColorRGBA
     {
         static constexpr T NormalMin = T(0);
-        static constexpr T NormalMax = T{ std::is_floating_point<T>::value ? 1.0 : std::numeric_limits<T>::max()};
+        static constexpr T NormalMax = std::is_floating_point<T>::value ? T(1.0) : std::numeric_limits<T>::max();
 
         union {
             T data[4];
@@ -21,6 +21,8 @@ namespace engine
             };
         };
 
+        ColorRGBA() : ColorRGBA(NormalMin, NormalMin, NormalMin) {}
+
         explicit ColorRGBA(T r, T g, T b, T a = NormalMax)
             : r(r), g(g), b(b), a(a) {}
 
@@ -28,15 +30,15 @@ namespace engine
             : r(r), g(g), b(b), a(a) {}
 
         explicit ColorRGBA(auto r, auto g, auto b, auto a = NormalMax)
-            : r(float(r)), g(float(g)), b(float(b)), a(float(a)) {}
+            : r(T(r)), g(T(g)), b(T(b)), a(T(a)) {}
 
         uint32 Pack()
         {
             using std::clamp;
             constexpr T packScale = T(255) / NormalMax;
-            return    uint32( clamp(r * packScale, T{0}, T{255}) ) << 24u 
-                    | uint32( clamp(g * packScale, T{0}, T{255}) ) << 16u 
-                    | uint32( clamp(b * packScale, T{0}, T{255}) ) <<  8u 
+            return    uint32( clamp(r * packScale, T{0}, T{255}) ) << 24u
+                    | uint32( clamp(g * packScale, T{0}, T{255}) ) << 16u
+                    | uint32( clamp(b * packScale, T{0}, T{255}) ) <<  8u
                     | uint32( clamp(a * packScale, T{0}, T{255}) ) <<  0u ;
         }
     };
