@@ -6,6 +6,9 @@ main = 'main/Main.cpp'
 engine_src = files(
     'assets/loaders/Textures.cpp',
     'assets/loaders/MeshOBJ.cpp',
+    windows ?
+        'platform/win32/PlatformWin32.cpp' :
+        'platform/linux/PlatformLinux.cpp',
     'platform/sdl/WindowSDL.cpp',
     'platform/sdl/CursorSDL.cpp',
     'render/bgfx/RenderBGFX.cpp',

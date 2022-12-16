@@ -11,9 +11,11 @@
     #define PLATFORM_X11     1
 #endif
 
+#include <string>
+
 namespace engine
 {
-    inline constexpr struct Platform
+    inline struct Platform
     {
     #ifdef EDITOR
         static constexpr bool Editor  = true;
@@ -22,5 +24,20 @@ namespace engine
     #endif
         static constexpr bool Windows = PLATFORM_WINDOWS;
         static constexpr bool Linux   = PLATFORM_LINUX;
+
+        // Returns empty string on cancel.
+        std::string FilePicker(const char* startIn);
+
+        // Starts in the directory of the last selected file.
+        std::string FilePicker()
+        {
+            static std::string lastDir;
+            std::string file = FilePicker(lastDir.empty() ? nullptr : lastDir.c_str());
+
+            if (!file.empty())
+                lastDir = file;
+
+            return file;
+        }
     } Platform;
 }
