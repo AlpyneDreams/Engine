@@ -82,5 +82,10 @@ namespace engine::editor
 
         void Run();
 
+        // Called by Run()    
+        void Init();
+        void Loop();
+        void Shutdown();
+
     } Editor;
 }

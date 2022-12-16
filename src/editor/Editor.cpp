@@ -22,6 +22,13 @@ namespace engine::editor
 {
     void Editor::Run()
     {
+        Init();
+        Loop();
+        Shutdown();
+    }
+
+    void Editor::Init()
+    {
         // Add engine systems...
         Engine.systems.AddSystem<editor::Keybinds>();
         Engine.systems.AddSystem<editor::Layout>();
@@ -70,9 +77,15 @@ namespace engine::editor
                 ctx.r.SetUniform("u_color", vec4(f, 0.f, 0.f, 1.0f));
             });
         };
+    }
 
-        // Run engine loop
+    void Editor::Loop()
+    {
         Engine.Loop();
+    }
+
+    void Editor::Shutdown()
+    {
         Engine.Shutdown();
     }
 

@@ -1,3 +1,5 @@
+- Engine runtime should be accessible through launch arg to Editor like in godot
+
 - Scene loading - (de)serialization
 
 - Move contents of entity/ to scene/

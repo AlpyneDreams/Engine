@@ -23,9 +23,9 @@ namespace engine
         Window* window      = Window::CreateWindow();
         RenderSystem renderSystem = RenderSystem(window);
 
+    public:
         SystemGroup systems;
 
-    public:
         render::Render& Render = *renderSystem.render;
 
         void Run()
@@ -33,7 +33,6 @@ namespace engine
             systems.AddSystem<GUI::ConsoleWindow>();
             
             Init();
-            // Run the main loop
             Loop();
             Shutdown();
         }
