@@ -22,13 +22,6 @@ namespace engine::editor
 {
     void Editor::Run()
     {
-        Init();
-        Loop();
-        Shutdown();
-    }
-
-    void Editor::Init()
-    {
         // Add engine systems...
         Engine.systems.AddSystem<editor::Keybinds>();
         Engine.systems.AddSystem<editor::Layout>();
@@ -38,6 +31,13 @@ namespace engine::editor
         sceneView     = &Engine.systems.AddSystem<editor::SceneView>();
         assetBrowser  = &Engine.systems.AddSystem<editor::AssetBrowser>();
 
+        Init();
+        Loop();
+        Shutdown();
+    }
+
+    void Editor::Init()
+    {
         // Initialize engine
         Engine.Init();
 
