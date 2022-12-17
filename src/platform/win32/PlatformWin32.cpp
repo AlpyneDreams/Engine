@@ -1,8 +1,11 @@
 
 #include "platform/Platform.h"
+#include <filesystem>
 #include <string>
 
 #define WIN32_LEAN_AND_MEAN
+
+#include "common/Filesystem.h"
 
 #include <windows.h>
 #include <commdlg.h>
@@ -11,6 +14,8 @@ namespace engine
 {
     std::string Platform::FilePicker(const char* startIn = nullptr)
     {
+        fs::Path pwd = std::filesystem::current_path();
+
         OPENFILENAME ofn;
         char filename[1024];
 
@@ -32,7 +37,12 @@ namespace engine
         ofn.lpstrInitialDir = startIn;
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-        if (GetOpenFileName(&ofn)) {
+        BOOL result = GetOpenFileName(&ofn);
+
+        // Prevent the pwd from being changed
+        std::filesystem::current_path(pwd);
+
+        if (result) {
             return std::string(ofn.lpstrFile);
         } else {
             return std::string();
