@@ -17,6 +17,8 @@ namespace engine::hammer
     {
     private:
         using KVObject = std::map<std::string, std::shared_ptr<KeyValues>>;
+        
+        inline static const std::string ObjectStr = "[object Object]";
     public:
         enum Type { Null, String, Object };
         Type type = Type::Object;
@@ -37,7 +39,8 @@ namespace engine::hammer
         KeyValues(Type type) : type(type) {}
         explicit KeyValues(std::string name, std::string value) : type(String), name(name), value(value) {}
 
-        operator std::string() const { return type == Object ? "[object Object]" : value; }
+        operator std::string() const { return type == Object ? ObjectStr : value; }
+        operator std::string_view() const { return type == Object ? ObjectStr : value; }
         operator int() const { return std::stoi(*this); }
         operator bool() const { return std::stoi(*this) != 0; }
 

@@ -3,6 +3,8 @@
 #include "math/Math.h"
 #include "math/Color.h"
 
+#include "core/Mesh.h"
+
 #include <vector>
 
 namespace engine::hammer
@@ -53,6 +55,8 @@ namespace engine::hammer
         int id;
         std::vector<Side> sides;
         Editor editor;
+
+        Mesh mesh;
     };
     
     struct World : MapEntity
