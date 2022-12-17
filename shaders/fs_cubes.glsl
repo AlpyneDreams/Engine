@@ -28,7 +28,7 @@ vec4 Lit(float _ndotl, float _rdotv, float _m)
 
 void main()
 {
-    vec3 light 		= normalize(vec3(0.5, 0.5, -0.5));
+    vec3 light 		= normalize(vec3(0.25, 0.75, -0.5));
 	vec3 ambient	= vec3(0.07, 0.06, 0.08);
 	vec3 color 		= vec3(1, 1, 1);
 	vec3 normal		= normalize(v_normal);
