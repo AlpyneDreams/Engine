@@ -30,6 +30,14 @@ namespace engine::hammer
             io.IniFilename = "hammer.ui.ini";
         }
 
+        static void OpenFilePicker()
+        {
+            std::string file = Platform.FilePicker();
+            if (!file.empty()) {
+                Hammer.Open(file.c_str());
+            }
+        }
+
         void Update() override
         {
             if (ImGui::BeginMainMenuBar())
@@ -39,11 +47,8 @@ namespace engine::hammer
                     if (ImGui::MenuItem("New")) {
 
                     }
-                    if (ImGui::MenuItem("Open")) {
-                        std::string file = Platform.FilePicker();
-                        if (!file.empty()) {
-                            Hammer.Open(file.c_str());
-                        }
+                    if (ImGui::MenuItem("Open", "Ctrl+O")) {
+                        OpenFilePicker();
                     }
                     if (ImGui::MenuItem("Quit")) {
                         Console.Execute("quit");

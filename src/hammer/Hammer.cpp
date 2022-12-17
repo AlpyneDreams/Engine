@@ -17,8 +17,9 @@ namespace engine::hammer
 {
     void Hammer::Open(const char* path)
     {
+        Console.Log("Open: '{}'", path);
         if (!fs::exists(path)) {
-            Console.Error("Error: file '{}' does not exist", uint(path[strlen(path)-1]));
+            Console.Error("Error: file '{}' does not exist", path);
             return;
         }
         
@@ -61,6 +62,7 @@ namespace engine::hammer
         Editor.Init();
 
         // Add hammer systems...
+        Engine.systems.AddSystem<hammer::Keybinds>();
         Engine.systems.AddSystem<hammer::Layout>();
         Editor.console       = &Engine.systems.AddSystem<GUI::ConsoleWindow>();
         viewport = &Engine.systems.AddSystem<Viewport>();
