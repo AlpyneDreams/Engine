@@ -5,6 +5,7 @@
 #include <type_traits>
 
 #include "common/Common.h"
+#include "math/Math.h"
 
 namespace engine
 {
@@ -40,6 +41,16 @@ namespace engine
                     | uint32( clamp(g * packScale, T{0}, T{255}) ) << 16u
                     | uint32( clamp(b * packScale, T{0}, T{255}) ) <<  8u
                     | uint32( clamp(a * packScale, T{0}, T{255}) ) <<  0u ;
+        }
+
+        operator vec4() const
+        {
+            return vec4(
+                float(r) / float(NormalMax),
+                float(g) / float(NormalMax),
+                float(b) / float(NormalMax),
+                float(a) / float(NormalMax)
+            );
         }
     };
 
