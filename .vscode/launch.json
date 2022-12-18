@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Linux) Engine",
+            "name": "Engine",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/runtime/engine",
@@ -13,18 +13,24 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/runtime",
             "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
+            "linux": {
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],    
+            },
+            "windows": {
+                "type": "cppvsdbg",
+                "console": "integratedTerminal"
+            }
         },
         {
-            "name": "(Linux) Editor",
+            "name": "Editor",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/runtime/editor",
@@ -32,37 +38,21 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/runtime",
             "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
+            "linux": {
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],    
+            },
+            "windows": {
+                "type": "cppvsdbg",
+                "console": "integratedTerminal"
+            }
         },
-        {
-            "name": "(Windows) Engine",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/runtime/engine.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/runtime",
-            "environment": [],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "(Windows) Editor",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/runtime/editor.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/runtime",
-            "environment": [],
-            "console": "integratedTerminal"
-        }
     ]
 }
