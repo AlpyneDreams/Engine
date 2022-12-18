@@ -8,12 +8,12 @@ fi
 
 ARGS="--platform linux -p spirv"
 
-for f in vs_*.glsl; do
+for f in vs_*.glsl *.vs.glsl; do
     echo $f
     $BGFX_SHADERC -f $f -o ../runtime/core/shaders/spirv/${f%.*}.bin --type v $ARGS
 done
 
-for f in fs_*.glsl; do
+for f in fs_*.glsl *.fs.glsl; do
     echo $f
     $BGFX_SHADERC -f $f -o ../runtime/core/shaders/spirv/${f%.*}.bin --type f $ARGS
 done

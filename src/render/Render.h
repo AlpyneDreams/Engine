@@ -70,6 +70,7 @@ namespace engine::render
             TextureFormat depth = TextureFormat::D32F) = 0;
 
         virtual Shader* LoadShader(const char* vertexShader, const char* pixelShader) = 0; // TODO: Probably replace this
+        virtual Shader* LoadShader(const char* name) { return LoadShader((std::string(name) + ".vs").c_str(), (std::string(name) + ".fs").c_str()); }
 
     // Per-Camera State //
 
