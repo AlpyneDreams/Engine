@@ -1,5 +1,6 @@
 #pragma once
 
+#include "engine/Engine.h"
 #include "editor/Editor.h"
 #include "engine/System.h"
 #include "imgui/Window.h"
@@ -30,9 +31,11 @@ namespace engine::hammer
     // TODO: Make this a RenderPipeline
     struct MapRender : public System
     {
+        render::Render& r = Engine.Render;
         render::Shader* shader;
 
         void Start() final override;
         void Update() final override;
+        void DrawEntity(MapEntity& entity);
     };
 }

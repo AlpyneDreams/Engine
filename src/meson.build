@@ -31,6 +31,12 @@ editor_src = files(
     'editor/Editor.cpp'
 )
 
+hammer_src = files(
+    'hammer/Hammer.cpp',
+    'hammer/VMF.cpp',
+    'hammer/Solid.cpp',
+)
+
 # Build meta files
 engine_meta = []
 editor_meta = []
@@ -100,7 +106,7 @@ editor = executable('editor', editor_src, main, editor_rtti,
 )
 
 # TODO: Link editor_src as a lib
-hammer = executable('hammer', 'hammer/Hammer.cpp', editor_src, editor_rtti,
+hammer = executable('hammer', hammer_src, editor_src, editor_rtti,
     dependencies    : shared_deps,
     link_with       : [engine_lib],
     install         : true,

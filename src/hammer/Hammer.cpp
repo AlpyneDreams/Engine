@@ -11,7 +11,7 @@
 #include "imgui/ConsoleWindow.h"
 #include "hammer/gui/Layout.h"
 #include "hammer/gui/Viewport.h"
-#include "hammer/Keybinds.h"
+#include "hammer/gui/Keybinds.h"
 
 #include "common/Filesystem.h"
 
@@ -36,86 +36,12 @@ namespace engine::hammer
             Console.Error("Error: file '{}' does not exist", path);
             return;
         }
-        
+
         std::string vmf = fs::readFile(path);
 
-        // TODO: Use rain to fill this struct!
-
         KeyValues kv = KeyValues::Parse(vmf);
-        auto& versioninfo = kv["versioninfo"];
 
-        map = VMF();
-        map.editorversion = versioninfo["editorversion"];
-        map.editorbuild = versioninfo["editorbuild"];
-        map.mapversion = versioninfo["mapversion"];
-        map.formatversion = versioninfo["formatversion"];
-        map.prefab = versioninfo["prefab"];
-
-        // For each solid
-        for (auto& solid : kv["world"].each("solid"))
-        {
-            Solid s = Solid { solid["id"] };
-
-            std::vector<vec3>& vertices = *new std::vector<vec3>();
-            std::vector<uint32>& indices = *new std::vector<uint32>();
-            uint32 index = 0;
-
-            // Add each side to mesh
-            for (auto& side : solid.each("side"))
-            {
-                s.sides.push_back(Side {});
-                
-                auto points = str::split(side["plane"], ")");
-                vec3 tri[3]; // bottom left, top left, top right
-
-                // Parse points
-                for (int i = 0; i < 3; i++)
-                {
-                    // TODO: Why can't we remove the '(' with str::trim
-                    auto xyz = str::trim(points[i]);
-                    xyz.remove_prefix(1);
-
-                    auto coords = str::split(xyz, " ");
-                    // Convert z-up to y-up
-                    // TODO: Handedness?
-                    float x = std::stof(std::string(coords[0]));
-                    float y = std::stof(std::string(coords[2]));
-                    float z = std::stof(std::string(coords[1]));
-                    
-                    // FIXME: Apply scale here for now
-                    tri[i] = vec3(x, y, z) * vec3(0.0254f);
-                }
-
-                // Compute normal
-                vec3 normal = glm::triangleNormal(tri[0], tri[1], tri[2]);
-                
-                // Add first triangle
-                for (int i = 0; i < 3; i++)
-                {
-                    vertices.push_back(tri[i]);
-                    vertices.push_back(normal);
-                    indices.push_back(index++);
-                }
-                
-                // Add second triangle
-                indices.push_back(index - 3); // tri[0]
-                indices.push_back(index - 1); // tri[2]
-
-                vec3 dy = tri[1] - tri[0]; // top left - bottom left
-                
-                // Add 4th vertex
-                vertices.push_back(tri[2] - dy);
-                vertices.push_back(normal);
-                indices.push_back(index++);
-            }
-
-            s.mesh = Mesh(xyz,
-                &vertices[0].x, vertices.size() * sizeof(vec3),
-                &indices[0], indices.size() * sizeof(uint32)
-            );
-
-            map.world.solids.push_back(s);
-        }
+        map = VMF(kv);
     }
 
     void Hammer::Run()
@@ -136,22 +62,30 @@ namespace engine::hammer
 
     void MapRender::Start()
     {
-        shader = Engine.Render.LoadShader("vs_cubes", "fs_cubes");
+        shader = Engine.Render.LoadShader("hammer_flat");
     }
 
     void MapRender::Update()
     {
-        render::Render& r = Engine.Render;
         r.SetRenderTarget(Editor.rt_SceneView);
         r.SetShader(shader);
         
-        for (auto& solid : Hammer.map.world.solids)
+        DrawEntity(Hammer.map.world);
+
+        for (auto& ent : Hammer.map.entities)
+            DrawEntity(ent);
+
+        editor::Gizmos.DrawIcon(vec3(0, 1, 0), editor::Gizmos.icnLight);
+    }
+
+    inline void MapRender::DrawEntity(MapEntity &entity)
+    {
+        for (auto& solid : entity.solids)
         {
+            r.SetUniform("u_color", solid.editor.color);
             r.SetTransform(glm::identity<mat4x4>());
             r.DrawMesh(&solid.mesh);
         }
-
-        editor::Gizmos.DrawIcon(vec3(0, 1, 0), editor::Gizmos.icnLight);
     }
 }
 
