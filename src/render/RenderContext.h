@@ -16,12 +16,13 @@ namespace engine::render
     {
         Render& r;
         Camera& camera;
-        RenderContext(Render& render, Camera& camera) : r(render), camera(camera) {}
+        Transform& pov;
+        RenderContext(Render& render, Camera& camera, Transform& pov) : r(render), camera(camera), pov(pov) {}
 
         void SetupCamera()
         {
             r.SetRenderTarget(camera.renderTarget);
-            mat4x4 view = camera.ViewMatrix();
+            mat4x4 view = camera.ViewMatrix(pov);
             mat4x4 proj = camera.ProjMatrix();
             r.SetViewTransform(view, proj);
         }

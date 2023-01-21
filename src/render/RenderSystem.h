@@ -48,19 +48,25 @@ namespace engine
             OnBeginFrame(r);
 
             // Render each camera with the render pipeline
-            for (auto&& [ent, camera] : World.Each<Camera>())
+            for (auto&& [ent, transform, camera] : World.Each<Transform, Camera>())
             {
-                RenderContext ctx = RenderContext(r, camera);
-
-                OnBeginCamera(ctx);
-                renderPipeline.RenderFrame(ctx);
-                OnEndCamera(ctx);
+                DrawCamera(camera, transform);
             }
             
             OnEndFrame(r);
             r.EndFrame();
 
             GUI::Render();
+        }
+        
+        void DrawCamera(Camera& camera, Transform& transform)
+        {
+            using namespace render;
+            RenderContext ctx = RenderContext(*render, camera, transform);
+
+            OnBeginCamera(ctx);
+            renderPipeline.RenderFrame(ctx);
+            OnEndCamera(ctx);
         }
 
         void Shutdown()

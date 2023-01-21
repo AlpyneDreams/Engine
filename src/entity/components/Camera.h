@@ -9,7 +9,7 @@
 
 namespace engine
 {
-    struct Camera : Behavior, RequireComponent<Transform>
+    struct Camera : RequireComponent<Transform>
     {
         // Horizontal field of view in degrees
         float fieldOfView = 90.0f;
@@ -27,13 +27,12 @@ namespace engine
 
     public:
         // World to camera matrix
-        mat4x4 ViewMatrix()
+        mat4x4 ViewMatrix(Transform& transform)
         {
             if (overrideViewMatrix)
                 return view;
             
             // TODO: Cache this
-            Transform& transform = GetOrAddComponent<Transform>();
             vec3 a = glm::radians(transform.GetEulerAngles());
             mat4x4 view = glm::eulerAngleZXY(-a.z, -a.x, -a.y);
             view = glm::translate(view, -transform.position);
@@ -91,14 +90,6 @@ namespace engine
 
         void ResetProjMatrix() {
             overrideProjMatrix = false;
-        }
-
-    public:
-        void SetMatrices(render::Render& r)
-        {
-            auto view = ViewMatrix();
-            auto proj = ProjMatrix();
-            r.SetViewTransform(view, proj);
         }
 
     private:

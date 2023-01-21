@@ -121,10 +121,10 @@ namespace engine::editor
             ImGuizmo::SetDrawlist();
 
             Camera& camera = Editor.editorCamera.GetComponent<Camera>();
-            //Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+            Transform& transform = Editor.editorCamera.GetComponent<Transform>();
 
             // Get camera matrices
-            mat4x4 view = camera.ViewMatrix();
+            mat4x4 view = camera.ViewMatrix(transform);
             mat4x4 proj = camera.ProjMatrix();
         
             Entity active = Selection.Active();
