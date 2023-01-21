@@ -25,11 +25,10 @@ namespace engine::hammer
             using namespace editor;
             
             // TODO: Better way to find solid by ID
-            Hammer.Renderer->DrawSolidsWith([&](MapEntity& ent, Solid& solid) {
-                if (solid.id == editor::Selection.Active())
-                {
+            Hammer.Renderer->DrawSolidsWith([&](MapEntity& ent, Solid& solid)
+            {
+                if (editor::Selection.Active() == Hammer.GetSelectionID(ent, solid))
                     DrawSelectionOutline(solid);
-                }
             });
          
 

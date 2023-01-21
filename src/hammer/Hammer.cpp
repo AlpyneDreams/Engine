@@ -43,6 +43,7 @@ namespace engine::hammer
         Renderer = &Engine.systems.AddSystem<hammer::MapRender>();
         Engine.systems.AddSystem<hammer::Keybinds>();
         Engine.systems.AddSystem<hammer::Layout>();
+        Engine.systems.AddSystem<hammer::SelectionModeWindow>();
         viewport = &Engine.systems.AddSystem<Viewport>();
 
         // Setup Object ID pass
@@ -54,7 +55,7 @@ namespace engine::hammer
             class hammer::Hammer& Hammer = hammer::Hammer;
             Hammer.Renderer->DrawSolidsWith([&](MapEntity& ent, Solid& solid)
             {
-                Tools.PreDrawSelection(ctx.r, solid.id);
+                Tools.PreDrawSelection(ctx.r, hammer::Hammer.GetSelectionID(ent, solid));
                 ctx.r.DrawMesh(&solid.mesh);
             });
         };
