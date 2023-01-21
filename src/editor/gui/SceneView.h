@@ -157,7 +157,7 @@ namespace engine::editor
 
             // Draw grid
             if (showGrid)
-                Handles.DrawGrid(r);
+                Handles.DrawGrid(r, Editor.sh_Grid);
 
             // Draw wireframe of current selection
             Entity ent = Selection.Active();

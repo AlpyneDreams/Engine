@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/Mesh.h"
-#include "editor/Editor.h"
 #include "glm/ext/matrix_transform.hpp"
 #include "math/Math.h"
 #include "render/Render.h"
@@ -19,14 +18,14 @@ namespace engine::editor
 
     public:
         // TODO: Scale grid based on snap increment. View based fade. Infinite grid
-        void DrawGrid(render::Render& r)
+        void DrawGrid(render::Render& r, render::Shader* shader)
         {
             mat4x4 matrix = glm::translate(glm::identity<mat4x4>(), vec3(0, 0.015, 0));
             r.SetTransform(matrix);
             r.SetBlendFunc(render::BlendFuncs::Alpha);
             r.SetDepthTest(render::CompareFunc::LessEqual);
             r.SetPrimitiveType(render::PrimitiveType::Lines);
-            r.SetShader(Editor.sh_Grid);
+            r.SetShader(shader);
             r.DrawMesh(&grid);
             r.SetPrimitiveType(render::PrimitiveType::Triangles);
             r.SetDepthTest(render::CompareFunc::Less);

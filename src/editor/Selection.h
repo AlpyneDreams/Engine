@@ -1,7 +1,6 @@
 #pragma once
 
 #include "entity/Common.h"
-#include "entity/Entity.h"
 
 namespace engine::editor
 {
