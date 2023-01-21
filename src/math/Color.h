@@ -32,15 +32,26 @@ namespace engine
 
         explicit ColorRGBA(auto r, auto g, auto b, auto a = NormalMax)
             : r(T(r)), g(T(g)), b(T(b)), a(T(a)) {}
-
+        
+        template <std::endian Endian = std::endian::big>
         uint32 Pack()
         {
             using std::clamp;
             constexpr T packScale = T(255) / NormalMax;
-            return    uint32( clamp(r * packScale, T{0}, T{255}) ) << 24u
-                    | uint32( clamp(g * packScale, T{0}, T{255}) ) << 16u
-                    | uint32( clamp(b * packScale, T{0}, T{255}) ) <<  8u
-                    | uint32( clamp(a * packScale, T{0}, T{255}) ) <<  0u ;
+            if constexpr (Endian == std::endian::little)
+            {
+                return    uint32( clamp(a * packScale, T{0}, T{255}) ) << 24u
+                        | uint32( clamp(b * packScale, T{0}, T{255}) ) << 16u
+                        | uint32( clamp(g * packScale, T{0}, T{255}) ) <<  8u
+                        | uint32( clamp(r * packScale, T{0}, T{255}) ) <<  0u ;
+            }
+            else // assume big endian
+            {
+                return    uint32( clamp(r * packScale, T{0}, T{255}) ) << 24u
+                        | uint32( clamp(g * packScale, T{0}, T{255}) ) << 16u
+                        | uint32( clamp(b * packScale, T{0}, T{255}) ) <<  8u
+                        | uint32( clamp(a * packScale, T{0}, T{255}) ) <<  0u ;
+            }
         }
 
         operator vec4() const
@@ -58,8 +69,9 @@ namespace engine
 
     // List of common colors
     const struct {
-        Color Black = Color(0, 0, 0, 1);
-        Color White = Color(1, 1, 1, 1);
+        Color Transparent   = Color(0, 0, 0, 0);
+        Color Black         = Color(0, 0, 0, 1);
+        Color White         = Color(1, 1, 1, 1);
     } Colors;
 
 }
