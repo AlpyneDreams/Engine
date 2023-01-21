@@ -35,7 +35,7 @@ editor_src = tools_common_src + files(
     'editor/Editor.cpp'
 )
 
-hammer_src = files(
+hammer_src = tools_common_src + files(
     'hammer/Hammer.cpp',
     'hammer/VMF.cpp',
     'hammer/Solid.cpp',
@@ -110,7 +110,7 @@ editor = executable('editor', editor_src, main, editor_rtti,
 )
 
 # TODO: Link editor_src as a lib
-hammer = executable('hammer', hammer_src, editor_src, editor_rtti,
+hammer = executable('hammer', hammer_src,
     dependencies    : shared_deps,
     link_with       : [engine_lib],
     install         : true,

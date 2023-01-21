@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/Engine.h"
-#include "editor/Editor.h"
+#include "editor/Tools.h"
 #include "engine/System.h"
 #include "imgui/Window.h"
 
@@ -9,7 +9,7 @@
 
 namespace engine::hammer
 {
-    inline class editor::Editor& Editor = editor::Editor;
+    inline class editor::Tools& Tools = editor::Tools;
     
     inline class Hammer
     {

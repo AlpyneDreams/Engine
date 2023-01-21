@@ -5,8 +5,6 @@
 #include "platform/Platform.h"
 #include "common/Common.h"
 #include "engine/System.h"
-#include "editor/Editor.h"
-#include "editor/gui/Layout.h"
 #include "console/ConVar.h"
 
 #include "imgui.h"
@@ -58,7 +56,7 @@ namespace engine::hammer
 
                 if (ImGui::BeginMenu("Window"))
                 {
-                    ImGui::MenuItem(editor::Editor.console->name.c_str(), "`", &editor::Editor.console->open);
+                    ImGui::MenuItem(editor::Tools.console->name.c_str(), "`", &editor::Tools.console->open);
                     ImGui::MenuItem(Hammer.viewport->name.c_str(), "", &Hammer.viewport->open);
                     ImGui::MenuItem(ICON_MC_APPLICATION_OUTLINE " GUI Demo", "", &gui_demo.value);
                     ImGui::EndMenu();
@@ -71,7 +69,7 @@ namespace engine::hammer
             {
                 if (ImGui::BeginMenuBar())
                 {
-                    GUI::WindowToggleButton(editor::Editor.console, 72.0f, "`");
+                    GUI::WindowToggleButton(editor::Tools.console, 72.0f, "`");
                     ImGui::EndMenuBar();
                 }
                 ImGui::End();

@@ -46,18 +46,17 @@ namespace engine::hammer
 
     void Hammer::Run()
     {
-        Editor.Init();
+        Tools.Init();
 
         // Add hammer systems...
         Engine.systems.AddSystem<hammer::MapRender>();
         Engine.systems.AddSystem<hammer::Keybinds>();
         Engine.systems.AddSystem<hammer::Layout>();
-        Editor.console = &Engine.systems.AddSystem<GUI::ConsoleWindow>();
         viewport = &Engine.systems.AddSystem<Viewport>();
 
         //Open("/home/alpyne/Desktop/test.vmf");
-        Editor.Loop();
-        Editor.Shutdown();
+        Tools.Loop();
+        Tools.Shutdown();
     }
 
     void MapRender::Start()
@@ -67,7 +66,7 @@ namespace engine::hammer
 
     void MapRender::Update()
     {
-        r.SetRenderTarget(Editor.rt_SceneView);
+        r.SetRenderTarget(Tools.rt_SceneView);
         r.SetShader(shader);
         
         DrawEntity(Hammer.map.world);

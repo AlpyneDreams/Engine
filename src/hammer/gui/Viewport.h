@@ -58,9 +58,9 @@ namespace engine::hammer
         {
             switch (mode) {
                 default: case DrawMode::Shaded:
-                    return editor::Editor.rt_SceneView->GetTexture();
+                    return Tools.rt_SceneView->GetTexture();
                 case DrawMode::Depth:
-                    return editor::Editor.rt_SceneView->GetDepthTexture();
+                    return Tools.rt_SceneView->GetDepthTexture();
             }
         }
 
@@ -121,13 +121,13 @@ namespace engine::hammer
             ImGuizmo::SetRect(viewport.x, viewport.y, viewport.w, viewport.h);
             ImGuizmo::SetDrawlist();
 
-            Camera& camera = Editor.editorCamera.GetComponent<Camera>();
-            Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+            Camera& camera = Tools.editorCamera.camera;
+            Transform& transform = Tools.editorCamera.transform;
 
             // Get camera matrices
             mat4x4 view = camera.ViewMatrix(transform);
             mat4x4 proj = camera.ProjMatrix();
-        
+            
             Entity active = Selection.Active();
             if (active && active.HasComponent<Transform>())
             {
@@ -154,11 +154,11 @@ namespace engine::hammer
 
             // Begin scene view extra rendering
             render::Render& r = Engine.Render;
-            r.SetRenderTarget(Editor.rt_SceneView);
+            r.SetRenderTarget(Tools.rt_SceneView);
 
             // Draw grid
             if (showGrid)
-                Handles.DrawGrid(r, Editor.sh_Grid);
+                Handles.DrawGrid(r, Tools.sh_Grid);
 
             // Draw wireframe of current selection
             Entity ent = Selection.Active();
@@ -169,7 +169,7 @@ namespace engine::hammer
                 }
                 r.SetDepthTest(render::CompareFunc::LessEqual);
                 r.SetPolygonMode(render::PolygonMode::Wireframe);
-                r.SetShader(Editor.sh_Color);
+                r.SetShader(Tools.sh_Color);
                 r.SetUniform("u_color", vec4(1, 0.6, 0.25, 1));
                 r.DrawMesh(ent.GetComponent<MeshRenderer>().mesh);
                 r.SetPolygonMode(render::PolygonMode::Fill);
@@ -209,7 +209,7 @@ namespace engine::hammer
                 ImGui::SameLine(ImGui::GetWindowWidth() - 40);
                 if (BeginMenu(ICON_MC_VIDEO " " ICON_MC_MENU_DOWN))
                 {
-                    Camera& camera = Editor.editorCamera.GetComponent<Camera>();
+                    Camera& camera = Tools.editorCamera.camera;
                     ImGui::TextUnformatted("Scene Camera");
                     ImGui::InputFloat("FOV", &camera.fieldOfView);
                     ImGui::InputFloat("Speed (m/s)", &cameraSpeed);
@@ -242,14 +242,14 @@ namespace engine::hammer
             // If mouse is over viewport,
             if (ImGui::IsMouseHoveringRect(pos, max))
             {
-                Transform& transform = Editor.editorCamera.GetComponent<Transform>();
+                Transform& transform = Tools.editorCamera.transform;
 
                 // Left-click: Select (or transform selection)
                 if (Mouse.GetButtonDown(Mouse::Left) && !popupOpen && (Selection.Empty() || !ImGuizmo::IsOver()))
                 {
                     ImVec2 absolute = ImGui::GetMousePos();
                     uint2 mouse = uint2(absolute.x - pos.x, absolute.y - pos.y);
-                    Editor.PickObject(mouse);
+                    Tools.PickObject(mouse);
                 }
 
                 if (!ImGui::GetIO().KeyCtrl)
@@ -304,7 +304,7 @@ namespace engine::hammer
                 height = uint(size.y);
 
                 // Resize framebuffer or viewport
-                editor::Editor.ResizeViewport(width, height);
+                Tools.ResizeViewport(width, height);
 
                 return true;
             }
