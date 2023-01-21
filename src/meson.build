@@ -27,7 +27,11 @@ engine_args = windows ? [
     '-Wno-volatile' # for GLM
 ]
 
-editor_src = files(
+tools_common_src = files(
+    'editor/Tools.cpp'
+)
+
+editor_src = tools_common_src + files(
     'editor/Editor.cpp'
 )
 
