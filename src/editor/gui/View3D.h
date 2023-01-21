@@ -8,7 +8,6 @@
 #include "input/Input.h"
 #include "input/Keyboard.h"
 #include "platform/Cursor.h"
-#include "common/Reflection.h"
 
 #include "entity/components/Camera.h"
 #include "entity/components/Transform.h"
@@ -51,6 +50,8 @@ namespace engine::editor
         enum class DrawMode {
             Shaded, Depth
         };
+
+        static inline const char* drawModes[] = { "Shaded", "Depth" };
 
         DrawMode drawMode = DrawMode::Shaded;
 
@@ -144,11 +145,10 @@ namespace engine::editor
                 ImGui::SameLine(ImGui::GetWindowWidth() - 90);
                 if (BeginMenu(ICON_MC_IMAGE_MULTIPLE " " ICON_MC_MENU_DOWN))
                 {
-                    refl::Enum* modes = refl::Enum::Get<DrawMode>();
-                    for (auto& [value, name] : *modes)
+                    for (int i = 0; i < sizeof(drawModes) / sizeof(const char*); i++)
                     {
-                        if (ImGui::MenuItem(name.c_str(), "", drawMode == DrawMode(value)))
-                            drawMode = DrawMode(value);
+                        if (ImGui::MenuItem(drawModes[i], "", drawMode == DrawMode(i)))
+                            drawMode = DrawMode(i);
                     }
                     ImGui::EndMenu();
                 }
