@@ -41,8 +41,11 @@ namespace engine::editor
         // Read object ID from scene view render target and update selection
         void PickObject(uint2 mouse);
         
+        // Draw object ID to the selection buffer
+        static void BeginSelectionPass(render::RenderContext& ctx);
+        static void PreDrawSelection(render::Render& r, uint id);
         static void DrawSelectionPass(render::RenderContext& ctx);
-        
+
         // Draw wireframe outline of selected object
         void DrawSelectionOutline(Mesh* mesh);
         void DrawSelectionOutline(Mesh* mesh, Transform& transform);
@@ -60,4 +63,11 @@ namespace engine::editor
         render::Render& r = Engine.Render;
 
     } Tools;
+    
+    inline void Tools::PreDrawSelection(render::Render& r, uint id)
+    {
+        r.SetShader(editor::Tools.sh_Color);
+        float f = std::bit_cast<float>(id + 1); // add 1 as 0 is for background
+        r.SetUniform("u_color", vec4(f, 0.f, 0.f, 1.0f));
+    }
 }

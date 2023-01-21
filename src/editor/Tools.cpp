@@ -25,7 +25,7 @@ namespace engine::editor
         // Setup editor render targets
         auto [width, height] = Engine.window->GetSize();
         rt_SceneView = r.CreateRenderTarget(width, height);
-        rt_ObjectID = r.CreateRenderTarget(width, height, render::TextureFormat::R32F, render::TextureFormat::None);
+        rt_ObjectID = r.CreateRenderTarget(width, height, render::TextureFormat::R32F, render::TextureFormat::D32F);
         rt_ObjectID->SetReadBack(true);
         
         // Setup editor camera
@@ -52,17 +52,24 @@ namespace engine::editor
         Engine.Shutdown();
     }
     
-    void Tools::DrawSelectionPass(render::RenderContext &ctx)
+    void Tools::BeginSelectionPass(render::RenderContext &ctx)
     {
         ctx.SetupCamera();
         ctx.r.SetRenderTarget(editor::Tools.rt_ObjectID);
         ctx.r.SetClearColor(true, Colors.Black);
         ctx.r.SetBlendFunc(render::BlendFuncs::Normal);
+        ctx.r.SetClearDepth(true, 1.0f);
+        ctx.r.SetBlendFunc(render::BlendFuncs::Normal);
+        ctx.r.SetDepthTest(render::CompareFunc::LessEqual);
+        ctx.r.SetDepthWrite(true);
+    }
+    
+    void Tools::DrawSelectionPass(render::RenderContext &ctx)
+    {
+        editor::Tools.BeginSelectionPass(ctx);
+        
         ctx.DrawRenderersWith([&](EntityID id) {
-            ctx.r.SetShader(editor::Tools.sh_Color);
-            uint i = uint(id);
-            float f = std::bit_cast<float>(i + 1); // add 1 as 0 is for background
-            ctx.r.SetUniform("u_color", vec4(f, 0.f, 0.f, 1.0f));
+            editor::Tools::PreDrawSelection(ctx.r, uint(id));
         });
     }
 
