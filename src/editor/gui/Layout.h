@@ -64,8 +64,8 @@ namespace engine::editor
             {
                 if (ImGui::BeginMenuBar())
                 {
-                    WindowToggleButton(Editor.assetBrowser, 64.0f, "Ctrl+Space");
-                    WindowToggleButton(Editor.console, 72.0f, "`");
+                    GUI::WindowToggleButton(Editor.assetBrowser, 64.0f, "Ctrl+Space");
+                    GUI::WindowToggleButton(Editor.console, 72.0f, "`");
                     ImGui::EndMenuBar();
                 }
                 ImGui::End();
@@ -73,16 +73,6 @@ namespace engine::editor
 
             // ImGuiDockNodeFlags_PassthruCentralNode
             ImGui::DockSpaceOverViewport(NULL);
-        }
-
-        static void WindowToggleButton(GUI::Window* window, float width = 64.0f, const char* tooltip = nullptr)
-        {
-            if (ImGui::Selectable(window->name.c_str(), window->visible, ImGuiSelectableFlags_None, ImVec2(width, 20.0f)))
-            {
-                window->ToggleOrFocus();
-            }
-            if (tooltip && ImGui::IsItemHovered())
-                ImGui::SetTooltip("%s", tooltip);
         }
 
         static void AddObjectMenu()

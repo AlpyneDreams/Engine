@@ -150,6 +150,16 @@ namespace engine
         ImGui::PopStyleColor();
         return clicked;
     }
+    
+    void GUI::WindowToggleButton(GUI::Window* window, float width, const char* tooltip)
+    {
+        if (ImGui::Selectable(window->name.c_str(), window->visible, ImGuiSelectableFlags_None, ImVec2(width, 20.0f)))
+        {
+            window->ToggleOrFocus();
+        }
+        if (tooltip && ImGui::IsItemHovered())
+            ImGui::SetTooltip("%s", tooltip);
+    }
 
     bool GUI::Thumbnail(const char* name, Texture* icon, bool selected)
     {
