@@ -34,24 +34,12 @@ namespace engine::editor
         editorCamera.camera.renderTarget = rt_SceneView;
         
         // Setup camera renderer
-        Engine.renderSystem.OnBeginFrame += [](render::Render& r) {
+        Renderer.OnBeginFrame += [](render::Render& r) {
             Engine.renderSystem.DrawCamera(editor::Tools.editorCamera.camera, editor::Tools.editorCamera.transform);
         };
 
         // Setup Object ID pass
-        Engine.renderSystem.OnEndCamera += [](render::RenderContext& ctx)
-        {
-            ctx.SetupCamera();
-            ctx.r.SetRenderTarget(editor::Tools.rt_ObjectID);
-            ctx.r.SetClearColor(true, Colors.Black);
-            ctx.r.SetBlendFunc(render::BlendFuncs::Normal);
-            ctx.DrawRenderersWith([&](EntityID id) {
-                ctx.r.SetShader(editor::Tools.sh_Color);
-                uint i = uint(id);
-                float f = std::bit_cast<float>(i + 1); // add 1 as 0 is for background
-                ctx.r.SetUniform("u_color", vec4(f, 0.f, 0.f, 1.0f));
-            });
-        };
+        Renderer.OnEndCamera += DrawSelectionPass;
     }
 
     void Tools::Loop()
@@ -62,6 +50,20 @@ namespace engine::editor
     void Tools::Shutdown()
     {
         Engine.Shutdown();
+    }
+    
+    void Tools::DrawSelectionPass(render::RenderContext &ctx)
+    {
+        ctx.SetupCamera();
+        ctx.r.SetRenderTarget(editor::Tools.rt_ObjectID);
+        ctx.r.SetClearColor(true, Colors.Black);
+        ctx.r.SetBlendFunc(render::BlendFuncs::Normal);
+        ctx.DrawRenderersWith([&](EntityID id) {
+            ctx.r.SetShader(editor::Tools.sh_Color);
+            uint i = uint(id);
+            float f = std::bit_cast<float>(i + 1); // add 1 as 0 is for background
+            ctx.r.SetUniform("u_color", vec4(f, 0.f, 0.f, 1.0f));
+        });
     }
 
     void Tools::PickObject(uint2 mouse)

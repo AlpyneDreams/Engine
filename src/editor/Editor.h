@@ -8,8 +8,7 @@
 namespace engine::editor
 {
     /**
-     * Editor manages the editor viewport, 
-     * editor GUI windows, and general rendering.
+     * Editor is the main level editor.
      */
     inline class Editor
     {

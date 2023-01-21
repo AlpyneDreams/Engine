@@ -7,12 +7,12 @@
 #include "imgui/Window.h"
 #include "entity/components/Camera.h"
 #include "entity/components/Transform.h"
+#include "render/RenderContext.h"
 
 namespace engine::editor
 {
     /**
-     * Editor manages the editor viewport, 
-     * editor GUI windows, and general rendering.
+     * Tools manages the editor viewport and general rendering.
      */
     inline class Tools
     {
@@ -40,6 +40,8 @@ namespace engine::editor
 
         // Read object ID from scene view render target and update selection
         void PickObject(uint2 mouse);
+        
+        static void DrawSelectionPass(render::RenderContext& ctx);
         
         // Draw wireframe outline of selected object
         void DrawSelectionOutline(Mesh* mesh);
