@@ -1,8 +1,6 @@
 #pragma once
 
-#include "engine/Engine.h"
 #include "editor/Tools.h"
-#include "engine/System.h"
 #include "imgui/Window.h"
 
 #include "hammer/VMF.h"
@@ -11,6 +9,8 @@ namespace engine::hammer
 {
     inline class editor::Tools& Tools = editor::Tools;
     
+    struct MapRender;
+    
     inline class Hammer
     {
     public:
@@ -18,6 +18,9 @@ namespace engine::hammer
         // TODO: multiple open maps
         VMF map;
         void Open(const char* path);
+    
+    // Systems //
+        MapRender* Renderer;
         
     // GUI //
         GUI::Window* viewport;
@@ -27,15 +30,4 @@ namespace engine::hammer
         void Run();
 
     } Hammer;
-
-    // TODO: Make this a RenderPipeline
-    struct MapRender : public System
-    {
-        render::Render& r = Engine.Render;
-        render::Shader* shader;
-
-        void Start() final override;
-        void Update() final override;
-        void DrawEntity(MapEntity& entity);
-    };
 }

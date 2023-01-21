@@ -1,34 +1,25 @@
 
 #include "hammer/Hammer.h"
+#include "hammer/MapRender.h"
 #include "common/String.h"
-#include "core/Primitives.h"
-#include "core/VertexLayout.h"
-#include "editor/Gizmos.h"
 #include "hammer/KeyValues.h"
 
 #include "console/Console.h"
 #include "engine/Engine.h"
+#include "hammer/VMF.h"
 #include "imgui/ConsoleWindow.h"
 #include "hammer/gui/Layout.h"
 #include "hammer/gui/Viewport.h"
 #include "hammer/gui/Keybinds.h"
 
 #include "common/Filesystem.h"
-
-#include "math/Math.h"
-#include <glm/gtx/normal.hpp>
+#include "render/Render.h"
 
 #include <cstring>
 #include <vector>
 
-
 namespace engine::hammer
 {
-    static VertexLayout xyz = {
-        VertexAttribute::For<float>(3, VertexAttribute::Position),
-        VertexAttribute::For<float>(3, VertexAttribute::Normal, true),
-    };
-
     void Hammer::Open(const char* path)
     {
         Console.Log("Open: '{}'", path);
@@ -49,42 +40,28 @@ namespace engine::hammer
         Tools.Init();
 
         // Add hammer systems...
-        Engine.systems.AddSystem<hammer::MapRender>();
+        Renderer = &Engine.systems.AddSystem<hammer::MapRender>();
         Engine.systems.AddSystem<hammer::Keybinds>();
         Engine.systems.AddSystem<hammer::Layout>();
         viewport = &Engine.systems.AddSystem<Viewport>();
 
+        // Setup Object ID pass
+        Tools.Renderer.OnEndCamera -= Tools.DrawSelectionPass;
+        Tools.Renderer.OnEndCamera += [](render::RenderContext& ctx)
+        {
+            Tools.BeginSelectionPass(ctx);
+                        
+            class hammer::Hammer& Hammer = hammer::Hammer;
+            Hammer.Renderer->DrawSolidsWith([&](MapEntity& ent, Solid& solid)
+            {
+                Tools.PreDrawSelection(ctx.r, solid.id);
+                ctx.r.DrawMesh(&solid.mesh);
+            });
+        };
+
         //Open("/home/alpyne/Desktop/test.vmf");
         Tools.Loop();
         Tools.Shutdown();
-    }
-
-    void MapRender::Start()
-    {
-        shader = Engine.Render.LoadShader("hammer_flat");
-    }
-
-    void MapRender::Update()
-    {
-        r.SetRenderTarget(Tools.rt_SceneView);
-        r.SetShader(shader);
-        
-        DrawEntity(Hammer.map.world);
-
-        for (auto& ent : Hammer.map.entities)
-            DrawEntity(ent);
-
-        editor::Gizmos.DrawIcon(vec3(0, 1, 0), editor::Gizmos.icnLight);
-    }
-
-    inline void MapRender::DrawEntity(MapEntity &entity)
-    {
-        for (auto& solid : entity.solids)
-        {
-            r.SetUniform("u_color", solid.editor.color);
-            r.SetTransform(glm::identity<mat4x4>());
-            r.DrawMesh(&solid.mesh);
-        }
     }
 }
 
