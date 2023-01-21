@@ -5,13 +5,8 @@
 #include "math/Math.h"
 #include "render/Render.h"
 #include "imgui/Window.h"
-/*
-#include "entity/Entity.h"
-#include "entity/components/Transform.h"
-#include "editor/Selection.h"
-
 #include "entity/components/Camera.h"
-*/
+#include "entity/components/Transform.h"
 
 namespace engine::editor
 {
@@ -45,6 +40,10 @@ namespace engine::editor
 
         // Read object ID from scene view render target and update selection
         void PickObject(uint2 mouse);
+        
+        // Draw wireframe outline of selected object
+        void DrawSelectionOutline(Mesh* mesh);
+        void DrawSelectionOutline(Mesh* mesh, Transform& transform);
     
     // GUI //
         GUI::Window* console;
@@ -54,6 +53,9 @@ namespace engine::editor
         void Init();
         void Loop();
         void Shutdown();
+        
+    private:
+        render::Render& r = Engine.Render;
 
     } Tools;
 }

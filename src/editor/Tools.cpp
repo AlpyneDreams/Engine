@@ -15,8 +15,6 @@ namespace engine::editor
         // Initialize engine
         Engine.Init();
 
-        render::Render& r = Engine.Render;
-
         // Initialize gizmos
         Gizmos.Init();
         
@@ -86,6 +84,24 @@ namespace engine::editor
                 }
             }
         });
+    }
+    
+    void Tools::DrawSelectionOutline(Mesh* mesh)
+    {
+        r.SetDepthTest(render::CompareFunc::LessEqual);
+        r.SetPolygonMode(render::PolygonMode::Wireframe);
+        r.SetShader(sh_Color);
+        r.SetUniform("u_color", vec4(1, 0.6, 0.25, 1));
+        r.DrawMesh(mesh);
+        r.SetPolygonMode(render::PolygonMode::Fill);
+        r.SetDepthTest(render::CompareFunc::Less);
+    }
+
+    void Tools::DrawSelectionOutline(Mesh* mesh, Transform& transform)
+    {
+        mat4x4 matrix = transform.GetTransformMatrix();
+        r.SetTransform(matrix);
+        DrawSelectionOutline(mesh);
     }
 
 }

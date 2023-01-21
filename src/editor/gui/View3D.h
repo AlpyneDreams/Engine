@@ -2,20 +2,16 @@
 
 #include "editor/Tools.h"
 #include "imgui/Window.h"
-#include "entity/Common.h"
-#include "entity/components/MeshRenderer.h"
-#include "entity/components/Transform.h"
 #include "editor/Selection.h"
 #include "editor/Handles.h"
-#include "editor/Gizmos.h"
-#include "entity/Scene.h"
-#include "entity/Entity.h"
-#include "entity/components/Camera.h"
 #include "engine/Engine.h"
 #include "input/Input.h"
 #include "input/Keyboard.h"
 #include "platform/Cursor.h"
 #include "common/Reflection.h"
+
+#include "entity/components/Camera.h"
+#include "entity/components/Transform.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -30,9 +26,7 @@ namespace engine::editor
     {
         View3D(auto... args) : GUI::Window(args..., ImGuiWindowFlags_MenuBar) {}
 
-        enum class Tool {
-            Translate, Rotate, Scale, Universal
-        };
+        using Tool = Handles::Tool;
 
         Tool  activeTool    = Tool::Translate;
         Space space         = Space::World;
@@ -46,6 +40,11 @@ namespace engine::editor
         bool gridUniform    = true;
 
         bool  popupOpen     = false;
+
+    // Virtual Methods //
+
+        virtual void DrawHandles(mat4x4& view, mat4x4& proj) {}
+        virtual void OnPostDraw() {}
 
     // Draw Modes //
 
@@ -91,35 +90,20 @@ namespace engine::editor
             NoPadding();
         }
 
-        static ImGuizmo::OPERATION GetOperation(Tool tool)
-        {
-            using enum ImGuizmo::OPERATION;
-            switch (tool) {
-                default:
-                case Tool::Translate: return TRANSLATE;
-                case Tool::Rotate:    return ROTATE;
-                case Tool::Scale:     return SCALE;
-                case Tool::Universal: return UNIVERSAL;
-            }
-        }
-
-        void PostDraw() override
+        void PostDraw() override final
         {
             ResetPadding();
 
             if (!visible)
                 return;
-            
+
             // HACK: Set hovered window to NULL,
             // this fixes mouse over with ImGui docking
             ImGuiContext& g = *ImGui::GetCurrentContext();
             ImGuiWindow* hovered = g.HoveredWindow;
             g.HoveredWindow = NULL;
 
-            ImGuizmo::BeginFrame();
-            ImGuizmo::AllowAxisFlip(allowAxisFlip);
-            ImGuizmo::SetRect(viewport.x, viewport.y, viewport.w, viewport.h);
-            ImGuizmo::SetDrawlist();
+            Handles.Begin(viewport, allowAxisFlip);
 
             Camera& camera = Tools.editorCamera.camera;
             Transform& transform = Tools.editorCamera.transform;
@@ -127,27 +111,8 @@ namespace engine::editor
             // Get camera matrices
             mat4x4 view = camera.ViewMatrix(transform);
             mat4x4 proj = camera.ProjMatrix();
-        
-            Entity active = Selection.Active();
-            if (active && active.HasComponent<Transform>())
-            {
-                Transform& transform = active.GetComponent<Transform>();
-                float mtx[16];
-                vec3 angles = transform.GetEulerAngles();
-                ImGuizmo::RecomposeMatrixFromComponents(&transform.position[0], &angles[0], &transform.scale[0], mtx);
 
-                ImGuizmo::MODE mode = space == Space::World ? ImGuizmo::MODE::WORLD : ImGuizmo::MODE::LOCAL;
-                ImGuizmo::Manipulate(&view[0][0], &proj[0][0], GetOperation(activeTool), mode, &mtx[0], NULL, gridSnap ? &gridSize.x : NULL);
-                
-                ImGuizmo::DecomposeMatrixToComponents(mtx, &transform.position[0], &angles[0], &transform.scale[0]);
-                transform.SetEulerAngles(angles);
-            }
-
-            //static mat4x4 grid = glm::identity<mat4x4>();
-            //static mat4x4 cube = glm::identity<mat4x4>();
-            //ImGuizmo::DrawGrid(&view[0][0], &proj[0][0], &grid[0][0], 100);
-            //ImGuizmo::DrawCubes(&view[0][0], &proj[0][0], &cube[0][0], 1);
-            //ImGuizmo::ViewManipulate(&view[0][0], 35.f, ImVec2(viewport.x, viewport.y), ImVec2(128, 128), 0x000000ff);
+            DrawHandles(view, proj);
 
             // HACK: Reset hovered window
             g.HoveredWindow = hovered;
@@ -160,30 +125,14 @@ namespace engine::editor
             if (showGrid)
                 Handles.DrawGrid(r, Tools.sh_Grid);
 
-            // Draw wireframe of current selection
-            Entity ent = Selection.Active();
-            if (ent && ent.HasComponent<MeshRenderer>()) {
-                if (ent.HasComponent<Transform>()) {
-                    mat4x4 matrix = ent.GetComponent<Transform>().GetTransformMatrix();
-                    r.SetTransform(matrix);
-                }
-                r.SetDepthTest(render::CompareFunc::LessEqual);
-                r.SetPolygonMode(render::PolygonMode::Wireframe);
-                r.SetShader(Tools.sh_Color);
-                r.SetUniform("u_color", vec4(1, 0.6, 0.25, 1));
-                r.DrawMesh(ent.GetComponent<MeshRenderer>().mesh);
-                r.SetPolygonMode(render::PolygonMode::Fill);
-                r.SetDepthTest(render::CompareFunc::Less);
-            }
-
-            Gizmos.DrawIcon(vec3(0), Gizmos.icnLight);
+            OnPostDraw();
         }
 
         void Draw() override
         {
             popupOpen = false;
             ResetPadding();
-            
+
         // Menu Bar //
             if (ImGui::BeginMenuBar())
             {
@@ -237,14 +186,14 @@ namespace engine::editor
             viewport = Rect(pos.x, pos.y, size.x, size.y);
 
             Toolbar();
-            
+
             // If mouse is over viewport,
             if (ImGui::IsMouseHoveringRect(pos, max))
             {
                 Transform& transform = Tools.editorCamera.transform;
 
                 // Left-click: Select (or transform selection)
-                if (Mouse.GetButtonDown(Mouse::Left) && !popupOpen && (Selection.Empty() || !ImGuizmo::IsOver()))
+                if (Mouse.GetButtonDown(Mouse::Left) && !popupOpen && (Selection.Empty() || !Handles.IsMouseOver()))
                 {
                     ImVec2 absolute = ImGui::GetMousePos();
                     uint2 mouse = uint2(absolute.x - pos.x, absolute.y - pos.y);
@@ -310,7 +259,7 @@ namespace engine::editor
 
             return true;
         }
-    
+
     // Coordinate Space Picker //
 
         void CoordinateSpacePicker()
@@ -363,7 +312,7 @@ namespace engine::editor
                 showingGrid = showGrid;
             }
         }
-    
+
     // Toolbar //
 
         void Toolbar()
@@ -384,7 +333,7 @@ namespace engine::editor
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, 0.f));
             ImGuiCol col = activeTool == tool ? ImGuiCol_TabActive : ImGuiCol_WindowBg;
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(col));
-            
+
             if (ImGui::Button(label)) {
                 activeTool = tool;
             }
