@@ -1,9 +1,12 @@
 
 #include "engine/Engine.h"
-#include "editor/Editor.h"
-
 using namespace engine;
+
+#ifdef EDITOR
+#include "editor/Editor.h"
 using namespace engine::editor;
+#endif
+
 
 int main(int argc, char* argv[])
 {

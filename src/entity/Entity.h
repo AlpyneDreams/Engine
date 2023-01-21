@@ -24,6 +24,8 @@ namespace engine
      */
     struct Entity : rain::Reflect
     {
+        using SelectionID = std::underlying_type_t<EntityID>;
+        
         // Handle: registry ptr + entity ID
         Handle handle;
 
@@ -36,9 +38,11 @@ namespace engine
 
         // If no scene is specified use World
         Entity(EntityID id) : handle(World.ents, id) {}
+        Entity(SelectionID id) : handle(World.ents, EntityID(id)) {}
 
         operator Handle() const { return handle; }
         operator EntityID() const { return handle.entity(); }
+        operator SelectionID() const { return SelectionID(handle.entity()); }
 
         operator bool() const { return handle.entity() != EntityNull && handle.valid(); }
 

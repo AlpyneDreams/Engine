@@ -14,11 +14,11 @@
 namespace engine
 {
     // Forward declarations.
-    namespace editor { class Editor; }
+    namespace editor { class Tools; }
     
     inline class Engine
     {
-        friend class editor::Editor;
+        friend class editor::Tools;
     protected:
         Window* window      = Window::CreateWindow();
         RenderSystem renderSystem = RenderSystem(window);

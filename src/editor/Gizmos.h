@@ -1,7 +1,6 @@
 #pragma once
 
 #include "engine/Engine.h"
-#include "editor/Editor.h"
 #include "assets/Assets.h"
 #include "glm/ext/matrix_transform.hpp"
 #include "render/Render.h"

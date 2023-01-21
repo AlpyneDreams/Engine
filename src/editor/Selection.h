@@ -1,48 +1,53 @@
 #pragma once
 
-#include "entity/Common.h"
-#include "entity/Entity.h"
+#include "common/Common.h"
 
 namespace engine::editor
 {
+    // Should match std::underlying_type_t<EntityID> from entity/Common.h
+    using SelectionID = uint32;
+    
     // TODO: Multiple selections.
     inline struct Selection
     {
     private:
-        EntityID selected = EntityNull;
+        // Should match EntityNull in entity/Common.h
+        static constexpr SelectionID Null = ~0;
+        
+        SelectionID selected = Null;
 
     public:
-        EntityID Active() {
+        SelectionID Active() {
             return selected;
         }
 
-        bool Selected(EntityID ent) {
-            return selected == ent;
+        bool Selected(auto ent) {
+            return selected == SelectionID(ent);
         }
 
         bool Empty() {
-            return selected == EntityNull;
+            return selected == Null;
         }
 
-        void Select(EntityID ent) {
-            selected = ent;
+        void Select(auto ent) {
+            selected = SelectionID(ent);
         }
 
-        void Deselect(EntityID ent) {
-            if (selected == ent) {
-                selected = EntityNull;
+        void Deselect(auto ent) {
+            if (selected == SelectionID(ent)) {
+                selected = Null;
             }
         }
 
         void Clear() {
-            selected = EntityNull;
+            selected = Null;
         }
 
-        void Toggle(EntityID ent) {
-            if (selected == ent) {
-                selected = EntityNull;
+        void Toggle(auto ent) {
+            if (selected == SelectionID(ent)) {
+                selected = Null;
             } else {
-                selected = ent;
+                selected = SelectionID(ent);
             }
         }
     } Selection;

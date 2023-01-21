@@ -9,6 +9,7 @@
 #include "entity/components/Camera.h"
 #include "math/Math.h"
 #include "console/ConVar.h"
+#include "editor/Tools.h"
 
 #include "imgui/Common.h"
 #include <imgui.h>
@@ -48,7 +49,7 @@ namespace engine::editor
 
                 if (ImGui::BeginMenu("Window"))
                 {
-                    ImGui::MenuItem(Editor.console->name.c_str(), "`", &Editor.console->open);
+                    ImGui::MenuItem(Tools.console->name.c_str(), "`", &Tools.console->open);
                     ImGui::MenuItem(Editor.sceneView->name.c_str(), "", &Editor.sceneView->open);
                     ImGui::MenuItem(Editor.outline->name.c_str(), "", &Editor.outline->open);
                     ImGui::MenuItem(Editor.inspector->name.c_str(), "", &Editor.inspector->open);
@@ -64,8 +65,8 @@ namespace engine::editor
             {
                 if (ImGui::BeginMenuBar())
                 {
-                    WindowToggleButton(Editor.assetBrowser, 64.0f, "Ctrl+Space");
-                    WindowToggleButton(Editor.console, 72.0f, "`");
+                    GUI::WindowToggleButton(Editor.assetBrowser, 64.0f, "Ctrl+Space");
+                    GUI::WindowToggleButton(Tools.console, 72.0f, "`");
                     ImGui::EndMenuBar();
                 }
                 ImGui::End();
@@ -73,16 +74,6 @@ namespace engine::editor
 
             // ImGuiDockNodeFlags_PassthruCentralNode
             ImGui::DockSpaceOverViewport(NULL);
-        }
-
-        static void WindowToggleButton(GUI::Window* window, float width = 64.0f, const char* tooltip = nullptr)
-        {
-            if (ImGui::Selectable(window->name.c_str(), window->visible, ImGuiSelectableFlags_None, ImVec2(width, 20.0f)))
-            {
-                window->ToggleOrFocus();
-            }
-            if (tooltip && ImGui::IsItemHovered())
-                ImGui::SetTooltip("%s", tooltip);
         }
 
         static void AddObjectMenu()

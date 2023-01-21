@@ -8,33 +8,13 @@
 namespace engine::editor
 {
     /**
-     * Editor manages the editor viewport, 
-     * editor GUI windows, and general rendering.
+     * Editor is the main level editor.
      */
     inline class Editor
     {
     public:
-    // Viewport //
-        Entity editorCamera;
-
-        render::Shader* sh_Color;
-        render::Shader* sh_Grid;
-
-        render::RenderTarget* rt_SceneView;
-        render::RenderTarget* rt_ObjectID;
-
-        void ResizeViewport(uint width, uint height)
-        {
-            rt_SceneView->Resize(width, height);
-            rt_ObjectID->Resize(width, height);
-        }
-
-        // Read object ID from scene view render target and update selection
-        void PickObject(uint2 mouse);
-
     // GUI //
         // TODO: Support multiple instances of each
-        GUI::Window* console;
         GUI::Window* outline;
         GUI::Window* inspector;
         GUI::Window* sceneView;
@@ -81,11 +61,6 @@ namespace engine::editor
     // Editor Engine Loop //
 
         void Run();
-
-        // Called by Run()    
-        void Init();
-        void Loop();
-        void Shutdown();
 
     } Editor;
 }
