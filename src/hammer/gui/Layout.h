@@ -71,7 +71,7 @@ namespace engine::hammer
             {
                 if (ImGui::BeginMenuBar())
                 {
-                    editor::Layout::WindowToggleButton(editor::Editor.console, 72.0f, "`");
+                    GUI::WindowToggleButton(editor::Editor.console, 72.0f, "`");
                     ImGui::EndMenuBar();
                 }
                 ImGui::End();
