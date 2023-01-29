@@ -4,6 +4,7 @@
 #include "ConCommand.h"
 #include "common/String.h"
 #include "common/Ranges.h"
+#include "common/Enum.h"
 
 #include <stdexcept>
 #include <string>
@@ -18,22 +19,45 @@ namespace engine
     template <typename T = const char*>
     struct ConVar : public ConCommand
     {
+    protected:
+        using CallbackFunc = std::function<void(T&)>;
+
+        CallbackFunc callback;
+        bool inCallback = false;
+    
+    public:
         T value;
         T defaultValue;
 
-        ConVar(const char* name, T defaultValue, const char* description, auto... flags)
-          : ConCommand(name, description, std::function<void(ConCmd&)>{}, flags...),
+        ConVar(const char* name, T defaultValue, const char* description, CallbackFunc func)
+          : ConCommand(name, description, std::function<void(ConCmd&)>{}, NULL),
+            value(defaultValue),
+            defaultValue(defaultValue),
+            callback(func)
+        {}
+        
+        ConVar(const char* name, T defaultValue, const char* description)
+          : ConCommand(name, description, std::function<void(ConCmd&)>{}, NULL),
             value(defaultValue),
             defaultValue(defaultValue)
-        {}
-
-        ConVar(const char* name, T defaultValue, const char* description)
-          : ConVar(name, defaultValue, description, NULL)
         {}
 
         // Cannot call a ConVar like a function (can still Invoke)
         void operator()(auto... args) = delete;
         
+        inline void SetValue(T t)
+        {
+            value = t;
+            
+            // Allow callback to set the value without recursing!
+            if (!inCallback && callback)
+            {
+                inCallback = true;
+                callback(value);
+                inCallback = false;
+            }
+        }
+
         // Print or set value
         void Invoke(ConCmd& cmd) final override
         {
@@ -41,8 +65,8 @@ namespace engine
             if (cmd.argc == 0) {
                 PrintHelp();
             } else try {
-                value = ParseValue(cmd.args);
-                Console.Log("{} = {}", name, value);
+                SetValue(ParseValue(cmd.args));
+                PrintValue();
             } catch (invalid_argument const& err) {
                 Console.Error("Invalid {} value '{}'", DescribeType(), cmd.args);
             } catch (out_of_range const& err) {
@@ -68,15 +92,20 @@ namespace engine
             }
         }
 
-        ConVar<T>& operator =(const T& t) { value = t; return *this; }
+        ConVar<T>& operator =(const T& t) { SetValue(t); return *this; }
         operator T() const { return value; }
         bool operator ==(const T& t) { return value == t; }
         auto operator <=>(const T& t) { return value <=> t; }
 
         void PrintHelp() final override
         {
-            Console.Log("{} = {}", name, value);
+            PrintValue();
             Console.Log("- {}, {}", description, DescribeType());
+        }
+        
+        void PrintValue()
+        {
+            Console.Log("{} = {}", name, ToUnderlying(value));
         }
     };
 
@@ -113,11 +142,10 @@ namespace engine
         }
     }
 
-
     template <typename T>
     inline T ConVar<T>::ParseValue(const char* string)
     {
-        T value;
+        UnderlyingType<T> value;
         auto [ptr, err] = std::from_chars(string, string + std::strlen(string), value);
         switch (err)
         {
@@ -126,7 +154,7 @@ namespace engine
             case std::errc::result_out_of_range:
                 throw std::out_of_range(string);
             default:
-                return value;
+                return T(value);
         }
     }
 }
